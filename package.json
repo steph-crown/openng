@@ -1,5 +1,5 @@
 {
-  "name": "ngdata",
+  "name": "openng",
   "private": true,
   "scripts": {
     "build": "turbo run build",

@@ -1,4 +1,4 @@
-# ngdata
+# openng
 
 ## Using this example
 
