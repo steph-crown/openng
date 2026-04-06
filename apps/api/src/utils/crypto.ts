@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { nanoid } from "nanoid";
-
-const API_KEY_PREFIX = "ong_live_";
+import { API_KEY_PREFIX } from "./constants.js";
 
 export function hashToken(raw: string): string {
   return crypto.createHash("sha256").update(raw, "utf8").digest("hex");

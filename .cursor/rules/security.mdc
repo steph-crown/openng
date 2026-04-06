@@ -35,7 +35,7 @@ Security is embedded in every layer of OpenNG. Apply these rules to every code c
 
 ## CORS
 - Allow all origins for GET on /v1/* (public data API)
-- Restrict /auth/* and /dashboard/* to APP_URL origin only
+- Restrict /auth/* and /account/* to APP_URL origin only
 
 ## SQL Injection
 - All queries go through Drizzle ORM parameterized query builder

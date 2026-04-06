@@ -14,6 +14,19 @@ export function authMeta(): PaginationMeta {
   };
 }
 
+export function accountKeysMeta(): PaginationMeta {
+  return {
+    total: 0,
+    page: 1,
+    limit: 1,
+    pages: 1,
+    resource: "account-keys",
+    last_updated: new Date().toISOString(),
+    source_url: "https://openng.dev",
+    freshness: "static",
+  };
+}
+
 export function successResponse<T>(data: T, meta: PaginationMeta): ApiSuccessResponse<T> {
   return {
     success: true,

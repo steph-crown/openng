@@ -2,7 +2,7 @@ export type { ApiSuccessResponse, ApiErrorResponse, ApiResponse } from "./types/
 export type { PaginationMeta } from "./types/pagination";
 export { ErrorCode } from "./types/error-codes";
 
-export { successResponse, errorResponse, authMeta } from "./helpers/response";
+export { successResponse, errorResponse, authMeta, accountKeysMeta } from "./helpers/response";
 
 export { paginationSchema } from "./schemas/pagination";
 export type { PaginationParams } from "./schemas/pagination";

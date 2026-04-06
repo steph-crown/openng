@@ -14,7 +14,7 @@ import {
   MAGIC_LINK_SUCCESS_MESSAGE,
   SESSION_COOKIE_NAME,
   SESSION_TTL_MS,
-} from "./constants.js";
+} from "../utils/constants.js";
 import { sessionAuth } from "./middleware.js";
 import * as authService from "./services/auth.service.js";
 

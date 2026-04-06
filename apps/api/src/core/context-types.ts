@@ -11,4 +11,6 @@ export type AppVariables = {
   event: WideEvent;
   requestId: string;
   user?: SessionUser;
+  tier?: string;
+  apiKeyId?: bigint;
 };

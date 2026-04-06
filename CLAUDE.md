@@ -32,14 +32,15 @@ openng/
 │   ├── api/                    ← Hono API server → api.openng.dev
 │   │   ├── src/
 │   │   │   ├── core/           ← factory, logger, wide-event, context-types, global *.middleware.ts
-│   │   │   ├── utils/          ← cross-domain pure helpers (no DB/HTTP)
-│   │   │   ├── auth/           ← routes, services, repositories, domain middleware, cleanup
+│   │   │   ├── utils/          ← cross-domain helpers: crypto, constants, normalize-email (no Drizzle/Hono)
+│   │   │   ├── auth/           ← magic link, sessions, API-key verification middleware, cleanup
+│   │   │   ├── account/        ← `/account/*` routes, API key CRUD (repositories + services)
 │   │   │   ├── resources/      ← one folder per data domain
 │   │   │   │   ├── fuel/
 │   │   │   │   ├── food-prices/
 │   │   │   │   ├── holidays/
 │   │   │   │   └── ...
-│   │   │   ├── admin/          ← internal-only routes (API keys live under /dashboard in Group 6)
+│   │   │   ├── admin/          ← internal-only routes (session API keys live under /account in Group 6)
 │   │   │   └── index.ts
 │   │   └── package.json
 │   │
@@ -129,7 +130,7 @@ openng/
 
 ## API application layout (`apps/api`)
 
-Hand-written domains (`auth`, `admin`, `dashboard`, …) use the same vertical structure:
+Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical structure under `apps/api/src/{domain}/` (e.g. `auth/routes.ts`, `account/routes.ts`).
 
 | Layer | Role |
 | ----- | ---- |
@@ -139,7 +140,7 @@ Hand-written domains (`auth`, `admin`, `dashboard`, …) use the same vertical s
 
 **Global vs domain middleware:** App-wide middleware (request logging, future CORS) lives in `apps/api/src/core/` as `*.middleware.ts`. There is no top-level `src/middleware/` folder. Domain-specific middleware (e.g. `sessionAuth`) lives as `auth/middleware.ts` next to that domain.
 
-**Cross-domain utils:** `apps/api/src/utils/` — pure functions used by more than one domain. Domain-only helpers stay inside that domain. Do not put Drizzle or Hono in `utils/`.
+**Cross-domain utils:** `apps/api/src/utils/` — pure functions and shared constants used by more than one domain (e.g. `crypto.ts`, `constants.ts`, `normalize-email.ts`). Domain-only helpers stay inside that domain. Do not put Drizzle or Hono in `utils/`.
 
 **Hono context types:** `apps/api/src/core/context-types.ts` defines `AppVariables` and `SessionUser` for `c.get` / `c.set`.
 
@@ -369,10 +370,12 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 
 **API key endpoints (session-authenticated):**
 
-- `POST /dashboard/keys` — generate new key (one per user for now)
-- `GET /dashboard/keys` — list user's keys (masked)
-- `DELETE /dashboard/keys/:id` — revoke a key
-- `PATCH /dashboard/keys/:id` — update key label
+- `POST /account/keys` — generate new key (one per user for now)
+- `GET /account/keys` — list user's keys (masked)
+- `DELETE /account/keys/:id` — revoke a key
+- `PATCH /account/keys/:id` — update key label
+
+**Auth middleware:** `sessionAuth` requires a valid session cookie and sets `user`. `apiKeyAuth` requires `Authorization: Bearer ong_live_…` and sets `user`, `tier`, and `apiKeyId`. `combinedAuth` tries the session cookie first, then the same bearer scheme; a present `ong_live_` bearer that fails validation returns 401; if neither applies, `tier` is `anonymous` and `user` is unset (for `/v1/*` public data routes).
 
 **API key lifecycle:**
 
@@ -464,6 +467,7 @@ Request finishes (finally block):
 - `apps/api/src/core/response-bytes.ts` — `responseBytes(res)` computes byte length (headers first, else read cloned body) because Fetch `Response` often has no `Content-Length`
 - `apps/api/src/core/request-error.ts` — `recordRequestError(c, err)` forwards to `event.addError` for handlers that catch without rethrowing
 - `apps/api/src/core/context-types.ts` — `AppVariables`, `SessionUser` for Hono context typing
+- `apps/api/src/core/api-key-cache.ts` — `invalidateApiKeyLookup` for Redis `apikey:{hash}` (used when revoking keys; avoids `account` importing `auth` services)
 
 **Rules for logging in route handlers:**
 
@@ -507,7 +511,7 @@ Security is not a separate concern — it is embedded in every layer. Every code
 - Session cookies are `HttpOnly`, `Secure`, `SameSite=Lax` — never accessible to JavaScript
 - Sessions expire after 30 days with sliding window renewal on activity
 - Expired and used tokens/sessions must be cleaned up periodically
-- Auth endpoints (`/auth/*`, `/dashboard/*`) must be rate-limited aggressively to prevent brute-force and enumeration
+- Auth and account endpoints (`/auth/*`, `/account/*`) must be rate-limited aggressively to prevent brute-force and enumeration
 
 **Error handling:**
 
@@ -519,7 +523,7 @@ Security is not a separate concern — it is embedded in every layer. Every code
 **Network and transport:**
 
 - HTTPS is enforced everywhere (`.dev` TLD has HSTS preloaded, Caddy auto-provisions TLS)
-- CORS: allow all origins for `GET` on `/v1/*` (public API); restrict `/auth/*` and `/dashboard/*` to `APP_URL` origin only
+- CORS: allow all origins for `GET` on `/v1/*` (public data API); restrict `/auth/*` and `/account/*` to `APP_URL` origin only
 - Internal services (Postgres, Redis, SigNoz) are bound to `127.0.0.1` — never exposed externally
 - Cloudflare proxies all traffic — the VPS IP is never revealed
 
@@ -561,6 +565,14 @@ Comments are never written in this codebase. Code must be self-documenting throu
 
 - Use `@openng/` workspace package imports for internal packages, never relative paths across packages
 - Within a package, relative imports are fine
+
+**Circular dependencies (apps/api):**
+
+- Avoid import cycles between feature domains (`auth`, `account`, `resources`, …) and `core`. Cycles break bundling, hot reload, and reasoning about initialization order.
+- **Pattern:** `core` must not import from `auth` or `account`. Shared infrastructure (e.g. Redis key invalidation for API lookups) lives in `core/` so both `auth` and `account` can depend on it without depending on each other.
+- **Pattern:** `auth` may import **repositories** from `account` for read-only key resolution (`api-key-auth.service` → `account/repositories/api-keys.repository`). `account` must not import `auth` services; it may import `auth/middleware` (e.g. `sessionAuth`) and `utils/crypto` / `utils/constants` for keys and hashing as one-way edges.
+- **Pattern:** If two domains need the same behavior, extract it upward into `core` or downward into `@openng/db` / `@openng/shared`, or duplicate a tiny pure helper — never create `A → B → A` imports.
+- When adding imports, mentally trace the graph: if the new edge completes a cycle, refactor before merging.
 
 ---
 
@@ -646,6 +658,7 @@ turbo typecheck
 - **Never store API keys in plaintext** — always hash before storage
 - **Never return unbounded result sets** — all list endpoints must paginate
 - **Never use `any` in TypeScript** without an explicit comment explaining why (and there should be very few)
+- **Never introduce circular imports** between `apps/api` domains (`auth`, `account`, `resources`) or between those and `core` — refactor shared code into `core` or `@openng/*` first (see **Circular dependencies** under Coding Standards)
 - **Never commit `.env` files** — use `.env.example` for documentation
 - **Never commit scraped Excel files** to git — only manually-curated seed files belong in git
 - **Never use npm or yarn** — this is a pnpm workspace, only pnpm

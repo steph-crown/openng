@@ -2,9 +2,9 @@ import { db } from "../repositories/db.js";
 import * as magicLinkTokensRepo from "../repositories/magic-link-tokens.repository.js";
 import * as sessionsRepo from "../repositories/sessions.repository.js";
 import * as usersRepo from "../repositories/users.repository.js";
-import { generateToken, hashToken } from "../crypto.js";
+import { generateToken, hashToken } from "../../utils/crypto.js";
 import { sendMagicLink } from "../email.js";
-import { MAGIC_LINK_TTL_MS, SESSION_TTL_MS } from "../constants.js";
+import { MAGIC_LINK_TTL_MS, SESSION_TTL_MS } from "../../utils/constants.js";
 import { normalizeEmail } from "../../utils/normalize-email.js";
 
 export async function requestMagicLink(email: string): Promise<void> {
