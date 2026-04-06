@@ -39,3 +39,4 @@ yarn-error.log*
 prd.md
 ROADMAP.md
 .history
+.pnpm-store
