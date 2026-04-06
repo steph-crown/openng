@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: openng_dev
       POSTGRES_DB: openng_dev
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - openng_postgres_data:/var/lib/postgresql/data
 

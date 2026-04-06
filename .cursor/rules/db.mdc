@@ -6,7 +6,7 @@ globs: packages/db/**/*.ts
 This package contains all Drizzle ORM schemas, migrations, and DB helpers for OpenNG.
 
 ## Schema Organization
-- packages/db/src/prod/ — production table schemas (public schema)
+- packages/db/src/public/ — production table schemas (PostgreSQL "public" schema)
 - packages/db/src/staging/ — staging table schemas (staging schema, includes audit columns)
 - packages/db/src/ref/ — reference/lookup table schemas (ref schema, read-only after seed)
 - packages/db/src/analytics/ — usage analytics schemas (analytics schema)

@@ -72,8 +72,10 @@ openng/
 ├── packages/
 │   ├── db/                     ← Drizzle ORM schema, migrations, helpers
 │   │   ├── src/
-│   │   │   ├── staging/
-│   │   │   ├── prod/
+│   │   │   ├── public/         ← tables in PostgreSQL "public" schema
+│   │   │   ├── staging/        ← tables in "staging" schema
+│   │   │   ├── ref/            ← tables in "ref" schema (states, LGAs)
+│   │   │   ├── analytics/      ← tables in "analytics" schema
 │   │   │   └── procedures/     ← SQL stored procedure files
 │   │   └── package.json
 │   │
@@ -173,7 +175,7 @@ turbo dev              # starts all apps in watch mode
 
 The Hono API and Next.js apps run natively (not in Docker) in development. Docker is only for infrastructure dependencies.
 
-**Local dev ports** mirror production: API on 3000, Web on 3001, Docs on 3002. Docker-exposed ports are offset to avoid collisions with host services: Postgres on 5433 (maps to container 5432), Redis on 6380 (maps to container 6379).
+**Local dev ports** mirror production: API on 3000, Web on 3001, Docs on 3002. Docker-exposed ports are offset to avoid collisions with host services: Postgres on 5434 (maps to container 5432), Redis on 6380 (maps to container 6379).
 
 ---
 
@@ -202,6 +204,15 @@ Nothing else. No controllers, no query builders, no middleware, no error handler
 
 **Route registration order matters:** Always register `/meta` before `/:id` in the factory to prevent "meta" being treated as an ID value.
 
+**Reference data endpoints** are NOT factory-generated. States and LGAs don't follow the ResourceConfig pattern (no `source_url`, `source_date`, `is_active`). They have dedicated routes under `/v1/ref/`:
+
+```
+GET /v1/ref/states             → all 36 states + FCT (optional filter: ?geo_zone=)
+GET /v1/ref/states/:slug       → single state by slug (e.g., /v1/ref/states/lagos)
+GET /v1/ref/states/:slug/lgas  → LGAs for a state
+GET /v1/ref/lgas?state=:slug   → LGAs filtered by state (required filter)
+```
+
 ---
 
 ## Database Architecture
@@ -212,7 +223,7 @@ Nothing else. No controllers, no query builders, no middleware, no error handler
 | ----------- | -------------------------------------------- | -------------------------------- |
 | `public`    | Production resource tables the API reads     | Data migration stored procedures only |
 | `staging`   | Imported data awaiting validation/migration   | Import scripts and scrapers      |
-| `ref`       | Reference/lookup tables (states, LGAs, etc.) | Initial seed only (idempotent)   |
+| `ref`       | Reference/lookup tables (states, LGAs, etc.) | Initial seed only (idempotent). Exposed via `/v1/ref/*` API endpoints. |
 | `analytics` | Usage events, API key activity               | API async batch writer           |
 
 The staging schema exists on the production database. The data pipeline runs against the live database: scrapers/imports push data into `staging.*`, stored procedures validate it, then promote valid rows to `public.*`. Staging rows are cleaned up after 90 days.
@@ -491,7 +502,7 @@ All environment variables are documented in `.env.example` at the root. Never ha
 Key variables:
 
 ```
-DATABASE_URL         # PostgreSQL connection string (e.g. postgresql://openng:pass@localhost:5433/openng_dev)
+DATABASE_URL         # PostgreSQL connection string (e.g. postgresql://openng:pass@localhost:5434/openng_dev)
 REDIS_URL            # Redis connection string (e.g. redis://localhost:6380)
 APP_URL              # Public-facing web URL (https://openng.dev in prod, http://localhost:3001 locally)
                      # Used for: magic link URLs in emails, CORS origin validation, redirect allowlist
@@ -562,7 +573,7 @@ When asked to add a new resource, follow this order:
 - [ ] Create `apps/api/src/resources/{name}/config.ts` with `ResourceConfig`
 - [ ] Create `apps/api/src/resources/{name}/index.ts` calling `createResourceRouter`
 - [ ] Register in `apps/api/src/index.ts` with `app.route('/v1/{name}', {name}Router)`
-- [ ] Create `packages/db/src/prod/{name}.ts` with Drizzle schema
+- [ ] Create `packages/db/src/public/{name}.ts` with Drizzle schema
 - [ ] Create `packages/db/src/staging/{name}.ts` with staging schema (includes audit columns)
 - [ ] Create `packages/db/src/procedures/validate_{name}.sql`
 - [ ] Create `packages/db/src/procedures/migrate_{name}.sql`
