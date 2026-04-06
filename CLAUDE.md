@@ -27,9 +27,9 @@ GitHub: `github.com/stephcrown/openng` (update when org is created)
 ## Monorepo Structure
 
 ```
-ngdata/
+openng/
 ├── apps/
-│   ├── api/                    ← Hono API server → api.ngdata.dev
+│   ├── api/                    ← Hono API server → api.openng.dev
 │   │   ├── src/
 │   │   │   ├── core/           ← factory, middleware, shared handlers
 │   │   │   ├── resources/      ← one folder per data domain
@@ -42,7 +42,7 @@ ngdata/
 │   │   │   └── index.ts
 │   │   └── package.json
 │   │
-│   ├── web/                    ← Next.js → ngdata.dev
+│   ├── web/                    ← Next.js → openng.dev
 │   │   ├── app/
 │   │   │   ├── page.tsx                    ← / (landing page)
 │   │   │   ├── explore/
@@ -59,7 +59,7 @@ ngdata/
 │   │   │       └── page.tsx                ← /contribute
 │   │   └── package.json
 │   │
-│   └── docs/                   ← Fumadocs → ngdata.dev/docs
+│   └── docs/                   ← Fumadocs → openng.dev/docs
 │       ├── app/
 │       │   └── docs/
 │       │       ├── page.tsx
@@ -324,6 +324,8 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 ```
 
 Never return raw data without this envelope. Never throw unhandled errors — all errors must be caught and returned in the error envelope format.
+
+Never return error messages that expose internal implementation details. Always return a user-friendly message and log the technical details internally.
 
 ---
 
