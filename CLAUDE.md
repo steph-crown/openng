@@ -27,23 +27,95 @@ GitHub: `github.com/stephcrown/openng` (update when org is created)
 ## Monorepo Structure
 
 ```
-openng/
+ngdata/
 ├── apps/
-│   ├── api/          ← Hono API → api.openng.dev
-│   ├── web/          ← Next.js → openng.dev
-│   └── docs/         ← Fumadocs → openng.dev/docs
+│   ├── api/                    ← Hono API server → api.ngdata.dev
+│   │   ├── src/
+│   │   │   ├── core/           ← factory, middleware, shared handlers
+│   │   │   ├── resources/      ← one folder per data domain
+│   │   │   │   ├── fuel/
+│   │   │   │   ├── food-prices/
+│   │   │   │   ├── holidays/
+│   │   │   │   └── ...
+│   │   │   ├── auth/           ← API key management
+│   │   │   ├── admin/          ← internal-only routes
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── web/                    ← Next.js → ngdata.dev
+│   │   ├── app/
+│   │   │   ├── page.tsx                    ← / (landing page)
+│   │   │   ├── explore/
+│   │   │   │   ├── page.tsx                ← /explore (resource cards grid)
+│   │   │   │   └── [resource]/
+│   │   │   │       └── page.tsx            ← /explore/fuel (table + filters)
+│   │   │   ├── dashboard/
+│   │   │   │   ├── page.tsx                ← /dashboard (overview)
+│   │   │   │   ├── keys/
+│   │   │   │   │   └── page.tsx            ← /dashboard/keys
+│   │   │   │   └── usage/
+│   │   │   │       └── page.tsx            ← /dashboard/usage
+│   │   │   └── contribute/
+│   │   │       └── page.tsx                ← /contribute
+│   │   └── package.json
+│   │
+│   └── docs/                   ← Fumadocs → ngdata.dev/docs
+│       ├── app/
+│       │   └── docs/
+│       │       ├── page.tsx
+│       │       ├── getting-started/
+│       │       ├── resources/
+│       │       └── api-reference/          ← auto-generated from OpenAPI
+│       ├── content/            ← MDX files (written documentation)
+│       └── package.json
+│
 ├── packages/
-│   ├── db/           ← Drizzle ORM schemas, migrations, stored procedures
-│   ├── scrapers/     ← One scraper module per resource
-│   ├── ui/           ← Shared React component library (@openng/ui)
-│   └── shared/       ← Types, Zod schemas, response formatters
+│   ├── db/                     ← Drizzle ORM schema, migrations, helpers
+│   │   ├── src/
+│   │   │   ├── staging/
+│   │   │   ├── prod/
+│   │   │   └── procedures/     ← SQL stored procedure files
+│   │   └── package.json
+│   │
+│   ├── scrapers/               ← one scraper module per resource
+│   │   ├── src/
+│   │   │   ├── fuel/
+│   │   │   ├── food-prices/
+│   │   │   └── shared/         ← PDF parser, HTTP client, R2 uploader
+│   │   └── package.json
+│   │
+│   ├── ui/                     ← shared component library
+│   │   ├── src/
+│   │   │   ├── components/     ← buttons, tables, filters, cards
+│   │   │   └── tokens/         ← design tokens, colors, typography
+│   │   └── package.json        ← used by both apps/web and apps/docs
+│   │
+│   └── shared/                 ← types, response formatters, Zod schemas
+│       └── package.json
+│
 ├── data/
-│   └── seeds/        ← Versioned seed files for static resources only
-├── scripts/          ← CLI scripts for the data pipeline
-├── docker-compose.yml ← Local dev infrastructure only (Postgres, Redis, SigNoz)
+│   └── seeds/                  ← versioned seed files (static resources only)
+│       ├── holidays/
+│       ├── postal-codes/
+│       └── ...
+│
+├── scripts/
+│   ├── import-excel.ts         ← CLI: Excel → staging DB
+│   ├── validate-staging.ts     ← CLI: run validation procedures
+│   ├── migrate-to-prod.ts      ← CLI: run migration procedures
+│   └── cleanup-staging.ts      ← CLI: purge migrated staging records
+│
+├── .github/
+│   └── workflows/
+│       ├── deploy.yml          ← CD to VPS
+│       ├── scraper-fuel.yml    ← monthly fuel price scraper
+│       ├── scraper-food.yml    ← monthly food price scraper
+│       └── test.yml            ← CI tests
+│
+├── docker-compose.yml          ← local dev: postgres, redis, signoz
 ├── pnpm-workspace.yaml
-├── turbo.json
-└── CLAUDE.md         ← This file
+├── CLAUDE.md         ← This file
+└── turbo.json
 ```
 
 **Package naming convention:** All internal packages use the `@openng/` scope.
