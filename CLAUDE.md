@@ -35,6 +35,7 @@ openng/
 │   │   │   ├── utils/          ← cross-domain helpers: crypto, constants, normalize-email (no Drizzle/Hono)
 │   │   │   ├── auth/           ← magic link, sessions, API-key verification middleware, cleanup
 │   │   │   ├── account/        ← `/account/*` routes, API key CRUD (repositories + services)
+│   │   │   ├── v1/             ← versioned public API surface (ResourceFactory + opt-in routes)
 │   │   │   ├── resources/      ← one folder per data domain
 │   │   │   │   ├── fuel/
 │   │   │   │   ├── food-prices/
@@ -375,7 +376,7 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 - `DELETE /account/keys/:id` — revoke a key
 - `PATCH /account/keys/:id` — update key label
 
-**Auth middleware:** `sessionAuth` requires a valid session cookie and sets `user`. `apiKeyAuth` requires `Authorization: Bearer ong_live_…` and sets `user`, `tier`, and `apiKeyId`. `combinedAuth` tries the session cookie first, then the same bearer scheme; a present `ong_live_` bearer that fails validation returns 401; if neither applies, `tier` is `anonymous` and `user` is unset (for `/v1/*` public data routes).
+**Auth middleware:** `sessionAuth` requires a valid session cookie and sets `user`. `apiKeyAuth` requires `Authorization: Bearer ong_live_…` and sets `user`, `tier`, and `apiKeyId`; attach it to a route or sub-app with `router.use("*", apiKeyAuth)` so missing or invalid keys get 401. `combinedAuth` tries the session cookie first, then the same bearer scheme; a present `ong_live_` bearer that fails validation returns 401; if neither applies, `tier` is `anonymous` and `user` is unset (for `/v1/*` public data routes).
 
 **API key lifecycle:**
 

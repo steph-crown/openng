@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { accountRouter } from "./account/routes.js";
 import { startAuthCleanupJob } from "./auth/cleanup.js";
 import { authRouter } from "./auth/routes.js";
+import { v1PingRouter } from "./v1/ping.js";
 import { logger } from "./core/logger.js";
 import { requestLogger } from "./core/request-logger.middleware.js";
 import type { AppVariables } from "./core/request-logger.middleware.js";
@@ -14,6 +15,7 @@ app.use("*", requestLogger);
 
 app.route("/auth", authRouter);
 app.route("/account", accountRouter);
+app.route("/v1", v1PingRouter);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
