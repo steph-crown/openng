@@ -31,7 +31,8 @@ openng/
 ├── apps/
 │   ├── api/                    ← Hono API server → api.openng.dev
 │   │   ├── src/
-│   │   │   ├── core/           ← factory, middleware, shared handlers
+│   │   │   ├── core/           ← factory, logger, shared utilities
+│   │   │   ├── middleware/     ← Hono middleware (request-logger, cors, rate-limiter, etc.)
 │   │   │   ├── resources/      ← one folder per data domain
 │   │   │   │   ├── fuel/
 │   │   │   │   ├── food-prices/
@@ -393,6 +394,59 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 Never return raw data without this envelope. Never throw unhandled errors — all errors must be caught and returned in the error envelope format.
 
 Never return error messages that expose internal implementation details. Always return a user-friendly message and log the technical details internally.
+
+---
+
+## Logging Architecture — Wide Events
+
+**This project uses the "wide event" pattern (also called canonical log lines).** Instead of scattering multiple log statements throughout a request lifecycle, every HTTP request accumulates context into a single `WideEvent` object. When the request finishes, one structured JSON line is emitted containing everything that happened during that request.
+
+**Why wide events:**
+
+- One log line per request makes it trivial to reconstruct what happened — no correlating scattered entries
+- Every field (user ID, API key tier, resource, duration, DB query time, cache hit/miss, error details) lives in the same JSON object
+- Searching and alerting in SigNoz becomes simple field-based filtering rather than log message parsing
+- No risk of forgetting to log something — the accumulator is always available via `c.get("event")`
+
+**How it works:**
+
+```
+Request arrives
+  → requestLogger middleware creates a WideEvent, stores it in Hono context
+  → sets request_id, method, path, user_agent, ip
+  → starts a "duration" timer
+
+Route handler and downstream middleware:
+  → c.get("event").set("user_id", userId)
+  → c.get("event").set("api_key_tier", "free")
+  → c.get("event").startTimer("db")  ... query ... c.get("event").stopTimer("db")
+  → c.get("event").addError(err)  // if something fails
+
+Request finishes (finally block):
+  → stops duration timer, sets status code
+  → emits ONE log line with all accumulated fields
+  → auto-selects log level: info (2xx/3xx), warn (4xx), error (5xx or caught errors)
+```
+
+**Key files:**
+
+- `apps/api/src/core/logger.ts` — Pino instance (redaction, env-aware formatting)
+- `apps/api/src/core/wide-event.ts` — `WideEvent` class (accumulator with `set`, `setMany`, `startTimer`, `stopTimer`, `addError`, `emit`)
+- `apps/api/src/middleware/request-logger.ts` — Hono middleware that creates and emits the wide event
+
+**Rules for logging in route handlers:**
+
+- Access the event via `c.get("event")` — never create a second logger call for request-scoped data
+- Use `event.set(key, value)` to add context fields (user_id, resource, cache_hit, etc.)
+- Use `event.startTimer(name)` / `event.stopTimer(name)` for sub-operation timing (db, redis, external API)
+- Use `event.addError(err)` for caught errors — never swallow errors silently
+- For non-request logs (startup, shutdown, cron jobs), use `logger.info(...)` directly from `core/logger.ts`
+- Never use `console.log` — use `logger` or the wide event exclusively
+
+**Pino redaction** ensures sensitive fields are never logged:
+
+- `req.headers.authorization`, `req.headers.cookie`
+- `*.password`, `*.token`, `*.secret`, `*.sessionToken`, `*.magicLinkToken`, `*.keyHash`, `*.tokenHash`, `*.sessionTokenHash`
 
 ---
 

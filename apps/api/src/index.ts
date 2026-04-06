@@ -1,7 +1,12 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { logger } from "./core/logger.js";
+import { requestLogger } from "./middleware/request-logger.js";
+import type { AppVariables } from "./middleware/request-logger.js";
 
-const app = new Hono();
+const app = new Hono<{ Variables: AppVariables }>();
+
+app.use("*", requestLogger);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -15,6 +20,6 @@ serve(
     port,
   },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    logger.info({ port: info.port }, "server started");
   },
 );

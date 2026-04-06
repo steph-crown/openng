@@ -22,19 +22,23 @@ This is the Hono API server for OpenNG. See CLAUDE.md at the project root for fu
 - Use the shared Zod schemas from @openng/shared for pagination (page, limit, sort, order)
 - Filter values must be validated against the resource's FilterConfig
 
-## Logging
-- Use the structured logger (pino) — never console.log, console.error, or console.warn
-- Log request completion with: method, path, status, duration_ms, api_key_prefix, resource, user_tier
-- Never log tokens, API keys, passwords, or session identifiers
+## Logging — Wide Events
+- Every request gets a WideEvent accumulator — access it via c.get("event")
+- Add context fields during the request: event.set("user_id", userId), event.set("cache_hit", true)
+- Time sub-operations: event.startTimer("db") / event.stopTimer("db")
+- Record caught errors: event.addError(err)
+- The requestLogger middleware emits one structured JSON log line when the request completes
+- Never use console.log, console.error, or console.warn — use the wide event or the logger from core/logger.ts
+- Never log tokens, API keys, passwords, or session identifiers (pino redaction enforces this)
+- For non-request logs (startup, cron): use logger directly from core/logger.ts
 
 ## Middleware Stack (order matters)
-1. CORS
-2. Request ID generation
-3. Structured logging (request start/end)
-4. Auth (session cookie OR API key header)
-5. Rate limiting
-6. Route handler
-7. Global error handler (catches uncaught, returns envelope)
+1. requestLogger (creates WideEvent, generates request ID, emits canonical log line)
+2. CORS
+3. Auth (session cookie OR API key header)
+4. Rate limiting
+5. Route handler
+6. Global error handler (catches uncaught, returns envelope)
 
 ## Database Access
 - Never import Drizzle or DB connection directly in route handlers
