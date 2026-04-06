@@ -1,12 +1,11 @@
 import crypto from "node:crypto";
 import type { MiddlewareHandler } from "hono";
-import { logger } from "../core/logger.js";
-import { WideEvent } from "../core/wide-event.js";
+import type { AppVariables } from "./context-types.js";
+import { logger } from "./logger.js";
+import { responseBytes } from "./response-bytes.js";
+import { WideEvent } from "./wide-event.js";
 
-export type AppVariables = {
-  event: WideEvent;
-  requestId: string;
-};
+export type { AppVariables } from "./context-types.js";
 
 export const requestLogger: MiddlewareHandler<{ Variables: AppVariables }> = async (c, next) => {
   const requestId = c.req.header("x-request-id") ?? crypto.randomUUID();
@@ -36,7 +35,7 @@ export const requestLogger: MiddlewareHandler<{ Variables: AppVariables }> = asy
   } finally {
     event.stopTimer("duration");
     event.set("status", c.res.status);
-    event.set("response_size", Number(c.res.headers.get("content-length")) || null);
+    event.set("response_size", await responseBytes(c.res));
     event.emit(logger);
   }
 };

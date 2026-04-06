@@ -31,15 +31,15 @@ openng/
 ├── apps/
 │   ├── api/                    ← Hono API server → api.openng.dev
 │   │   ├── src/
-│   │   │   ├── core/           ← factory, logger, shared utilities
-│   │   │   ├── middleware/     ← Hono middleware (request-logger, cors, rate-limiter, etc.)
+│   │   │   ├── core/           ← factory, logger, wide-event, context-types, global *.middleware.ts
+│   │   │   ├── utils/          ← cross-domain pure helpers (no DB/HTTP)
+│   │   │   ├── auth/           ← routes, services, repositories, domain middleware, cleanup
 │   │   │   ├── resources/      ← one folder per data domain
 │   │   │   │   ├── fuel/
 │   │   │   │   ├── food-prices/
 │   │   │   │   ├── holidays/
 │   │   │   │   └── ...
-│   │   │   ├── auth/           ← API key management
-│   │   │   ├── admin/          ← internal-only routes
+│   │   │   ├── admin/          ← internal-only routes (API keys live under /dashboard in Group 6)
 │   │   │   └── index.ts
 │   │   └── package.json
 │   │
@@ -124,6 +124,35 @@ openng/
 **Package naming convention:** All internal packages use the `@openng/` scope.
 
 - `@openng/ui`, `@openng/db`, `@openng/shared`, `@openng/scrapers`
+
+---
+
+## API application layout (`apps/api`)
+
+Hand-written domains (`auth`, `admin`, `dashboard`, …) use the same vertical structure:
+
+| Layer | Role |
+| ----- | ---- |
+| `routes.ts` | HTTP only: Zod validation, call service method(s), map to JSON / cookies / status. No Drizzle, no transactions. |
+| `services/` | Orchestration and business rules; owns `db.transaction(...)` when multiple writes must commit together. Calls repositories and side effects (e.g. email). |
+| `repositories/` | Persistence only: named Drizzle operations (`findUserByEmail`, `invalidateUnusedMagicLinksForUser`, …). Accept a `DbExecutor` (`db` or transaction `tx`) so multi-step writes use one transaction. |
+
+**Global vs domain middleware:** App-wide middleware (request logging, future CORS) lives in `apps/api/src/core/` as `*.middleware.ts`. There is no top-level `src/middleware/` folder. Domain-specific middleware (e.g. `sessionAuth`) lives as `auth/middleware.ts` next to that domain.
+
+**Cross-domain utils:** `apps/api/src/utils/` — pure functions used by more than one domain. Domain-only helpers stay inside that domain. Do not put Drizzle or Hono in `utils/`.
+
+**Hono context types:** `apps/api/src/core/context-types.ts` defines `AppVariables` and `SessionUser` for `c.get` / `c.set`.
+
+**ResourceFactory (`/v1/{resource}`):** Per-resource folders remain `config` + factory registration only. Shared list/detail query logic belongs in `core/` (factory + repositories there), not duplicate per-resource repositories. Extend the factory instead of bypassing it.
+
+**Discipline (apply without waiting for a prompt):**
+
+- **Repositories:** Add a repository function when the operation is named, reusable, or mockable—not a one-line pass-through that duplicates intent everywhere. Avoid anemic layers; avoid stuffing unrelated queries into one god file (split by table or aggregate).
+- **Transactions:** Any multi-table write that must succeed or fail together runs inside `db.transaction`; pass the same `tx` into repository calls—never commit half a use case across separate top-level `db` calls.
+- **Services:** Split oversized services by use case (e.g. `magic-link` vs `session`) when a single file becomes hard to navigate.
+- **Routes:** Prefer one clear service entry point per handler; two calls are acceptable when concerns are independent. If two steps are always paired, expose one service method that orchestrates internally.
+- **Middleware:** Identification and cheap reads only; call repositories or a small shared session helper—no multi-step business workflows in middleware.
+- **YAGNI:** Full three layers are required for real domains; trivial experimental routes need not justify a repository until they grow.
 
 ---
 
@@ -316,13 +345,13 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 
 **User authentication** uses passwordless magic links:
 
-1. User submits email at `/auth/register` or `/auth/login`
-2. Server generates a cryptographically random token, hashes it (SHA-256), stores the hash with a 15-minute expiry
-3. Server sends the raw token as a link via Resend (transactional email)
-4. User clicks the link → `GET /auth/verify?token=xxx`
+1. User submits email at `POST /auth/magic-link`
+2. Server finds or creates the user, **invalidates any unused** magic link rows for that user, generates a **new** cryptographically random token, hashes it (SHA-256), stores the hash with a 15-minute expiry
+3. Server sends the raw token in a link via Resend: `sendMagicLink` builds the URL and calls `sendMail` (all transactional email goes through `sendMail`)
+4. User opens the link → `GET /auth/verify?token=xxx` on the API (verify URL uses `API_URL`, falling back to `APP_URL` if unset)
 5. Server hashes the incoming token, matches against stored hash, checks expiry and single-use
-6. On success: marks email verified, creates a session, returns an `HttpOnly` session cookie
-7. Session cookie is `HttpOnly`, `Secure`, `SameSite=Lax` with 30-day sliding expiry
+6. On success: marks email verified if needed, creates a session, sets `openng_session` `HttpOnly` cookie
+7. Session cookie is `HttpOnly`, `Secure` (in production), `SameSite=Lax` with 30-day sliding expiry (`last_active_at` / `expires_at` refreshed on authenticated requests)
 
 **Auth-related tables:**
 
@@ -333,11 +362,10 @@ Research → Excel seed file → staging DB → validate → migrate to prod →
 
 **Auth endpoints:**
 
-- `POST /auth/register` — create user + send magic link
-- `POST /auth/login` — send magic link to existing user
-- `GET /auth/verify` — verify magic link token, create session
-- `POST /auth/logout` — destroy session
-- `GET /auth/me` — return current authenticated user
+- `POST /auth/magic-link` — body `{ email }`; find or create user; invalidate unused magic links for that user; issue a **new** token and send email (same success envelope every time)
+- `GET /auth/verify` — query `token`; verify magic link, create session, `Set-Cookie`
+- `POST /auth/logout` — destroy session cookie and DB session row if present
+- `GET /auth/me` — session cookie required; returns current user
 
 **API key endpoints (session-authenticated):**
 
@@ -432,7 +460,10 @@ Request finishes (finally block):
 
 - `apps/api/src/core/logger.ts` — Pino instance (redaction, env-aware formatting)
 - `apps/api/src/core/wide-event.ts` — `WideEvent` class (accumulator with `set`, `setMany`, `startTimer`, `stopTimer`, `addError`, `emit`)
-- `apps/api/src/middleware/request-logger.ts` — Hono middleware that creates and emits the wide event
+- `apps/api/src/core/request-logger.middleware.ts` — Hono middleware that creates and emits the wide event
+- `apps/api/src/core/response-bytes.ts` — `responseBytes(res)` computes byte length (headers first, else read cloned body) because Fetch `Response` often has no `Content-Length`
+- `apps/api/src/core/request-error.ts` — `recordRequestError(c, err)` forwards to `event.addError` for handlers that catch without rethrowing
+- `apps/api/src/core/context-types.ts` — `AppVariables`, `SessionUser` for Hono context typing
 
 **Rules for logging in route handlers:**
 
@@ -440,6 +471,7 @@ Request finishes (finally block):
 - Use `event.set(key, value)` to add context fields (user_id, resource, cache_hit, etc.)
 - Use `event.startTimer(name)` / `event.stopTimer(name)` for sub-operation timing (db, redis, external API)
 - Use `event.addError(err)` for caught errors — never swallow errors silently
+- If you `catch` an error and return a 5xx (or otherwise handle without rethrowing), call `recordRequestError(c, err)` so the emitted wide event includes an `errors` array; unhandled throws are still recorded by the request logger’s `catch` around `next()`
 - For non-request logs (startup, shutdown, cron jobs), use `logger.info(...)` directly from `core/logger.ts`
 - Never use `console.log` — use `logger` or the wide event exclusively
 
@@ -551,7 +583,11 @@ Comments are never written in this codebase. Code must be self-documenting throu
 
 ## Environment Variables
 
-All environment variables are documented in `.env.example` at the root. Never hardcode secrets. Never commit `.env` files.
+API-specific variables are documented in [`apps/api/.env.example`](apps/api/.env.example). The repo root may also have a `.env.example` for cross-cutting or Docker Compose. Never hardcode secrets. Never commit `.env` files.
+
+**API process and `.env`:** The API loads `dotenv` at startup; resolution follows the current working directory. Prefer `apps/api/.env` when the server runs with cwd `apps/api` (e.g. PM2 `cwd` pointing at `apps/api`, or `node dist/index.js` from that folder). Alternatively set variables in the process environment with no file.
+
+**Deploying only `apps/api`:** `@openng/db` and `@openng/shared` are **workspace** packages (not npm registry packages). You must install from the **monorepo root** so pnpm links them, then build with `pnpm --filter api build`. Do not rsync only `apps/api` without the root `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and `packages/*` (or use `pnpm deploy` / `turbo prune` to produce a self-contained deploy bundle).
 
 Key variables:
 
@@ -559,7 +595,10 @@ Key variables:
 DATABASE_URL         # PostgreSQL connection string (e.g. postgresql://openng:pass@localhost:5434/openng_dev)
 REDIS_URL            # Redis connection string (e.g. redis://localhost:6380)
 APP_URL              # Public-facing web URL (https://openng.dev in prod, http://localhost:3001 locally)
-                     # Used for: magic link URLs in emails, CORS origin validation, redirect allowlist
+                     # Used for: CORS origin validation, redirect allowlist; fallback base for magic-link verify URL if API_URL unset
+API_URL              # Public API base URL (https://api.openng.dev in prod, http://localhost:3000 locally)
+                     # Used for: magic-link verify links in emails (so the API can Set-Cookie on the API host)
+RESEND_FROM_EMAIL    # Verified sender in Resend (e.g. auth@mail.openng.dev)
 SESSION_SECRET       # Random hex string for session cookie HMAC signing. Generate: openssl rand -hex 32
 MAGIC_LINK_SECRET    # Random hex string for magic link token HMAC. Generate: openssl rand -hex 32
 R2_ACCOUNT_ID        # Cloudflare R2 account — for raw source file and backup storage

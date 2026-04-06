@@ -4,12 +4,19 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.12",
+    "@openng/db": "workspace:^",
+    "@openng/shared": "workspace:^",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.44.0",
     "hono": "^4.12.10",
-    "pino": "^10.3.1"
+    "nanoid": "^5.1.7",
+    "pino": "^10.3.1",
+    "resend": "^6.10.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

@@ -40,7 +40,18 @@ This is the Hono API server for OpenNG. See CLAUDE.md at the project root for fu
 5. Route handler
 6. Global error handler (catches uncaught, returns envelope)
 
+## Auth routes
+- `POST /auth/magic-link` — request body `{ email }`; issues a new magic link every time (invalidates prior unused tokens for that user)
+- `GET /auth/verify`, `POST /auth/logout`, `GET /auth/me` — see CLAUDE.md
+
+## Feature module layout (auth, admin, dashboard)
+- `routes.ts` — HTTP and validation only; call `services/`; no Drizzle in routes
+- `services/` — orchestration, transactions, business rules; call `repositories/` and side effects (email, etc.)
+- `repositories/` — Drizzle only; named functions; pass `db` or transaction `tx` for multi-write consistency
+- `apps/api/src/utils/` — pure helpers shared across domains; no DB or HTTP
+- Global middleware: `apps/api/src/core/*.middleware.ts`; domain middleware: `{domain}/middleware.ts`
+
 ## Database Access
-- Never import Drizzle or DB connection directly in route handlers
-- Access the database through @openng/db helpers and the db instance passed to the factory
+- Resource list/detail routes: use the ResourceFactory and persistence inside `core/` (not ad-hoc per-resource repositories)
+- Hand-written routes: use repositories from `services`; do not embed Drizzle in `routes.ts`
 - Never write raw SQL in application code — stored procedures live in packages/db/src/procedures/

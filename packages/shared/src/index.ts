@@ -2,8 +2,14 @@ export type { ApiSuccessResponse, ApiErrorResponse, ApiResponse } from "./types/
 export type { PaginationMeta } from "./types/pagination";
 export { ErrorCode } from "./types/error-codes";
 
-export { successResponse, errorResponse } from "./helpers/response";
+export { successResponse, errorResponse, authMeta } from "./helpers/response";
 
 export { paginationSchema } from "./schemas/pagination";
 export type { PaginationParams } from "./schemas/pagination";
-export { registerSchema, loginSchema, verifyTokenSchema, updateKeySchema } from "./schemas/auth";
+export {
+  magicLinkRequestSchema,
+  registerSchema,
+  loginSchema,
+  verifyTokenSchema,
+  updateKeySchema,
+} from "./schemas/auth";

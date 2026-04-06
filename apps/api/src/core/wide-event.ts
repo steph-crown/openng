@@ -7,7 +7,7 @@ type TimerEntry = { start: number };
 export class WideEvent {
   private fields: FieldMap = {};
   private timers: Map<string, TimerEntry> = new Map();
-  private errors: Array<{ message: string; code?: string; stack?: string }> = [];
+  private errors: Array<{ name?: string; message: string; code?: string; stack?: string }> = [];
 
   set(key: string, value: FieldValue): this {
     this.fields[key] = value;
@@ -38,6 +38,7 @@ export class WideEvent {
   addError(err: unknown): this {
     if (err instanceof Error) {
       this.errors.push({
+        name: err.name,
         message: err.message,
         code: (err as unknown as Record<string, unknown>).code as string | undefined,
         stack: err.stack,
