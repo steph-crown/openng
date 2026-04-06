@@ -18,7 +18,7 @@ GitHub: `github.com/stephcrown/openng` (update when org is created)
 
 - `api.openng.dev` — the REST API (Hono, Node.js)
 - `openng.dev` — landing page, data explorer, dashboard, contribute form (Next.js)
-- `openng.dev/docs` — documentation (Fumadocs, Next.js)
+- `docs.openng.dev` — documentation (Fumadocs, Next.js)
 - A staging database pipeline (PostgreSQL + stored procedures)
 - Scraper jobs (TypeScript, GitHub Actions cron)
 
@@ -59,7 +59,7 @@ openng/
 │   │   │       └── page.tsx                ← /contribute
 │   │   └── package.json
 │   │
-│   └── docs/                   ← Fumadocs → openng.dev/docs
+│   └── docs/                   ← Fumadocs → docs.openng.dev
 │       ├── app/
 │       │   └── docs/
 │       │       ├── page.tsx
@@ -158,7 +158,7 @@ openng/
 ```
 api.openng.dev  → Hono API         → localhost:3000
 openng.dev      → Next.js web      → localhost:3001
-openng.dev/docs → Fumadocs         → localhost:3002
+docs.openng.dev → Fumadocs         → localhost:3002
                   PostgreSQL        → localhost:5432 (internal only)
                   Redis             → localhost:6379 (internal only)
                   SigNoz            → localhost:3301 (internal only)
