@@ -34,6 +34,14 @@ Short **decision records**: what we picked, what we rejected or deferred, and wh
 
 ---
 
+## ResourceFactory list filters (`buildFilters`)
+
+- List handlers use **`c.req.queries()`** (via `mergeQueryParamValues`) so a filter accepts **repeated** query keys (`?category=national&category=religious`) **and** **comma-separated** values in a single key (`?category=national,religious`). Values are merged and deduped.
+- **`exact`**, **`ilike`**, **`range_gte`**, **`range_lte`** use the **first** value only if multiple are provided.
+- **`in`** uses **all** merged values for SQL `IN (...)`.
+
+---
+
 ## Top-level domain folders vs `resources/`
 
 Use this decision table; **do not** invent new top-level folders without updating this file.

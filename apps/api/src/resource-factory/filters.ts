@@ -2,8 +2,31 @@ import { and, eq, getTableColumns, gte, ilike, inArray, lte, type SQL } from "dr
 import type { PgTable } from "drizzle-orm/pg-core";
 import type { FilterConfig } from "./resource-config";
 
+export function mergeQueryParamValues(req: {
+  queries(): Record<string, string[]>;
+}): Record<string, string[]> {
+  const raw = req.queries();
+  const result: Record<string, string[]> = {};
+  for (const [k, vals] of Object.entries(raw)) {
+    const expanded = vals.flatMap((v) =>
+      v.split(",").map((s) => s.trim()).filter((s) => s.length > 0),
+    );
+    if (expanded.length > 0) {
+      result[k] = [...new Set(expanded)];
+    }
+  }
+  return result;
+}
+
+function valuesForParam(
+  queryMulti: Record<string, string[]>,
+  param: string,
+): string[] {
+  return queryMulti[param] ?? [];
+}
+
 export function buildFilters(
-  query: Record<string, string | undefined>,
+  queryMulti: Record<string, string[]>,
   filterConfigs: FilterConfig[],
   table: PgTable,
 ): SQL | undefined {
@@ -22,34 +45,47 @@ export function buildFilters(
     if (!col) {
       continue;
     }
-    const raw = query[fc.param];
-    if (raw === undefined || raw === "") {
+    const vals = valuesForParam(queryMulti, fc.param);
+    if (vals.length === 0) {
       continue;
     }
 
     switch (fc.type) {
-      case "exact":
+      case "exact": {
+        const raw = vals[0];
+        if (raw === undefined || raw === "") {
+          break;
+        }
         parts.push(eq(col, raw));
         break;
-      case "ilike":
+      }
+      case "ilike": {
+        const raw = vals[0];
+        if (raw === undefined || raw === "") {
+          break;
+        }
         parts.push(ilike(col, `%${raw}%`));
         break;
-      case "range_gte":
+      }
+      case "range_gte": {
+        const raw = vals[0];
+        if (raw === undefined || raw === "") {
+          break;
+        }
         parts.push(gte(col, raw));
         break;
-      case "range_lte":
+      }
+      case "range_lte": {
+        const raw = vals[0];
+        if (raw === undefined || raw === "") {
+          break;
+        }
         parts.push(lte(col, raw));
         break;
-      case "in": {
-        const values = raw
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s.length > 0);
-        if (values.length > 0) {
-          parts.push(inArray(col, values));
-        }
-        break;
       }
+      case "in":
+        parts.push(inArray(col, vals));
+        break;
       default:
         break;
     }

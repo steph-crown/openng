@@ -16,7 +16,7 @@ import { errorResponse, ErrorCode, successResponse } from "@openng/shared";
 import { recordRequestError } from "../http/request-error";
 import type { AppVariables } from "../types/context";
 import { asDynamicSelect, selectedColumnsForResource } from "./dynamic-select";
-import { buildFilters } from "./filters";
+import { buildFilters, mergeQueryParamValues } from "./filters";
 import { serializeForJson } from "./json";
 import { parsePagination } from "./pagination";
 import { registerResource } from "./resource-registry";
@@ -115,7 +115,8 @@ export function createResourceRouter(
     try {
       const query = c.req.query();
       const pagination = parsePagination(query, config);
-      const whereClause = buildFilters(query, config.filters, config.table);
+      const queryMulti = mergeQueryParamValues(c.req);
+      const whereClause = buildFilters(queryMulti, config.filters, config.table);
       const cols = getTableColumns(config.table);
       const sortCol = cols[pagination.sort as keyof typeof cols];
       if (!sortCol) {
