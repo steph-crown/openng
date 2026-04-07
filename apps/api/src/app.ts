@@ -6,6 +6,7 @@ import { errorHandler } from "./http/error-handler";
 import { corsMiddleware } from "./middleware/cors";
 import { requestLogger } from "./middleware/request-logger";
 import type { AppVariables } from "./types/context";
+import { anonymousRateLimitMiddleware } from "./middleware/rate-limit";
 import { createRegistryListRouter } from "./registry/list-router";
 import { v1Router } from "./v1/index";
 
@@ -15,11 +16,14 @@ export function createApp() {
   app.use("*", requestLogger);
   app.use("*", corsMiddleware);
   app.route("/health", healthRouter);
-  app.route("/meta", createRegistryListRouter());
+  const metaRouter = new Hono<{ Variables: AppVariables }>();
+  metaRouter.use("*", anonymousRateLimitMiddleware);
+  metaRouter.route("/", createRegistryListRouter());
+  app.route("/meta", metaRouter);
   app.route("/auth", authRouter);
   app.route("/account", accountRouter);
   app.route("/v1", v1Router);
-  app.get("/", (c) => {
+  app.get("/", anonymousRateLimitMiddleware, (c) => {
     return c.text("Hello Hono!");
   });
   return app;

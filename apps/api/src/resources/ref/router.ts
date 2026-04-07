@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { errorResponse, ErrorCode, successResponse } from "@openng/shared";
-import { combinedAuth } from "../../middleware/auth-context";
 import { recordRequestError } from "../../http/request-error";
 import type { AppVariables } from "../../types/context";
 import * as refService from "./ref.service";
@@ -11,8 +10,6 @@ import {
 } from "./schemas";
 
 export const refRouter = new Hono<{ Variables: AppVariables }>();
-
-refRouter.use("*", combinedAuth);
 
 refRouter.get("/states", async (c) => {
   try {

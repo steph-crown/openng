@@ -2,6 +2,22 @@ import Redis from "ioredis";
 
 let client: Redis | null = null;
 
+let shutdownRegistered = false;
+
+function registerShutdownHandlers(instance: Redis) {
+  if (shutdownRegistered) {
+    return;
+  }
+  shutdownRegistered = true;
+  const close = () => {
+    void instance.quit().catch(() => {
+      void instance.disconnect();
+    });
+  };
+  process.once("SIGINT", close);
+  process.once("SIGTERM", close);
+}
+
 export function getRedis(): Redis | null {
   if (client) {
     return client;
@@ -10,8 +26,26 @@ export function getRedis(): Redis | null {
   if (!url) {
     return null;
   }
-  client = new Redis(url, { maxRetriesPerRequest: 2 });
+  client = new Redis(url, {
+    maxRetriesPerRequest: 3,
+    retryStrategy(times) {
+      return Math.min(times * 200, 3000);
+    },
+  });
+  registerShutdownHandlers(client);
   return client;
+}
+
+export async function disconnectRedis(): Promise<void> {
+  if (!client) {
+    return;
+  }
+  try {
+    await client.quit();
+  } catch {
+    client.disconnect();
+  }
+  client = null;
 }
 
 export async function pingRedis(): Promise<boolean> {

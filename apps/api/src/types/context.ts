@@ -13,4 +13,5 @@ export type AppVariables = {
   user?: SessionUser;
   tier?: string;
   apiKeyId?: bigint;
+  magicLinkBody?: { email: string };
 };

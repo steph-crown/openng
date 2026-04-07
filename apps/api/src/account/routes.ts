@@ -7,6 +7,7 @@ import {
   updateKeySchema,
 } from "@openng/shared";
 import { sessionAuth } from "../middleware/auth-context";
+import { standardRateLimitMiddleware } from "../middleware/rate-limit";
 import type { AppVariables } from "../types/context";
 import { recordRequestError } from "../http/request-error";
 import * as apiKeyService from "./services/api-key.service";
@@ -21,6 +22,7 @@ function parseNumericIdParam(s: string | undefined): bigint | null {
 export const accountRouter = new Hono<{ Variables: AppVariables }>();
 
 accountRouter.use("*", sessionAuth);
+accountRouter.use("*", standardRateLimitMiddleware);
 
 accountRouter.post("/keys", async (c) => {
   const user = c.get("user")!;

@@ -2,11 +2,14 @@ import { Hono } from "hono";
 import { sql } from "drizzle-orm";
 import { db } from "@openng/db";
 import { pingRedis } from "../infrastructure/redis";
+import { anonymousRateLimitMiddleware } from "../middleware/rate-limit";
 import type { AppVariables } from "../types/context";
 
 const startTime = Date.now();
 
 export const healthRouter = new Hono<{ Variables: AppVariables }>();
+
+healthRouter.use("*", anonymousRateLimitMiddleware);
 
 healthRouter.get("/", async (c) => {
   let dbStatus: "ok" | "error" = "error";
@@ -24,7 +27,8 @@ healthRouter.get("/", async (c) => {
     cacheStatus = ok ? "ok" : "error";
   }
 
-  const allOk = dbStatus === "ok" && (cacheStatus === "ok" || cacheStatus === "skipped");
+  const allOk =
+    dbStatus === "ok" && (cacheStatus === "ok" || cacheStatus === "skipped");
   const degraded = !allOk;
 
   const body = {

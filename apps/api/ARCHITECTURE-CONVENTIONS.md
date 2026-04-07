@@ -18,6 +18,8 @@ Short **decision records**: what we picked, what we rejected or deferred, and wh
 | Hand-written domains | `router` → `service` → `repositories` with Drizzle only in repositories | Drizzle or raw SQL in route files | Testable boundaries, one place for SQL shape per domain, routes stay thin HTTP + validation. |
 | Global error handling | `app.onError(errorHandler)` | `try/catch` in every route | Consistent error envelope and no duplicated handler boilerplate. |
 | SQL in application code | Drizzle query builder only | String-built SQL in TS | Parameterization by construction; raw SQL belongs in `packages/db` stored procedures for migrations, not in route handlers. |
+| Rate limiting when Redis is down / unset | Fail open (skip limits) | Fail closed (deny all) | Matches API key cache behavior; local dev and CI stay usable without `REDIS_URL`; production should always run Redis for real enforcement. |
+| Rate limit correctness under concurrency | Lua `EVAL` sliding-window counters in Redis | Per-process in-memory maps | Atomic increments and shared state across workers; avoids race double-counts and works when the API scales horizontally. |
 
 ---
 
@@ -99,7 +101,13 @@ Registration order **MUST** be:
 
 ## Rate limiting
 
-Not implemented yet. **MUST NOT** add ad-hoc per-route throttling scattered in handlers; when implemented, it belongs as dedicated middleware (see ROADMAP) applied after auth context is available where required.
+- **MUST** implement HTTP rate limits in `middleware/rate-limit.ts` and `infrastructure/rate-limiter.ts` — **MUST NOT** scatter ad-hoc counters in route handlers.
+- **MUST** use `getRedis()`; when `REDIS_URL` is unset, rate limit middleware **allows** traffic (same fail-open policy as API key cache) so local dev works without Redis.
+- **Tier limits** (sliding window counter per minute + per day, Lua `EVAL` for atomicity): `anonymous` 10/min & 500/day (IP key); `free` 60/min & 5,000/day; `pro` 500/min & 200,000/day; `enterprise` bypass.
+- **Identity keys:** API key → `k:{apiKeyId}`; session-only user → `u:{userId}`; anonymous → `a:{clientIp}`.
+- **`v1Router`:** `combinedAuth` then `standardRateLimitMiddleware` so tier is known before counting.
+- **`/meta` (top-level only):** wrapped in `app.ts` with `anonymousRateLimitMiddleware` — `GET /v1` uses the same registry handler but is limited under `v1` stack only (no duplicate anonymous middleware on the registry factory).
+- **Auth:** `POST /auth/magic-link` — 5/hour per normalized email (hashed key); `GET /auth/verify` — 10/hour per IP; other auth routes use `anonymous` or `standard` as mounted in `auth/routes.ts`.
 
 ---
 
@@ -123,6 +131,7 @@ Any change to:
 - Redis usage,
 - layering rules for `resources/`,
 - a **normative architectural decision** (add or revise a row under **Architectural decisions** above),
+- rate limiting behavior (`middleware/rate-limit.ts`, `infrastructure/rate-limiter.ts`),
 
 **MUST** update:
 

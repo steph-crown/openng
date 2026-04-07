@@ -41,9 +41,11 @@ In `apps/api/src/app.ts`: **`requestLogger` before `corsMiddleware`**. Do not re
 - Import `db` / `DbExecutor` from `apps/api/src/db/client.ts` in services and repositories.
 - **Never** write raw SQL in application code except via Drizzle; stored procedures live in `packages/db/src/procedures/`.
 
-## Not implemented yet
+## MUST — rate limiting
 
-- **Rate limiting** middleware is not mounted; do not fake it in random handlers. Follow ROADMAP when adding it.
+- Use `apps/api/src/middleware/rate-limit.ts` and `apps/api/src/infrastructure/rate-limiter.ts`. **Never** add ad-hoc throttling in route handlers.
+- **`v1`:** `combinedAuth` then `standardRateLimitMiddleware` in `apps/api/src/v1/index.ts`.
+- Without `REDIS_URL`, limits are skipped (fail open), same as API key cache.
 
 ## Tests
 

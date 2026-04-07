@@ -24,7 +24,13 @@ export const corsMiddleware: MiddlewareHandler = async (c, next) => {
     return cors({
       origin: "*",
       allowMethods: ["GET", "HEAD", "OPTIONS"],
-      exposeHeaders: ["x-request-id"],
+      exposeHeaders: [
+        "x-request-id",
+        "x-ratelimit-limit",
+        "x-ratelimit-remaining",
+        "x-ratelimit-reset",
+        "retry-after",
+      ],
     })(c, next);
   }
 
@@ -35,7 +41,13 @@ export const corsMiddleware: MiddlewareHandler = async (c, next) => {
       credentials: true,
       allowHeaders: ["Content-Type", "Authorization"],
       allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-      exposeHeaders: ["x-request-id"],
+      exposeHeaders: [
+        "x-request-id",
+        "x-ratelimit-limit",
+        "x-ratelimit-remaining",
+        "x-ratelimit-reset",
+        "retry-after",
+      ],
     })(c, next);
   }
 
@@ -43,6 +55,12 @@ export const corsMiddleware: MiddlewareHandler = async (c, next) => {
     origin: appUrl,
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS", "HEAD"],
-    exposeHeaders: ["x-request-id"],
+    exposeHeaders: [
+      "x-request-id",
+      "x-ratelimit-limit",
+      "x-ratelimit-remaining",
+      "x-ratelimit-reset",
+      "retry-after",
+    ],
   })(c, next);
 };

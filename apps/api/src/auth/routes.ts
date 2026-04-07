@@ -4,43 +4,48 @@ import {
   authMeta,
   errorResponse,
   ErrorCode,
-  magicLinkRequestSchema,
   successResponse,
   verifyTokenSchema,
 } from "@openng/shared";
 import type { AppVariables } from "../types/context";
 import { recordRequestError } from "../http/request-error";
 import {
+  anonymousRateLimitMiddleware,
+  authVerifyIpRateLimitMiddleware,
+  magicLinkEmailRateLimitMiddleware,
+  parseMagicLinkBodyMiddleware,
+  standardRateLimitMiddleware,
+} from "../middleware/rate-limit";
+import { sessionAuth } from "../middleware/auth-context";
+import {
   MAGIC_LINK_SUCCESS_MESSAGE,
   SESSION_COOKIE_NAME,
   SESSION_TTL_MS,
 } from "../utils/constants";
-import { sessionAuth } from "../middleware/auth-context";
 import * as authService from "./services/auth.service";
 
 export const authRouter = new Hono<{ Variables: AppVariables }>();
 
-authRouter.post("/magic-link", async (c) => {
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json(errorResponse(ErrorCode.VALIDATION_ERROR, "Invalid request body"), 400);
-  }
-  const parsed = magicLinkRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return c.json(errorResponse(ErrorCode.VALIDATION_ERROR, "Invalid request body"), 400);
-  }
-  try {
-    await authService.requestMagicLink(parsed.data.email);
-  } catch (err) {
-    recordRequestError(c, err);
-    return c.json(errorResponse(ErrorCode.INTERNAL_ERROR, "Something went wrong"), 500);
-  }
-  return c.json(successResponse({ message: MAGIC_LINK_SUCCESS_MESSAGE }, authMeta()));
-});
+authRouter.post(
+  "/magic-link",
+  parseMagicLinkBodyMiddleware,
+  magicLinkEmailRateLimitMiddleware,
+  async (c) => {
+    const parsed = c.get("magicLinkBody");
+    if (!parsed) {
+      return c.json(errorResponse(ErrorCode.VALIDATION_ERROR, "Invalid request body"), 400);
+    }
+    try {
+      await authService.requestMagicLink(parsed.email);
+    } catch (err) {
+      recordRequestError(c, err);
+      return c.json(errorResponse(ErrorCode.INTERNAL_ERROR, "Something went wrong"), 500);
+    }
+    return c.json(successResponse({ message: MAGIC_LINK_SUCCESS_MESSAGE }, authMeta()));
+  },
+);
 
-authRouter.get("/verify", async (c) => {
+authRouter.get("/verify", authVerifyIpRateLimitMiddleware, async (c) => {
   const q = c.req.query("token");
   const parsed = verifyTokenSchema.safeParse({ token: q ?? "" });
   if (!parsed.success) {
@@ -60,14 +65,14 @@ authRouter.get("/verify", async (c) => {
   return c.json(successResponse({ user: result.user }, authMeta()));
 });
 
-authRouter.post("/logout", async (c) => {
+authRouter.post("/logout", anonymousRateLimitMiddleware, async (c) => {
   const raw = getCookie(c, SESSION_COOKIE_NAME);
   await authService.logoutBySessionRaw(raw);
   deleteCookie(c, SESSION_COOKIE_NAME, { path: "/" });
   return c.json(successResponse({ message: "Logged out" }, authMeta()));
 });
 
-authRouter.get("/me", sessionAuth, async (c) => {
+authRouter.get("/me", sessionAuth, standardRateLimitMiddleware, async (c) => {
   const user = c.get("user");
   if (!user) {
     return c.json(errorResponse(ErrorCode.UNAUTHORIZED, "Authentication required"), 401);

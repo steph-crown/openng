@@ -164,7 +164,7 @@ Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical str
 
 **Middleware order (fixed):** In `apps/api/src/app.ts`, register `requestLogger` before `corsMiddleware` so every request (including OPTIONS) is wrapped by the wide-event logger first; CORS runs inside that wrapper. Do not reverse this order without updating `apps/api/ARCHITECTURE-CONVENTIONS.md` and `.cursor/rules/api.mdc`.
 
-**Redis:** A single lazy singleton lives in `apps/api/src/infrastructure/redis.ts` (`getRedis()` returns `null` if `REDIS_URL` is unset). Health checks and cache code use this module; use `pingRedis()` for readiness, not ad-hoc clients.
+**Redis:** A single lazy singleton lives in `apps/api/src/infrastructure/redis.ts` (`getRedis()` returns `null` if `REDIS_URL` is unset). Health checks, API key cache, and **rate limiting** use this module; use `pingRedis()` for readiness, not ad-hoc clients. Rate limits are skipped when Redis is unavailable (fail open for local dev).
 
 **Normative detail for tools and humans:** See `apps/api/ARCHITECTURE-CONVENTIONS.md` for MUST / MUST NOT rules that apply to Cursor and other automation. Keep it updated when behavior changes.
 
