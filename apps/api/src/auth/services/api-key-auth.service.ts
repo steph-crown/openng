@@ -1,7 +1,7 @@
-import { getRedis } from "../../core/redis";
-import type { SessionUser } from "../../core/context-types";
+import type { SessionUser } from "../../types/context";
 import * as apiKeysRepo from "../../account/repositories/api-keys.repository";
-import { db } from "../repositories/db";
+import { db } from "../../db/client";
+import { getRedis } from "../../infrastructure/redis";
 import * as usersRepo from "../repositories/users.repository";
 import { hashToken } from "../../utils/crypto";
 
@@ -56,8 +56,11 @@ function parseCached(raw: string): CachedPayload | null {
 }
 
 async function maybeTouchLastUsed(apiKeyId: bigint, keyHash: string): Promise<void> {
+  const redis = getRedis();
+  if (!redis) {
+    return;
+  }
   try {
-    const redis = getRedis();
     const k = `apikey:lu:${keyHash}`;
     const r = await redis.set(k, "1", "EX", LAST_USED_DEBOUNCE_SEC, "NX");
     if (r === "OK") {
@@ -69,8 +72,12 @@ async function maybeTouchLastUsed(apiKeyId: bigint, keyHash: string): Promise<vo
 }
 
 async function setCache(keyHash: string, payload: CachedPayload): Promise<void> {
+  const redis = getRedis();
+  if (!redis) {
+    return;
+  }
   try {
-    await getRedis().setex(`apikey:${keyHash}`, CACHE_TTL_SEC, JSON.stringify(payload));
+    await redis.setex(`apikey:${keyHash}`, CACHE_TTL_SEC, JSON.stringify(payload));
   } catch {
     return;
   }
@@ -81,10 +88,13 @@ export async function resolveApiKeyFromRaw(raw: string): Promise<ResolvedApiKey 
   const cacheKey = `apikey:${keyHash}`;
 
   let cachedRaw: string | null = null;
-  try {
-    cachedRaw = await getRedis().get(cacheKey);
-  } catch {
-    cachedRaw = null;
+  const redis = getRedis();
+  if (redis) {
+    try {
+      cachedRaw = await redis.get(cacheKey);
+    } catch {
+      cachedRaw = null;
+    }
   }
 
   if (cachedRaw) {

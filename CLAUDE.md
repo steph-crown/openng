@@ -31,18 +31,28 @@ openng/
 ├── apps/
 │   ├── api/                    ← Hono API server → api.openng.dev
 │   │   ├── src/
-│   │   │   ├── core/           ← factory, logger, wide-event, context-types, global *.middleware.ts
+│   │   │   ├── app.ts          ← builds Hono app (middleware + route mounts)
+│   │   │   ├── index.ts        ← process entry (serve)
+│   │   │   ├── db/             ← `db` + `DbExecutor` (single import for all domains)
+│   │   │   ├── types/          ← e.g. `context.ts` (`AppVariables`, `SessionUser`)
+│   │   │   ├── middleware/     ← CORS, request logger, `auth-context` (session + API key + combined)
+│   │   │   ├── registry/       ← shared resource list JSON (`build-registry-response`, `createRegistryListRouter` for `/meta` and `GET /v1`)
+│   │   │   ├── http/           ← global `onError`, `recordRequestError`
+│   │   │   ├── observability/  ← Pino, `WideEvent`, response bytes
+│   │   │   ├── infrastructure/ ← Redis, API key cache invalidation
+│   │   │   ├── health/         ← `GET /health`
+│   │   │   ├── resource-factory/ ← ResourceFactory only (`factory`, filters, pagination, registry, `resource-config`)
 │   │   │   ├── utils/          ← cross-domain helpers: crypto, constants, normalize-email (no Drizzle/Hono)
 │   │   │   ├── auth/           ← magic link, sessions, API-key verification middleware, cleanup
 │   │   │   ├── account/        ← `/account/*` routes, API key CRUD (repositories + services)
-│   │   │   ├── v1/             ← versioned public API surface (ResourceFactory + opt-in routes)
-│   │   │   ├── resources/      ← one folder per data domain
+│   │   │   ├── v1/             ← `/v1` composition (ping, discovery, ref mount)
+│   │   │   ├── resources/      ← one folder per hand-written data domain (`routes` → `services` → `repositories`)
+│   │   │   │   ├── ref/        ← `/v1/ref/*` (not factory-generated): `router`, `ref.service`, `repositories/`
 │   │   │   │   ├── fuel/
-│   │   │   │   ├── food-prices/
 │   │   │   │   ├── holidays/
 │   │   │   │   └── ...
 │   │   │   ├── admin/          ← internal-only routes (session API keys live under /account in Group 6)
-│   │   │   └── index.ts
+│   │   │   └── ...
 │   │   └── package.json
 │   │
 │   ├── web/                    ← Next.js → openng.dev
@@ -120,6 +130,7 @@ openng/
 ├── docker-compose.yml          ← local dev: postgres, redis, signoz
 ├── pnpm-workspace.yaml
 ├── CLAUDE.md         ← This file
+├── apps/api/ARCHITECTURE-CONVENTIONS.md ← binding rules for `apps/api` (middleware order, layers, Redis, architectural decision rationales; read before changing the API)
 └── turbo.json
 ```
 
@@ -139,13 +150,23 @@ Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical str
 | `services/` | Orchestration and business rules; owns `db.transaction(...)` when multiple writes must commit together. Calls repositories and side effects (e.g. email). |
 | `repositories/` | Persistence only: named Drizzle operations (`findUserByEmail`, `invalidateUnusedMagicLinksForUser`, …). Accept a `DbExecutor` (`db` or transaction `tx`) so multi-step writes use one transaction. |
 
-**Global vs domain middleware:** App-wide middleware (request logging, future CORS) lives in `apps/api/src/core/` as `*.middleware.ts`. There is no top-level `src/middleware/` folder. Domain-specific middleware (e.g. `sessionAuth`) lives as `auth/middleware.ts` next to that domain.
+**Global vs cross-cutting middleware:** App-wide middleware (CORS, request logging) lives in `apps/api/src/middleware/`. **Authentication context** middleware (`sessionAuth`, `apiKeyAuth`, `combinedAuth`) lives in `apps/api/src/middleware/auth-context.ts` because it is mounted on multiple surfaces (`/auth`, `/account`, `/v1/*`), not only under `/auth`.
 
 **Cross-domain utils:** `apps/api/src/utils/` — pure functions and shared constants used by more than one domain (e.g. `crypto.ts`, `constants.ts`, `normalize-email.ts`). Domain-only helpers stay inside that domain. Do not put Drizzle or Hono in `utils/`.
 
-**Hono context types:** `apps/api/src/core/context-types.ts` defines `AppVariables` and `SessionUser` for `c.get` / `c.set`.
+**Hono context types:** `apps/api/src/types/context.ts` defines `AppVariables` and `SessionUser` for `c.get` / `c.set`.
 
-**ResourceFactory (`/v1/{resource}`):** Per-resource folders remain `config` + factory registration only. Shared list/detail query logic belongs in `core/` (factory + repositories there), not duplicate per-resource repositories. Extend the factory instead of bypassing it.
+**ResourceFactory (`/v1/{resource}`):** Shared list/detail query logic lives in `apps/api/src/resource-factory/` (`createResourceRouter`, filters, pagination, `resource-registry`). The factory **does not** import auth middleware: `createResourceRouter(config, db, { authMiddleware })` receives the middleware from the composition site (typically `combinedAuth` from `middleware/auth-context.ts` in `resources/{name}/index.ts`). Per-resource folders under `apps/api/src/resources/{name}/` hold `config.ts` + `index.ts` that register the router — no ad-hoc Drizzle in those index files. Extend the factory instead of bypassing it.
+
+**Hand-written HTTP under `resources/`:** Every domain folder under `apps/api/src/resources/{name}/` uses the same vertical slice as `auth` and `account`: `router.ts` (or `routes.ts`) → `*.service.ts` → `repositories/*.ts`. Routes validate HTTP input and call services only. Services orchestrate and map response shapes. Repositories are the only layer that import Drizzle table objects and run queries (accept `DbExecutor`). Never put multi-step query logic or table access in `router.ts`.
+
+**Database access module:** Import `db` and `DbExecutor` from `apps/api/src/db/client.ts` in services and repositories — not per-domain `repositories/db.ts` stubs.
+
+**Middleware order (fixed):** In `apps/api/src/app.ts`, register `requestLogger` before `corsMiddleware` so every request (including OPTIONS) is wrapped by the wide-event logger first; CORS runs inside that wrapper. Do not reverse this order without updating `apps/api/ARCHITECTURE-CONVENTIONS.md` and `.cursor/rules/api.mdc`.
+
+**Redis:** A single lazy singleton lives in `apps/api/src/infrastructure/redis.ts` (`getRedis()` returns `null` if `REDIS_URL` is unset). Health checks and cache code use this module; use `pingRedis()` for readiness, not ad-hoc clients.
+
+**Normative detail for tools and humans:** See `apps/api/ARCHITECTURE-CONVENTIONS.md` for MUST / MUST NOT rules that apply to Cursor and other automation. Keep it updated when behavior changes.
 
 **Discipline (apply without waiting for a prompt):**
 
@@ -227,8 +248,8 @@ GET /v1/{resource}/export   → bulk CSV/JSON (paid tier only)
 **Adding a new resource requires exactly three things:**
 
 1. Create `apps/api/src/resources/{name}/config.ts` — the ResourceConfig object
-2. Create `apps/api/src/resources/{name}/index.ts` — call `createResourceRouter(config, db)`
-3. Add one line to `apps/api/src/index.ts` — `app.route('/v1/{name}', {name}Router)`
+2. Create `apps/api/src/resources/{name}/index.ts` — call `createResourceRouter(config, db, { authMiddleware: combinedAuth })` from `apps/api/src/resource-factory/factory.ts` (import `combinedAuth` from `middleware/auth-context.ts` and `db` from `db/client.ts`)
+3. Add one line to `apps/api/src/v1/index.ts` (or `app.ts` if mounting at root) — `v1Router.route('/{name}', {name}Router)`
 
 Nothing else. No controllers, no query builders, no middleware, no error handlers. The factory provides all of it.
 
@@ -462,13 +483,14 @@ Request finishes (finally block):
 
 **Key files:**
 
-- `apps/api/src/core/logger.ts` — Pino instance (redaction, env-aware formatting)
-- `apps/api/src/core/wide-event.ts` — `WideEvent` class (accumulator with `set`, `setMany`, `startTimer`, `stopTimer`, `addError`, `emit`)
-- `apps/api/src/core/request-logger.middleware.ts` — Hono middleware that creates and emits the wide event
-- `apps/api/src/core/response-bytes.ts` — `responseBytes(res)` computes byte length (headers first, else read cloned body) because Fetch `Response` often has no `Content-Length`
-- `apps/api/src/core/request-error.ts` — `recordRequestError(c, err)` forwards to `event.addError` for handlers that catch without rethrowing
-- `apps/api/src/core/context-types.ts` — `AppVariables`, `SessionUser` for Hono context typing
-- `apps/api/src/core/api-key-cache.ts` — `invalidateApiKeyLookup` for Redis `apikey:{hash}` (used when revoking keys; avoids `account` importing `auth` services)
+- `apps/api/src/observability/logger.ts` — Pino instance (redaction, env-aware formatting)
+- `apps/api/src/observability/wide-event.ts` — `WideEvent` class (accumulator with `set`, `setMany`, `startTimer`, `stopTimer`, `addError`, `emit`)
+- `apps/api/src/middleware/request-logger.ts` — Hono middleware that creates and emits the wide event
+- `apps/api/src/observability/response-bytes.ts` — `responseBytes(res)` computes byte length (headers first, else read cloned body) because Fetch `Response` often has no `Content-Length`
+- `apps/api/src/http/request-error.ts` — `recordRequestError(c, err)` forwards to `event.addError` for handlers that catch without rethrowing
+- `apps/api/src/types/context.ts` — `AppVariables`, `SessionUser` for Hono context typing
+- `apps/api/src/infrastructure/api-key-cache.ts` — `invalidateApiKeyLookup` for Redis `apikey:{hash}` (used when revoking keys; avoids `account` importing `auth` services)
+- `apps/api/src/infrastructure/redis.ts` — single lazy singleton; `getRedis()` returns `null` when `REDIS_URL` is unset; `pingRedis()` uses that client for health (no separate connections per probe)
 
 **Rules for logging in route handlers:**
 
@@ -477,7 +499,7 @@ Request finishes (finally block):
 - Use `event.startTimer(name)` / `event.stopTimer(name)` for sub-operation timing (db, redis, external API)
 - Use `event.addError(err)` for caught errors — never swallow errors silently
 - If you `catch` an error and return a 5xx (or otherwise handle without rethrowing), call `recordRequestError(c, err)` so the emitted wide event includes an `errors` array; unhandled throws are still recorded by the request logger’s `catch` around `next()`
-- For non-request logs (startup, shutdown, cron jobs), use `logger.info(...)` directly from `core/logger.ts`
+- For non-request logs (startup, shutdown, cron jobs), use `logger.info(...)` directly from `observability/logger.ts`
 - Never use `console.log` — use `logger` or the wide event exclusively
 
 **Pino redaction** ensures sensitive fields are never logged:
@@ -569,10 +591,11 @@ Comments are never written in this codebase. Code must be self-documenting throu
 
 **Circular dependencies (apps/api):**
 
-- Avoid import cycles between feature domains (`auth`, `account`, `resources`, …) and `core`. Cycles break bundling, hot reload, and reasoning about initialization order.
-- **Pattern:** `core` must not import from `auth` or `account`. Shared infrastructure (e.g. Redis key invalidation for API lookups) lives in `core/` so both `auth` and `account` can depend on it without depending on each other.
-- **Pattern:** `auth` may import **repositories** from `account` for read-only key resolution (`api-key-auth.service` → `account/repositories/api-keys.repository`). `account` must not import `auth` services; it may import `auth/middleware` (e.g. `sessionAuth`) and `utils/crypto` / `utils/constants` for keys and hashing as one-way edges.
-- **Pattern:** If two domains need the same behavior, extract it upward into `core` or downward into `@openng/db` / `@openng/shared`, or duplicate a tiny pure helper — never create `A → B → A` imports.
+- Avoid import cycles between feature domains (`auth`, `account`, …). Cycles break bundling, hot reload, and reasoning about initialization order.
+- **Pattern:** `infrastructure/`, `observability/`, `db/`, and `types/` must not import from `auth` or `account`. Shared infrastructure (e.g. Redis key invalidation for API lookups) lives in `infrastructure/` so both `auth` and `account` can depend on it without depending on each other.
+- **Pattern:** `resource-factory/` **must not** import `middleware/auth-context`; callers pass `authMiddleware` into `createResourceRouter`. `auth` must not import `resource-factory/`.
+- **Pattern:** `auth` may import **repositories** from `account` for read-only key resolution (`api-key-auth.service` → `account/repositories/api-keys.repository`). `account` must not import `auth` services; it may import `middleware/auth-context` (e.g. `sessionAuth`) and `utils/crypto` / `utils/constants` for keys and hashing as one-way edges.
+- **Pattern:** If two domains need the same behavior, extract it upward into `infrastructure/`, `observability/`, or `types/`, or downward into `@openng/db` / `@openng/shared`, or duplicate a tiny pure helper — never create `A → B → A` imports.
 - When adding imports, mentally trace the graph: if the new edge completes a cycle, refactor before merging.
 
 ---
@@ -659,7 +682,7 @@ turbo typecheck
 - **Never store API keys in plaintext** — always hash before storage
 - **Never return unbounded result sets** — all list endpoints must paginate
 - **Never use `any` in TypeScript** without an explicit comment explaining why (and there should be very few)
-- **Never introduce circular imports** between `apps/api` domains (`auth`, `account`, `resources`) or between those and `core` — refactor shared code into `core` or `@openng/*` first (see **Circular dependencies** under Coding Standards)
+- **Never introduce circular imports** between `apps/api` domains (`auth`, `account`, `resources`) — refactor shared code into `infrastructure/`, `observability/`, `types/`, or `@openng/*` first (see **Circular dependencies** under Coding Standards)
 - **Never commit `.env` files** — use `.env.example` for documentation
 - **Never commit scraped Excel files** to git — only manually-curated seed files belong in git
 - **Never use npm or yarn** — this is a pnpm workspace, only pnpm
@@ -678,8 +701,8 @@ turbo typecheck
 When asked to add a new resource, follow this order:
 
 - [ ] Create `apps/api/src/resources/{name}/config.ts` with `ResourceConfig`
-- [ ] Create `apps/api/src/resources/{name}/index.ts` calling `createResourceRouter`
-- [ ] Register in `apps/api/src/index.ts` with `app.route('/v1/{name}', {name}Router)`
+- [ ] Create `apps/api/src/resources/{name}/index.ts` calling `createResourceRouter(config, db, { authMiddleware: combinedAuth })` from `resource-factory/factory`
+- [ ] Register in `apps/api/src/v1/index.ts` with `v1Router.route('/{name}', {name}Router)` (or mount on `app` in `app.ts` if preferred)
 - [ ] Create `packages/db/src/public/{name}.ts` with Drizzle schema
 - [ ] Create `packages/db/src/staging/{name}.ts` with staging schema (includes audit columns)
 - [ ] Create `packages/db/src/procedures/validate_{name}.sql`

@@ -1,9 +1,9 @@
-import { db } from "../repositories/db";
+import { db } from "../../db/client";
 import * as sessionsRepo from "../repositories/sessions.repository";
 import * as usersRepo from "../repositories/users.repository";
 import { hashToken } from "../../utils/crypto";
 import { SESSION_TTL_MS } from "../../utils/constants";
-import type { SessionUser } from "../../core/context-types";
+import type { SessionUser } from "../../types/context";
 
 export async function loadSessionUserFromCookieRaw(raw: string): Promise<SessionUser | null> {
   const tokenHash = hashToken(raw);

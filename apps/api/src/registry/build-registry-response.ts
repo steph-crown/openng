@@ -1,9 +1,7 @@
-import { Hono } from "hono";
 import { successResponse } from "@openng/shared";
-import { listRegisteredResources } from "./resource-registry";
-import type { AppVariables } from "./request-logger.middleware";
+import { listRegisteredResources } from "../resource-factory/resource-registry";
 
-function buildRegistryResponse() {
+export function buildRegistryResponse() {
   const resources = listRegisteredResources().map((r) => ({
     name: r.name,
     description: r.description,
@@ -11,6 +9,7 @@ function buildRegistryResponse() {
     source_url: r.sourceUrl,
     update_frequency: r.updateFrequency,
   }));
+
   return successResponse(resources, {
     total: resources.length,
     page: 1,
@@ -22,15 +21,3 @@ function buildRegistryResponse() {
     update_frequency: "static",
   });
 }
-
-export const globalMetaRouter = new Hono<{ Variables: AppVariables }>();
-
-globalMetaRouter.get("/", (c) => {
-  return c.json(buildRegistryResponse());
-});
-
-export const v1DiscoveryRouter = new Hono<{ Variables: AppVariables }>();
-
-v1DiscoveryRouter.get("/", (c) => {
-  return c.json(buildRegistryResponse());
-});

@@ -1,4 +1,4 @@
-import type { ResourceConfig } from "./types";
+import type { ResourceConfig } from "./resource-config";
 
 const resources: ResourceConfig[] = [];
 

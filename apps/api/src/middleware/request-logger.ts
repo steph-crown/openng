@@ -1,11 +1,9 @@
 import crypto from "node:crypto";
 import type { MiddlewareHandler } from "hono";
-import type { AppVariables } from "./context-types";
-import { logger } from "./logger";
-import { responseBytes } from "./response-bytes";
-import { WideEvent } from "./wide-event";
-
-export type { AppVariables } from "./context-types";
+import { logger } from "../observability/logger";
+import { responseBytes } from "../observability/response-bytes";
+import { WideEvent } from "../observability/wide-event";
+import type { AppVariables } from "../types/context";
 
 export const requestLogger: MiddlewareHandler<{ Variables: AppVariables }> = async (c, next) => {
   const requestId = c.req.header("x-request-id") ?? crypto.randomUUID();

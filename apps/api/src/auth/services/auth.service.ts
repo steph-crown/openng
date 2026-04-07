@@ -1,4 +1,4 @@
-import { db } from "../repositories/db";
+import { db } from "../../db/client";
 import * as magicLinkTokensRepo from "../repositories/magic-link-tokens.repository";
 import * as sessionsRepo from "../repositories/sessions.repository";
 import * as usersRepo from "../repositories/users.repository";

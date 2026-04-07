@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { MiddlewareHandler } from "hono";
 import {
   and,
   asc,
@@ -12,28 +13,20 @@ import {
 import type { PgTable } from "drizzle-orm/pg-core";
 import { db } from "@openng/db";
 import { errorResponse, ErrorCode, successResponse } from "@openng/shared";
-import { combinedAuth } from "../auth/middleware";
-import { recordRequestError } from "./request-error";
-import type { AppVariables } from "./request-logger.middleware";
+import { recordRequestError } from "../http/request-error";
+import type { AppVariables } from "../types/context";
+import { asDynamicSelect, selectedColumnsForResource } from "./dynamic-select";
 import { buildFilters } from "./filters";
 import { serializeForJson } from "./json";
 import { parsePagination } from "./pagination";
 import { registerResource } from "./resource-registry";
-import type { ResourceConfig } from "./types";
+import type { ResourceConfig } from "./resource-config";
 
 type Executor = typeof db;
 
-function pickSelectShape(table: PgTable, names: string[]) {
-  const cols = getTableColumns(table);
-  const out: Record<string, unknown> = {};
-  for (const name of names) {
-    const col = cols[name as keyof typeof cols];
-    if (col) {
-      out[name] = col;
-    }
-  }
-  return out;
-}
+export type CreateResourceRouterOptions = {
+  authMiddleware: MiddlewareHandler<{ Variables: AppVariables }>;
+};
 
 async function resolveLastUpdated(
   executor: Executor,
@@ -64,11 +57,15 @@ function parsePositiveBigIntId(raw: string): bigint | null {
   return BigInt(raw);
 }
 
-export function createResourceRouter(config: ResourceConfig, executor: Executor) {
+export function createResourceRouter(
+  config: ResourceConfig,
+  executor: Executor,
+  options: CreateResourceRouterOptions,
+) {
   registerResource(config);
 
   const router = new Hono<{ Variables: AppVariables }>();
-  router.use("*", combinedAuth);
+  router.use("*", options.authMiddleware);
 
   router.get("/meta", async (c) => {
     try {
@@ -126,7 +123,8 @@ export function createResourceRouter(config: ResourceConfig, executor: Executor)
       }
       const orderExpr =
         pagination.order === "asc" ? asc(sortCol) : desc(sortCol);
-      const selectShape = pickSelectShape(config.table, config.selectColumns);
+      const rawShape = selectedColumnsForResource(config.table, config.selectColumns);
+      const selectShape = asDynamicSelect(rawShape);
 
       const countBase = executor.select({ n: count() }).from(config.table);
       const [countRow] = whereClause
@@ -134,7 +132,7 @@ export function createResourceRouter(config: ResourceConfig, executor: Executor)
         : await countBase;
       const total = Number(countRow?.n ?? 0);
 
-      const listBase = executor.select(selectShape as never).from(config.table);
+      const listBase = executor.select(selectShape).from(config.table);
       const listFiltered = whereClause ? listBase.where(whereClause) : listBase;
       const rows = await listFiltered
         .orderBy(orderExpr)
@@ -180,9 +178,10 @@ export function createResourceRouter(config: ResourceConfig, executor: Executor)
         filters.push(eq(cols.isActive, true));
       }
       const whereClause = filters.length === 1 ? filters[0]! : and(...filters);
-      const selectShape = pickSelectShape(config.table, config.selectColumns);
+      const rawShape = selectedColumnsForResource(config.table, config.selectColumns);
+      const selectShape = asDynamicSelect(rawShape);
       const detailBase = executor
-        .select(selectShape as never)
+        .select(selectShape)
         .from(config.table)
         .where(whereClause)
         .limit(1);

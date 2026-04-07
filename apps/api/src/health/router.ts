@@ -1,22 +1,10 @@
 import { Hono } from "hono";
 import { sql } from "drizzle-orm";
-import Redis from "ioredis";
 import { db } from "@openng/db";
-import type { AppVariables } from "./request-logger.middleware";
+import { pingRedis } from "../infrastructure/redis";
+import type { AppVariables } from "../types/context";
 
 const startTime = Date.now();
-
-function getRedisPingMs(url: string): Promise<number | null> {
-  const client = new Redis(url, { maxRetriesPerRequest: 1, connectTimeout: 2000, lazyConnect: true });
-  const started = Date.now();
-  return client
-    .ping()
-    .then(() => Date.now() - started)
-    .catch(() => null)
-    .finally(() => {
-      client.disconnect();
-    });
-}
 
 export const healthRouter = new Hono<{ Variables: AppVariables }>();
 
@@ -32,7 +20,7 @@ healthRouter.get("/", async (c) => {
   const redisUrl = process.env.REDIS_URL;
   let cacheStatus: "ok" | "error" | "skipped" = "skipped";
   if (redisUrl) {
-    const ok = (await getRedisPingMs(redisUrl)) !== null;
+    const ok = await pingRedis();
     cacheStatus = ok ? "ok" : "error";
   }
 

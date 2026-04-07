@@ -1,6 +1,6 @@
-import { invalidateApiKeyLookup } from "../../core/api-key-cache";
+import { invalidateApiKeyLookup } from "../../infrastructure/api-key-cache";
 import { generateApiKey, hashToken } from "../../utils/crypto";
-import { db } from "../repositories/db";
+import { db } from "../../db/client";
 import * as apiKeysRepo from "../repositories/api-keys.repository";
 
 export async function createApiKeyForUser(userId: bigint) {

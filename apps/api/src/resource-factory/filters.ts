@@ -1,6 +1,6 @@
 import { and, eq, getTableColumns, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
-import type { FilterConfig } from "./types";
+import type { FilterConfig } from "./resource-config";
 
 export function buildFilters(
   query: Record<string, string | undefined>,

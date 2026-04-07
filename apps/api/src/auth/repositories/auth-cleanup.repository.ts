@@ -1,6 +1,6 @@
 import { and, isNotNull, lt, or, sql } from "drizzle-orm";
 import { magicLinkTokens, sessions } from "@openng/db";
-import type { DbExecutor } from "./db";
+import type { DbExecutor } from "../../db/client";
 
 export async function deleteStaleMagicLinkTokens(client: DbExecutor) {
   await client.delete(magicLinkTokens).where(

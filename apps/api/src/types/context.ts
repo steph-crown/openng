@@ -1,4 +1,4 @@
-import type { WideEvent } from "./wide-event";
+import type { WideEvent } from "../observability/wide-event";
 
 export type SessionUser = {
   id: bigint;

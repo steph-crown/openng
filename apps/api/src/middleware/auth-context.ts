@@ -1,11 +1,11 @@
 import type { MiddlewareHandler } from "hono";
 import { getCookie } from "hono/cookie";
 import { errorResponse, ErrorCode } from "@openng/shared";
-import { recordRequestError } from "../core/request-error";
-import type { AppVariables } from "../core/request-logger.middleware";
+import { recordRequestError } from "../http/request-error";
+import type { AppVariables } from "../types/context";
 import { API_KEY_PREFIX, SESSION_COOKIE_NAME } from "../utils/constants";
-import { resolveApiKeyFromRaw } from "./services/api-key-auth.service";
-import { loadSessionUserFromCookieRaw } from "./services/session.service";
+import { resolveApiKeyFromRaw } from "../auth/services/api-key-auth.service";
+import { loadSessionUserFromCookieRaw } from "../auth/services/session.service";
 
 function extractBearerToken(raw: string | undefined): string | null {
   if (!raw) {

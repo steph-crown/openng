@@ -1,7 +1,7 @@
 import type { ErrorHandler } from "hono";
 import { errorResponse, ErrorCode } from "@openng/shared";
-import { logger } from "./logger";
-import type { AppVariables } from "./request-logger.middleware";
+import { logger } from "../observability/logger";
+import type { AppVariables } from "../types/context";
 
 export const errorHandler: ErrorHandler<{ Variables: AppVariables }> = (err, c) => {
   logger.error({ err }, "unhandled error");

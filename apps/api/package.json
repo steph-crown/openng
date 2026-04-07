@@ -17,7 +17,8 @@
     "ioredis": "^5.10.1",
     "nanoid": "^5.1.7",
     "pino": "^10.3.1",
-    "resend": "^6.10.0"
+    "resend": "^6.10.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

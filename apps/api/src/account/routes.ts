@@ -6,9 +6,9 @@ import {
   successResponse,
   updateKeySchema,
 } from "@openng/shared";
-import { sessionAuth } from "../auth/middleware";
-import type { AppVariables } from "../core/request-logger.middleware";
-import { recordRequestError } from "../core/request-error";
+import { sessionAuth } from "../middleware/auth-context";
+import type { AppVariables } from "../types/context";
+import { recordRequestError } from "../http/request-error";
 import * as apiKeyService from "./services/api-key.service";
 
 function parseNumericIdParam(s: string | undefined): bigint | null {
