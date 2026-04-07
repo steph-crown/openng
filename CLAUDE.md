@@ -709,7 +709,7 @@ When asked to add a new resource, follow this order:
 - [ ] Create `packages/db/src/procedures/migrate_{name}.sql`
 - [ ] Create `data/seeds/{name}/` if static resource
 - [ ] Create `packages/scrapers/src/{name}/` if scraped resource
-- [ ] Document in `docs/content/resources/{name}.mdx`
+- [ ] Document in `docs/content/resources/{name}.mdx` — include **human-readable meanings** for any constrained enums or taxonomy columns (`category`, `schedule_kind`, etc.); `GET /v1/{name}/meta` exposes filter names and shapes, not long prose definitions
 
 ---
 

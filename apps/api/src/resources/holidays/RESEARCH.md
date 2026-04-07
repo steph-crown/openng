@@ -62,14 +62,50 @@ Historical declarations going back to at least 2019 on interior.gov.ng.
 Cross-referencing with timeanddate.com allows reconstruction back to ~2000.
 Target seed range: 2019–2027 (confirmed) + tentative 2028+ for fixed holidays.
 
+## schedule_kind (what it means)
+
+This column answers **how we know the calendar date**, not whether it is “national” or “religious” (that is **`category`**).
+
+| Value | Meaning |
+|-------|---------|
+| `fixed` | Same civil calendar date every year (e.g. 1 January, 1 May) or a date fixed by statute until the law changes. |
+| `moveable_christian` | Date moves each year following the **Western (Gregorian) Easter** cycle (e.g. Good Friday, Easter Monday). |
+| `moveable_islamic` | Date depends on **moon sighting**; Interior confirms. Often provisional until announced. |
+| `declared_special` | **Ad-hoc** federal public holiday (e.g. national mourning, one-off declaration) — not one of the recurring statutory buckets above. |
+
+Examples: Independence Day is **`fixed`** + **`category national`**. Eid el-Fitr is **`moveable_islamic`** + **`category religious`**. Good Friday is **`moveable_christian`** + **`category religious`**.
+
+## category (what it means)
+
+| Value | Meaning |
+|-------|---------|
+| `national` | Civic / state occasions (e.g. Independence, Democracy Day). |
+| `religious` | Religious observance (Christian moveable feasts, Islamic holidays, Maulud). |
+| `observance` | Commemorative or cultural observance where it fits neither cleanly (use sparingly; many rows will be `national` or `religious`). |
+
+## day_of_week: store in DB vs derive in API
+
+| Approach | When it helps | Trade-off |
+|----------|----------------|-----------|
+| **Stored** (`TEXT NOT NULL` in DB) | Excel/import pipeline: humans see “Monday” next to the date; CSV exports and DB ad hoc queries stay readable without app code; historical rows stay exactly as imported even if timezone/date rules change later. | Must stay consistent with `date` — validate `day_of_week` matches `date` in staging validation (or derive on import and persist). |
+| **Derived** (computed from `date` in SQL or API) | Single source of truth: impossible to drift from `date`. | Every consumer/report must go through SQL or API; raw SQL on the table has no weekday without `to_char` / app logic. |
+
+**Recommendation for OpenNG:** **store** `day_of_week`, and **validate** in `validate_holidays` that it matches the date (so drift is caught). Optional later: generate column or view for redundancy.
+
+## Enum semantics for API consumers
+
+The API lists **filter parameter names** and allowed columns on **`GET /v1/holidays/meta`** from `ResourceConfig`, but it does **not** ship long prose definitions of `category` or `schedule_kind` in JSON.
+
+**Human-readable definitions** (tables above + examples) belong in **`docs/content/resources/holidays.mdx`** so developers understand what each value means. Keep that page updated when enums change.
+
 ## Fields to Capture
 
 - name: human-readable holiday name
 - date: actual observed public holiday date (calendar date for that year)
-- day_of_week: derived label for convenience (e.g. "Monday")
+- day_of_week: label for the row’s date (e.g. "Monday") — store and validate against `date` (see above)
 - year: integer, for easy filtering (must match `date`)
-- category: national | religious | observance — thematic classification (API filter)
-- schedule_kind: fixed | moveable_christian | moveable_islamic | declared_special — how the date is determined (fixed calendar; Western Easter cycle; moon-sighted Islamic; ad-hoc FG declaration such as mourning)
+- category: national | religious | observance
+- schedule_kind: fixed | moveable_christian | moveable_islamic | declared_special
 - is_confirmed: boolean — false when date is provisional (typical for Islamic until Interior confirms; optional false for forward-year Christian if you ever publish before cross-check)
 - observance_note: free text, optional (e.g. no substitute holiday when on weekend)
 - source_url: canonical citation — ministry press release when available; for fixed statutory rows a stable Act/schedule permalink is acceptable when no per-year release exists
