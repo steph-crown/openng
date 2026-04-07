@@ -56,6 +56,14 @@ export function buildFilters(
         if (raw === undefined || raw === "") {
           break;
         }
+        if (fc.coerce === "boolean") {
+          const lower = raw.toLowerCase();
+          if (lower !== "true" && lower !== "false") {
+            break;
+          }
+          parts.push(eq(col, lower === "true"));
+          break;
+        }
         parts.push(eq(col, raw));
         break;
       }
@@ -83,9 +91,20 @@ export function buildFilters(
         parts.push(lte(col, raw));
         break;
       }
-      case "in":
+      case "in": {
+        if (fc.coerce === "integer") {
+          const nums = vals
+            .map((v) => parseInt(v, 10))
+            .filter((n) => !Number.isNaN(n));
+          if (nums.length === 0) {
+            break;
+          }
+          parts.push(inArray(col, nums));
+          break;
+        }
         parts.push(inArray(col, vals));
         break;
+      }
       default:
         break;
     }

@@ -9,3 +9,6 @@ export { sessions } from "./public/sessions";
 export { apiKeys } from "./public/api-keys";
 
 export { analyticsSchema, usageEvents } from "./analytics/usage-events";
+
+export { holidays } from "./public/holidays";
+export { stagingHolidays } from "./staging/holidays";

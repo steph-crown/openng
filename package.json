@@ -6,12 +6,22 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+    "import-json": "tsx scripts/import-json/index.ts",
+    "validate-staging": "tsx scripts/validate-staging/index.ts",
+    "migrate-to-prod": "tsx scripts/migrate-to-prod/index.ts"
   },
   "devDependencies": {
+    "@openng/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "@openng/db": "workspace:*",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.44.0",
     "prettier": "^3.7.4",
+    "tsx": "^4.7.1",
     "turbo": "^2.9.3",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "zod": "^3.24.0"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

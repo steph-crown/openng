@@ -19,6 +19,7 @@ export interface FilterConfig {
   param: string;
   column: string;
   type: "exact" | "ilike" | "range_gte" | "range_lte" | "in";
+  coerce?: "boolean" | "integer";
 }
 
 export interface IndexConfig {

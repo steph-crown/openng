@@ -8,15 +8,36 @@ importers:
 
   .:
     devDependencies:
+      '@openng/db':
+        specifier: workspace:*
+        version: link:packages/db
+      '@openng/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
+      drizzle-orm:
+        specifier: ^0.44.0
+        version: 0.44.7(postgres@3.4.9)
       prettier:
         specifier: ^3.7.4
         version: 3.7.4
+      tsx:
+        specifier: ^4.7.1
+        version: 4.21.0
       turbo:
         specifier: ^2.9.3
         version: 2.9.3
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
 
   apps/api:
     dependencies:
