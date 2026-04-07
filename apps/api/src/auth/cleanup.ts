@@ -1,6 +1,6 @@
-import { db } from "./repositories/db.js";
-import * as authCleanupRepo from "./repositories/auth-cleanup.repository.js";
-import { logger } from "../core/logger.js";
+import { db } from "./repositories/db";
+import * as authCleanupRepo from "./repositories/auth-cleanup.repository";
+import { logger } from "../core/logger";
 
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
 

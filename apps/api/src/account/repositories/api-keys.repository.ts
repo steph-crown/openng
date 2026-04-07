@@ -1,6 +1,6 @@
 import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { apiKeys } from "@openng/db";
-import type { DbExecutor } from "./db.js";
+import type { DbExecutor } from "./db";
 
 export async function countActiveKeysForUser(client: DbExecutor, userId: bigint): Promise<number> {
   const [row] = await client

@@ -1,7 +1,7 @@
-import { invalidateApiKeyLookup } from "../../core/api-key-cache.js";
-import { generateApiKey, hashToken } from "../../utils/crypto.js";
-import { db } from "../repositories/db.js";
-import * as apiKeysRepo from "../repositories/api-keys.repository.js";
+import { invalidateApiKeyLookup } from "../../core/api-key-cache";
+import { generateApiKey, hashToken } from "../../utils/crypto";
+import { db } from "../repositories/db";
+import * as apiKeysRepo from "../repositories/api-keys.repository";
 
 export async function createApiKeyForUser(userId: bigint) {
   const count = await apiKeysRepo.countActiveKeysForUser(db, userId);

@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import type { AppVariables } from "./context-types.js";
+import type { AppVariables } from "./context-types";
 
 export function recordRequestError(
   c: Context<{ Variables: AppVariables }>,

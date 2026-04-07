@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { authMeta, successResponse } from "@openng/shared";
-import { apiKeyAuth } from "../auth/middleware.js";
-import type { AppVariables } from "../core/request-logger.middleware.js";
+import { apiKeyAuth } from "../auth/middleware";
+import type { AppVariables } from "../core/request-logger.middleware";
 
 export const v1PingRouter = new Hono<{ Variables: AppVariables }>();
 

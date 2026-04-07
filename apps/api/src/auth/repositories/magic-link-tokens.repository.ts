@@ -1,6 +1,6 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { magicLinkTokens } from "@openng/db";
-import type { DbExecutor } from "./db.js";
+import type { DbExecutor } from "./db";
 
 export async function invalidateUnusedForUser(client: DbExecutor, userId: bigint) {
   await client

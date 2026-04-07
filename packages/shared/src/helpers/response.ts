@@ -10,7 +10,7 @@ export function authMeta(): PaginationMeta {
     resource: "auth",
     last_updated: new Date().toISOString(),
     source_url: "https://openng.dev",
-    freshness: "static",
+    update_frequency: "static",
   };
 }
 
@@ -23,7 +23,7 @@ export function accountKeysMeta(): PaginationMeta {
     resource: "account-keys",
     last_updated: new Date().toISOString(),
     source_url: "https://openng.dev",
-    freshness: "static",
+    update_frequency: "static",
   };
 }
 

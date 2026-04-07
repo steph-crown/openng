@@ -6,5 +6,5 @@ export interface PaginationMeta {
   resource: string;
   last_updated: string;
   source_url: string;
-  freshness: string;
+  update_frequency: string;
 }

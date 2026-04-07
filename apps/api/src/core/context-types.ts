@@ -1,4 +1,4 @@
-import type { WideEvent } from "./wide-event.js";
+import type { WideEvent } from "./wide-event";
 
 export type SessionUser = {
   id: bigint;

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { users } from "@openng/db";
-import type { DbExecutor } from "./db.js";
+import type { DbExecutor } from "./db";
 
 export async function findUserByEmail(client: DbExecutor, email: string) {
   const [row] = await client.select().from(users).where(eq(users.email, email)).limit(1);

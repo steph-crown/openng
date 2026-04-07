@@ -1,9 +1,9 @@
-import { getRedis } from "../../core/redis.js";
-import type { SessionUser } from "../../core/context-types.js";
-import * as apiKeysRepo from "../../account/repositories/api-keys.repository.js";
-import { db } from "../repositories/db.js";
-import * as usersRepo from "../repositories/users.repository.js";
-import { hashToken } from "../../utils/crypto.js";
+import { getRedis } from "../../core/redis";
+import type { SessionUser } from "../../core/context-types";
+import * as apiKeysRepo from "../../account/repositories/api-keys.repository";
+import { db } from "../repositories/db";
+import * as usersRepo from "../repositories/users.repository";
+import { hashToken } from "../../utils/crypto";
 
 const CACHE_TTL_SEC = 300;
 const LAST_USED_DEBOUNCE_SEC = 60;

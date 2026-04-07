@@ -6,10 +6,10 @@ import {
   successResponse,
   updateKeySchema,
 } from "@openng/shared";
-import { sessionAuth } from "../auth/middleware.js";
-import type { AppVariables } from "../core/request-logger.middleware.js";
-import { recordRequestError } from "../core/request-error.js";
-import * as apiKeyService from "./services/api-key.service.js";
+import { sessionAuth } from "../auth/middleware";
+import type { AppVariables } from "../core/request-logger.middleware";
+import { recordRequestError } from "../core/request-error";
+import * as apiKeyService from "./services/api-key.service";
 
 function parseNumericIdParam(s: string | undefined): bigint | null {
   if (!s || !/^\d+$/.test(s)) {

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { sessions } from "@openng/db";
-import type { DbExecutor } from "./db.js";
+import type { DbExecutor } from "./db";
 
 export async function findSessionByTokenHash(client: DbExecutor, tokenHash: string) {
   const [row] = await client

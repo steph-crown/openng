@@ -8,15 +8,15 @@ import {
   successResponse,
   verifyTokenSchema,
 } from "@openng/shared";
-import type { AppVariables } from "../core/request-logger.middleware.js";
-import { recordRequestError } from "../core/request-error.js";
+import type { AppVariables } from "../core/request-logger.middleware";
+import { recordRequestError } from "../core/request-error";
 import {
   MAGIC_LINK_SUCCESS_MESSAGE,
   SESSION_COOKIE_NAME,
   SESSION_TTL_MS,
-} from "../utils/constants.js";
-import { sessionAuth } from "./middleware.js";
-import * as authService from "./services/auth.service.js";
+} from "../utils/constants";
+import { sessionAuth } from "./middleware";
+import * as authService from "./services/auth.service";
 
 export const authRouter = new Hono<{ Variables: AppVariables }>();
 
