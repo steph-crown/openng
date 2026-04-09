@@ -1,10 +1,20 @@
 import { createRelativeLink } from "fumadocs-ui/mdx";
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle,
+  MarkdownCopyButton,
+  ViewOptionsPopover,
+} from "fumadocs-ui/layouts/docs/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getMDXComponents } from "@/components/mdx";
+import { markdownUrlForPage } from "@/lib/markdown-url";
 import { source } from "@/lib/source";
+
+const githubRepo = "https://github.com/stephcrown/openng";
 
 type DocPageProps = {
   params: Promise<{ slug?: string[] }>;
@@ -16,11 +26,16 @@ export default async function Page(props: DocPageProps) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const markdownUrl = markdownUrlForPage(page.url);
 
   return (
     <DocsPage full={page.data.full} toc={page.data.toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <div className="not-prose flex flex-row flex-wrap items-center gap-2 border-b border-fd-border pb-6 mb-6">
+        <MarkdownCopyButton markdownUrl={markdownUrl} />
+        <ViewOptionsPopover githubUrl={githubRepo} markdownUrl={markdownUrl} />
+      </div>
       <DocsBody>
         <MDX
           components={getMDXComponents({

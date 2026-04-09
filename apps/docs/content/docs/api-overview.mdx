@@ -1,0 +1,30 @@
+---
+title: API overview
+description: Versioning, discovery, and core routes
+icon: Boxes
+---
+
+## Versioning
+
+Resources are versioned in the path: `/v1/{resource}`. Non-breaking additions do not bump versions; breaking changes for a resource get a new `/v2/{resource}` when introduced.
+
+## Discovery
+
+- `GET /meta` — registry of resources and versions  
+- `GET /v1/{resource}/meta` — filters, columns, and dataset metadata for that resource  
+
+## Standard resource routes
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/v1/{resource}` | List + filters + pagination |
+| `GET` | `/v1/{resource}/meta` | Machine-readable filter config |
+| `GET` | `/v1/{resource}/:id` | Detail by id |
+| `GET` | `/v1/{resource}/export` | Bulk export (tiers / policy permitting) |
+
+## System
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | DB + Redis checks |
+| `GET` | `/meta` | Global resource registry |

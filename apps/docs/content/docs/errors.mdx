@@ -1,0 +1,21 @@
+---
+title: Errors
+description: Codes, messages, and how clients should react
+icon: AlertCircle
+---
+
+## Shape
+
+Errors always use the shared envelope with `success: false` and an `error` object (`code`, `message`, `docs`).
+
+## Common codes
+
+| Code | Meaning | Typical fix |
+| --- | --- | --- |
+| `INVALID_FILTER` | Unknown or malformed query | Check `/v1/{resource}/meta` |
+| `NOT_FOUND` | Missing record or path | Verify id or route |
+| `RATE_LIMIT_EXCEEDED` | Too many requests | Backoff, cache, or use a key |
+
+## Logging
+
+Messages are safe for end users; internal detail stays in server logs only.

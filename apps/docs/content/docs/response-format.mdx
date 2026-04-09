@@ -1,0 +1,39 @@
+---
+title: Response format
+description: Success envelope, list meta, and errors
+icon: Braces
+---
+
+## Success
+
+```json
+{
+  "success": true,
+  "data": [],
+  "meta": {
+    "total": 0,
+    "page": 1,
+    "limit": 20,
+    "pages": 0,
+    "resource": "holidays",
+    "last_updated": "2025-01-01T00:00:00.000Z",
+    "source_url": "https://example.org/source",
+    "freshness": "monthly"
+  }
+}
+```
+
+## Errors
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILTER",
+    "message": "Human readable",
+    "docs": "https://docs.openng.dev/errors"
+  }
+}
+```
+
+Never rely on HTTP bodies for secrets—errors are safe to log in clients.

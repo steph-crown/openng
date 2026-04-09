@@ -1,0 +1,5 @@
+{
+  "title": "Data resources",
+  "icon": "Database",
+  "pages": ["holidays", "fuel-prices", "food-prices"]
+}

@@ -1,0 +1,21 @@
+---
+title: Rate limits
+description: Anonymous vs authenticated quotas and headers
+icon: Gauge
+---
+
+## Behaviour
+
+- **Anonymous:** sliding window per IP.
+- **Authenticated:** keyed by API key hash with higher ceilings.
+
+## Headers
+
+Successful responses may include:
+
+- `RateLimit-Limit` — allowed requests in the window  
+- `RateLimit-Remaining` — requests left  
+- `RateLimit-Reset` — window reset time  
+- `429` with `Retry-After` when exceeded  
+
+Tune clients to backoff and cache stable reference data (states, LGAs).

@@ -1,8 +1,183 @@
 ---
-title: Welcome
-description: Documentation for the OpenNG public data API
+title: Documentation
+description: Nigerian public data as a clean, versioned REST API for developers worldwide
+icon: Rocket
+full: true
 ---
 
-## Overview
+import {
+  Boxes,
+  Braces,
+  Calendar,
+  Fuel,
+  Gauge,
+  HeartPulse,
+  KeyRound,
+  Map,
+  Network,
+  PackageOpen,
+  Shield,
+  Utensils,
+} from "lucide-react";
 
-This site uses [Fumadocs](https://fumadocs.dev) with the default docs layout: sidebar, full-text search, and MDX content. Replace this placeholder when you add real documentation.
+## Introduction
+
+**OpenNG** makes Nigerian public data easy to consume: fuel prices, holidays, reference geography, and more—served through a consistent JSON API with pagination, filters, and clear documentation. Data is sourced from official releases and community pipelines, validated, and exposed under stable **`/v1`** paths.
+
+OpenNG has several parts—use the cards below to jump in, or follow the sidebar for the full story.
+
+## What OpenNG includes
+
+<Cards className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+  <Card
+    description="List and detail endpoints with filters, pagination, and a shared response envelope. Start with `/v1/holidays` or explore the registry at `/meta`."
+    href="/api-overview"
+    icon={<Boxes />}
+    title="REST API"
+  />
+  <Card
+    description="Anonymous requests are rate-limited by IP; optional API keys unlock higher limits. Same semantics everywhere."
+    href="/rate-limits"
+    icon={<Gauge />}
+    title="Fair usage"
+  />
+  <Card
+    description="States, LGAs, and resource-specific fields are typed and documented. Reference data lives under `/v1/ref`."
+    href="/states-lgas"
+    icon={<Map />}
+    title="Reference data"
+  />
+  <Card
+    description="Magic links for sign-in, dashboard API keys, and hashed storage—aligned with the main OpenNG web app."
+    href="/authentication"
+    icon={<KeyRound />}
+    title="Sessions & keys"
+  />
+</Cards>
+
+## Explore the data
+
+Nine entry points below mirror what we ship or are building toward. **Holidays** is live; others follow the same ResourceFactory patterns as we add datasets.
+
+<Cards className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <Card
+    description="National and regional holidays with year, category, and schedule metadata."
+    href="/resources/holidays"
+    icon={<Calendar />}
+    title="Holidays"
+  />
+  <Card
+    description="PMS, AGO, and kerosene prices by state and period—monthly cadence."
+    href="/resources/fuel-prices"
+    icon={<Fuel />}
+    title="Fuel prices"
+  />
+  <Card
+    description="Commodity basket trends where available from official statistics."
+    href="/resources/food-prices"
+    icon={<Utensils />}
+    title="Food prices"
+  />
+  <Card
+    description="`GET /v1/ref/states` and LGAs for joins and filters."
+    href="/states-lgas"
+    icon={<Map />}
+    title="States & LGAs"
+  />
+  <Card
+    description="Liveness for load balancers; checks database and Redis where configured."
+    href="/api-overview"
+    icon={<HeartPulse />}
+    title="Health & meta"
+  />
+  <Card
+    description="Optional `Authorization: Bearer` for higher rate limits and future paid tiers."
+    href="/authentication"
+    icon={<Shield />}
+    title="API keys"
+  />
+  <Card
+    description="`success`, `data`, `meta`, and structured `error` codes across all routes."
+    href="/response-format"
+    icon={<Braces />}
+    title="Response shape"
+  />
+  <Card
+    description="Combine `mergeQueryParamValues` with `in`, `exact`, `ilike`, and date ranges."
+    href="/filtering-pagination"
+    icon={<Network />}
+    title="Filters"
+  />
+  <Card
+    description="How to propose fixes and new datasets—issues and PRs welcome."
+    href="/contributing"
+    icon={<PackageOpen />}
+    title="Contribute data"
+  />
+</Cards>
+
+<Callout title="Want to go deeper?">
+
+Read [Quick start](/quickstart) for your first requests, then [API overview](/api-overview) for base URLs, versioning, and discovery. Error semantics are covered in [Errors](/errors).
+
+</Callout>
+
+### Terminology
+
+**Resource:** A dataset exposed under `/v1/{name}` (for example `holidays`) with list, `meta`, detail, and export (where enabled).
+
+**Envelope:** Every JSON response uses a shared shape: `success`, `data` or `error`, and `meta` on list routes.
+
+**Staging vs public:** Imports land in `staging`, validation procedures run, then migration promotes rows to `public` tables the API reads.
+
+**ResourceFactory:** Server-side config that generates list, meta, detail, and export routes from one definition—no one-off controllers for standard resources.
+
+## First requests
+
+A minimum of **Node.js 22** is recommended for local tooling; the API itself is consumed over HTTPS from any stack.
+
+```bash title="Health"
+curl -sS "https://api.openng.dev/health"
+```
+
+```bash title="List holidays (example)"
+curl -sS "https://api.openng.dev/v1/holidays?year=2025&limit=5"
+```
+
+```bash title="Registry"
+curl -sS "https://api.openng.dev/meta"
+```
+
+## FAQ
+
+### Who is OpenNG for?
+
+Developers building dashboards, research tools, and civic apps that need dependable Nigerian public data without scraping PDFs by hand.
+
+### Do I need an API key?
+
+No. Anonymous access works with stricter rate limits. Sign in on [openng.dev](https://openng.dev) to create a key when you need higher throughput.
+
+### How often does data update?
+
+It depends on the resource—see each resource’s **meta** response for `last_updated`, `freshness`, and `source_url`.
+
+### Where do I report mistakes?
+
+Use [Contributing](/contributing): file an issue or a PR against the relevant pipeline; we run validation before anything reaches production.
+
+### Is there a GraphQL endpoint?
+
+Not today—the API is REST-only, versioned per resource under `/v1`.
+
+### For client apps
+
+Use `https://api.openng.dev` as the base URL. From browsers, respect CORS: public `GET` under `/v1/*` is intended to work from documented web origins; authenticated flows use cookies on the main app.
+
+### For scrapers and bulk jobs
+
+Prefer an API key, backoff on `429`, and read `Rate-Limits` / `Retry-After` response headers.
+
+## Learn more
+
+New to the project? Browse the sidebar: **Get started** covers auth and limits, **API** explains the surface area, **Data resources** lists datasets, and **Project** covers how to contribute.

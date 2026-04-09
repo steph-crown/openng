@@ -1,6 +1,6 @@
 export function OpenNavLogo() {
   return (
-    <span className="flex items-center gap-2.5 font-semibold tracking-tight text-fd-foreground">
+    <span className="flex items-center gap-2.5 font-bold tracking-tight text-fd-foreground font-heading text-base">
       <svg
         width="24"
         height="24"

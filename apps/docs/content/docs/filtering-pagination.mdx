@@ -1,0 +1,25 @@
+---
+title: Filtering & pagination
+description: Query params, multi-value filters, and sorting
+icon: Filter
+---
+
+## Pagination
+
+Use `page` and `limit` (caps apply per resource). List responses include `meta.total`, `meta.pages`, etc.
+
+## Multi-value filters
+
+Many filters accept **comma-separated** values or repeated keys, for example:
+
+```
+?year=2024,2025&category=national,religious
+```
+
+## Filter types
+
+Common kinds: `exact`, `in`, `ilike`, `range_gte` / `range_lte` for dates. See each resource’s `/meta` for the exact set.
+
+## Sorting
+
+Where supported, use `sort` / `order` as documented on the resource—defaults are stable for caching.

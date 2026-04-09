@@ -1,0 +1,19 @@
+---
+title: States & LGAs
+description: Reference endpoints for Nigerian geography
+icon: Map
+---
+
+## States
+
+`GET /v1/ref/states` — optional `?geo_zone=` filter.
+
+`GET /v1/ref/states/:slug` — single state (e.g. `lagos`).
+
+## LGAs
+
+`GET /v1/ref/states/:slug/lgas` — LGAs for that state.
+
+`GET /v1/ref/lgas?state=:slug` — **requires** `state` filter.
+
+Use these ids to join resource rows that expose `state_id` / `lga_id`.

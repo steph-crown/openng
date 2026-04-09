@@ -1,14 +1,28 @@
 ---
 title: Quick start
-description: Make your first API request
+description: Base URL, first calls, and response basics
+icon: Zap
 ---
 
 ## Base URL
 
-Use `https://api.openng.dev` in production when it is available.
+| Environment | API base |
+| --- | --- |
+| Production | `https://api.openng.dev` |
+| Local | `http://localhost:3000` (when running the API stack) |
 
-## Example
+All versioned resources live under `/v1`.
+
+## Make a request
 
 ```bash
-curl -sS "https://api.openng.dev/health"
+curl -sS "https://api.openng.dev/v1/holidays?limit=3"
 ```
+
+You should receive a JSON **envelope** with `success: true`, a `data` array, and `meta` (totals, pagination, resource metadata).
+
+## Next steps
+
+- [Authentication](/authentication) — sessions and API keys
+- [Response format](/response-format) — fields every client should handle
+- [Rate limits](/rate-limits) — anonymous vs authenticated quotas
