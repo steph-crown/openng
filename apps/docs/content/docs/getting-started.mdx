@@ -4,36 +4,151 @@ description: Base URL, keys, authentication, terminology, and next steps
 icon: BookOpen
 ---
 
-OpenNG exposes **versioned JSON** under `https://api.openng.dev` (production). Local development typically uses `http://localhost:3000` when you run the API from this monorepo.
+import {
+  Activity,
+  BookOpenCheck,
+  Braces,
+  CircleHelp,
+  Compass,
+  KeyRound,
+  LockKeyhole,
+  Map,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+
+OpenNG exposes **versioned JSON** under `https://api.openng.dev` in production. This page gives you the shortest path from first read to first successful request.
+
+<Callout title="Start here">
+
+Read this page in order if you are new: understand the API surface, create a key if you need higher limits, choose the right authentication mode, then use the dataset pages for resource-specific filters and response details.
+
+</Callout>
+
+<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <Card
+    title="About the API"
+    href="#about-the-api"
+    icon={<Compass />}
+  >
+    Base URL, versioning, discovery, and health checks.
+  </Card>
+  <Card
+    title="Create an API key"
+    href="#create-an-api-key"
+    icon={<KeyRound />}
+  >
+    Dashboard flow, secret handling, and example authorization headers.
+  </Card>
+  <Card
+    title="Authentication"
+    href="#authentication"
+    icon={<LockKeyhole />}
+  >
+    Browser sessions, API keys, and anonymous access.
+  </Card>
+  <Card
+    title="FAQ"
+    href="#faq"
+    icon={<CircleHelp />}
+  >
+    Short answers to common questions before you start building.
+  </Card>
+</Cards>
 
 ## About the API
 
+OpenNG groups public data under resource routes like `/v1/holidays`. Most work starts with discovery, then a resource `meta` endpoint, then the dataset itself.
+
+<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  <Card title="Base URL" icon={<Compass />}>
+    Production requests go to `https://api.openng.dev`. Local development usually runs at `http://localhost:3000`.
+  </Card>
+  <Card title="Discovery" icon={<Search />}>
+    Use `GET /meta` to inspect available resources and versions before wiring a client.
+  </Card>
+  <Card title="Health" icon={<Activity />}>
+    Use `GET /health` for readiness checks behind load balancers, monitors, and CI.
+  </Card>
+</Cards>
+
+<CodeBlockTabs defaultValue="curl">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="curl">curl</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="fetch">fetch</CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+  <CodeBlockTab value="curl">
+
+```bash
+curl -sS "https://api.openng.dev/meta"
+curl -sS "https://api.openng.dev/v1/holidays/meta"
+curl -sS "https://api.openng.dev/health"
+```
+
+  </CodeBlockTab>
+  <CodeBlockTab value="fetch">
+
+```ts
+const [registry, holidaysMeta, health] = await Promise.all([
+  fetch("https://api.openng.dev/meta").then((res) => res.json()),
+  fetch("https://api.openng.dev/v1/holidays/meta").then((res) => res.json()),
+  fetch("https://api.openng.dev/health").then((res) => res.json()),
+]);
+```
+
+  </CodeBlockTab>
+</CodeBlockTabs>
+
 ### Versioning
 
-Paths are grouped as `/v1/{resource}`. Adding fields or filters is non-breaking; incompatible changes to a resource earn a new `/v2/{resource}` when required.
-
-### Discovery
-
-- `GET /meta` lists resources and supported versions.
-- `GET /v1/{resource}/meta` returns filters, columns, and dataset metadata for that resource.
-
-### Health
-
-`GET /health` reports database and Redis checks—use it behind load balancers and in CI.
+Paths are grouped as `/v1/{resource}`. Adding fields or filters is non-breaking. Incompatible changes to a specific resource earn a new `/v2/{resource}` only when needed.
 
 ## Create an API key
 
-### Web dashboard
+If you are building a script, backend integration, or worker, use an API key instead of browser cookies.
 
-Sign in on the main OpenNG app with your email. Open **Dashboard → API keys** and create a key. The full token is shown **once**—store it in a password manager or secret store.
+<Callout title="Store it once">
 
-### Format
+After you create a key in the dashboard, copy it immediately into a password manager, secret store, or environment variable. The plaintext token is shown once.
 
-Keys use the prefix `ong_live_` followed by a high-entropy segment. Send the entire string as:
+</Callout>
 
+### Dashboard flow
+
+1. Sign in on the main OpenNG app with your email.
+2. Open `Dashboard -> API keys`.
+3. Create a key and save the returned token.
+4. Send it as a bearer token on API requests.
+
+<CodeBlockTabs defaultValue="curl">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="curl">curl</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="fetch">fetch</CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+  <CodeBlockTab value="curl">
+
+```bash
+export OPENNG_API_KEY="ong_live_your_key_here"
+
+curl -sS "https://api.openng.dev/v1/holidays?limit=5" \
+  -H "Authorization: Bearer $OPENNG_API_KEY"
 ```
-Authorization: Bearer ong_live_…
+
+  </CodeBlockTab>
+  <CodeBlockTab value="fetch">
+
+```ts
+const response = await fetch("https://api.openng.dev/v1/holidays?limit=5", {
+  headers: {
+    Authorization: `Bearer ${process.env.OPENNG_API_KEY}`,
+  },
+});
+
+const json = await response.json();
 ```
+
+  </CodeBlockTab>
+</CodeBlockTabs>
 
 ### Rotation
 
@@ -41,51 +156,75 @@ Revoke the current key, then create a new one. Old keys stop working immediately
 
 ## Authentication
 
-### Browser sessions
+Choose the mode that matches your client.
 
-The marketing and dashboard apps use **passwordless email**. Links are single-use and short-lived; successful verification sets an **HttpOnly** session cookie.
+<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  <Card title="Browser sessions" icon={<LockKeyhole />}>
+    The web and dashboard apps use passwordless email links and an `HttpOnly` session cookie.
+  </Card>
+  <Card title="API keys" icon={<KeyRound />}>
+    Server-to-server and scripted access should use bearer tokens with the `ong_live_` prefix.
+  </Card>
+  <Card title="Anonymous access" icon={<ShieldCheck />}>
+    Public `GET` routes work without a key, but limits are lower than authenticated usage.
+  </Card>
+</Cards>
 
-### API keys
+### When to use what
 
-Server-to-server and script access should use **API keys** rather than scraping cookies. Keys are hashed in the database; plaintext never persists after creation.
-
-### Anonymous access
-
-Public `GET` endpoints work without a key at lower rate limits—ideal for experiments and prototypes.
+- Use **browser sessions** when a human is signing into the app.
+- Use **API keys** for scripts, cron jobs, workers, and backend services.
+- Use **anonymous access** for quick experiments and early prototypes.
 
 ## Terminology
 
-**Resource** — A dataset served at `/v1/{name}` with list, `meta`, and detail routes generated from one ResourceFactory config.
-
-**Envelope** — JSON shape with `success`, optional `data` or `error`, and `meta` on list responses.
-
-**Staging** — Import tables where rows are validated before promotion to `public`.
-
-**Batch** — Identifier tying imported rows together for validation and migration jobs.
+<Cards className="grid gap-4 sm:grid-cols-2">
+  <Card title="Resource" icon={<Compass />}>
+    A dataset served at `/v1/{name}` with list, `meta`, and detail routes generated from one config.
+  </Card>
+  <Card title="Envelope" icon={<Braces />}>
+    The JSON response shape with `success`, optional `data` or `error`, and `meta`.
+  </Card>
+  <Card title="Staging" icon={<Activity />}>
+    Import tables where rows are validated before promotion to `public`.
+  </Card>
+  <Card title="Batch" icon={<BookOpenCheck />}>
+    The identifier tying imported rows together for validation and migration jobs.
+  </Card>
+</Cards>
 
 ## FAQ
 
-### Do I need an API key?
-
-No for basic use. Keys raise rate limits and unlock future paid capabilities.
-
-### Is there GraphQL?
-
-Not currently—only REST under `/v1`.
-
-### Where is the OpenAPI spec?
-
-Generated from the API and published with the docs as the project matures; until then use `/meta` and each resource’s `/meta` route.
-
-### How do I report bad data?
-
-See [Contributing](/contributing). Include sources and the affected resource.
+<Accordions type="single">
+  <Accordion title="Do I need an API key?" id="do-i-need-an-api-key">
+    No for basic use. Keys raise rate limits and unlock higher-throughput access for scripts and integrations.
+  </Accordion>
+  <Accordion title="Is there GraphQL?" id="is-there-graphql">
+    Not currently. OpenNG is a REST API under `/v1`.
+  </Accordion>
+  <Accordion title="Where is the OpenAPI spec?" id="where-is-the-openapi-spec">
+    It will be published with the docs as generation matures. Until then, use `/meta` and each resource's `/meta` route for machine-readable discovery.
+  </Accordion>
+  <Accordion title="How do I report bad data?" id="how-do-i-report-bad-data">
+    See [Contributing](/contributing) and include the official source, the affected endpoint, and the identifiers you received.
+  </Accordion>
+</Accordions>
 
 ## Learn more
 
-- [Rate limits](/rate-limits) — headers and backoff.
-- [API formats](/api-formats) — response envelope and errors.
-- [How to read these docs](/how-to-read-docs) — headings, examples, and conventions.
-- [Holidays](/data-api/holidays) — dataset-specific pages.
+<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <Card title="Rate limits" href="/rate-limits" icon={<ShieldCheck />}>
+    Understand headers, reset windows, and backoff behavior.
+  </Card>
+  <Card title="API formats" href="/api-formats" icon={<Braces />}>
+    Review the response envelope, list metadata, and error objects.
+  </Card>
+  <Card title="How to read these docs" href="/how-to-read-docs" icon={<BookOpenCheck />}>
+    Learn how examples, headings, and internal links are organized.
+  </Card>
+  <Card title="Holidays" href="/data-api/holidays" icon={<Map />}>
+    Jump into a concrete dataset page with filters, examples, and metadata.
+  </Card>
+</Cards>
 
-The [GitHub repository](https://github.com/stephcrown/openng) tracks issues and roadmap discussion.
+The [GitHub repository](https://github.com/stephcrown/openng) tracks roadmap discussion and project updates.

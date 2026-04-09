@@ -53,7 +53,7 @@ export function DocsSidebarItem({ item }: { item: Item }) {
     <Link
       data-active={active}
       href={item.url}
-      className="relative flex flex-row items-center gap-2 rounded-lg p-2 text-start text-fd-muted-foreground transition-colors wrap-anywhere hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary"
+      className="relative flex flex-row items-center gap-2 rounded-lg p-2 text-[14px] text-start text-fd-muted-foreground transition-colors wrap-anywhere hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary"
     >
       {icon}
       {item.name}

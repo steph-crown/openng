@@ -35,7 +35,7 @@ export default async function Page(props: DocPageProps) {
       toc={page.data.toc}
     >
       <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
+      <DocsDescription className="mb-2">{page.data.description}</DocsDescription>
       <div className="not-prose mb-6 flex flex-row flex-wrap items-center gap-2 pb-2">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
         <ViewOptionsPopover githubUrl={githubRepo} markdownUrl={markdownUrl} />
