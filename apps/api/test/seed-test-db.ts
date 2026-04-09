@@ -1,12 +1,13 @@
 import postgres from "postgres";
 
+import { assertAllowedTestDatabaseName } from "./assert-test-database-url.js";
+
 const url = process.env.DATABASE_URL;
 if (!url) {
   throw new Error("DATABASE_URL is required to seed the test database");
 }
-if (url.includes("/openng_dev") || url.endsWith("openng_dev")) {
-  throw new Error("Refusing to seed openng_dev");
-}
+
+assertAllowedTestDatabaseName(url);
 
 const sql = postgres(url);
 

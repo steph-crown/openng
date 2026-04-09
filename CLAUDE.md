@@ -151,7 +151,7 @@ openng/
 
 ## API application layout (`apps/api`)
 
-**Automated tests:** `apps/api/test/` (Vitest). Integration tests call `createApp().fetch()` with `DATABASE_URL` pointing at **`openng_test`** only (see `apps/api/test/README.md`, `.env.test.example`).
+**Automated tests:** `apps/api/test/` (Vitest). Global setup migrates and seeds only when the **database name** in `DATABASE_URL_TEST` is allowlisted (default `openng_test`; comma-separated `ALLOWED_TEST_DATABASE_NAMES` for CI aliases). See `apps/api/test/README.md`, `.env.test.example`.
 
 Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical structure under `apps/api/src/{domain}/` (e.g. `auth/routes.ts`, `account/routes.ts`).
 
@@ -195,6 +195,7 @@ Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical str
 | Concern         | Tool                   | Notes                                              |
 | --------------- | ---------------------- | -------------------------------------------------- |
 | Language        | TypeScript             | Strict mode everywhere                             |
+| Runtime         | Node.js 22+            | Root `package.json` `engines`; `.nvmrc` for local version managers |
 | Package manager | pnpm                   | Workspaces, never use npm or yarn                  |
 | Monorepo        | Turborepo              | `turbo dev`, `turbo build`, `turbo lint`           |
 | API framework   | Hono (Node.js)         | `apps/api` only                                    |
@@ -685,7 +686,7 @@ pnpm tsx scripts/cleanup-staging.ts --resource {name} --older-than 90d
 pnpm --filter @openng/db db:generate -- --name={short_description}
 pnpm --filter @openng/db db:migrate
 
-# Tests (`openng_test` DB — see apps/api/test/README.md)
+# Tests (allowlisted test DB name — see apps/api/test/README.md)
 pnpm test
 pnpm --filter api test
 pnpm --filter shared test
