@@ -1,0 +1,17 @@
+---
+title: API formats
+description: JSON envelope, list meta, and error objects
+icon: Braces
+---
+
+## Success responses
+
+List endpoints return `success: true`, a `data` array, and `meta` with pagination and dataset fields.
+
+## Error responses
+
+Errors use `success: false` and an `error` object with `code`, `message`, and `docs` URL—never stack traces or internal SQL.
+
+## Content type
+
+Responses are `application/json; charset=utf-8` unless otherwise noted.

@@ -1,0 +1,20 @@
+---
+title: About the API
+description: Base URL, versioning, discovery, and health endpoints
+icon: LayoutTemplate
+---
+
+OpenNG exposes **versioned JSON** under `https://api.openng.dev` (production). Local development typically uses `http://localhost:3000` when you run the API from this monorepo.
+
+## Versioning
+
+Paths are grouped as `/v1/{resource}`. Adding fields or filters is non-breaking; incompatible changes to a resource earn a new `/v2/{resource}` when required.
+
+## Discovery
+
+- `GET /meta` lists resources and supported versions.
+- `GET /v1/{resource}/meta` returns filters, columns, and dataset metadata for that resource.
+
+## Health
+
+`GET /health` reports database and Redis checks—use it behind load balancers and in CI.

@@ -8,18 +8,8 @@
   --font-mono: var(--font-fira-mono), ui-monospace, monospace;
 }
 
-:root {
-  --color-fd-primary: hsl(0 0% 9%);
-  --color-fd-primary-foreground: hsl(0 0% 98%);
-}
-
 .dark {
   --color-fd-background: #000000;
-  --color-fd-card: hsl(0 0% 5%);
-  --color-fd-border: hsla(0 0% 100%, 0.12);
-  --color-fd-primary: hsl(0 0% 98%);
-  --color-fd-primary-foreground: hsl(0 0% 5%);
-  --color-fd-muted-foreground: hsl(0 0% 65%);
 }
 
 .prose :is(h1, h2, h3, h4) {

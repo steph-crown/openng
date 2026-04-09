@@ -1,0 +1,27 @@
+---
+title: API conventions
+description: Filters, pagination, sorting, and error codes
+icon: FileCode
+---
+
+## Pagination
+
+Use `page` and `limit`. Never assume defaults are unlimited—caps are enforced per resource.
+
+## Filters
+
+Many filters accept **comma-separated** values or repeated query keys. Exact names and types are listed in `GET /v1/{resource}/meta`.
+
+## Sorting
+
+When documented, `sort` and `order` follow each resource’s rules; otherwise rely on stable default ordering.
+
+## Common error codes
+
+| Code | When |
+| --- | --- |
+| `INVALID_FILTER` | Unknown or malformed query parameter |
+| `NOT_FOUND` | Missing record |
+| `RATE_LIMIT_EXCEEDED` | Too many requests in the window |
+
+See [API formats](/api-formats) for the error object shape.

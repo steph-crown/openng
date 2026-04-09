@@ -1,23 +1,19 @@
 {
   "title": "OpenNG",
   "pages": [
-    "---Introduction---",
+    "---Overview---",
+    "...getting-started",
     "index",
-    "quickstart",
-    "---Get started---",
-    "authentication",
     "rate-limits",
-    "response-format",
-    "---API---",
-    "api-overview",
-    "...resources",
-    "---Guides---",
-    "filtering-pagination",
-    "errors",
-    "---Reference---",
-    "states-lgas",
-    "---Project---",
-    "contributing",
-    "changelog"
+    "api-formats",
+    "how-to-read-docs",
+    "api-conventions",
+    "changelog",
+    "---Data API---",
+    "...data-api",
+    "---Reference API---",
+    "...ref-api",
+    "---More---",
+    "contributing"
   ]
 }

@@ -1,0 +1,18 @@
+---
+title: Holidays
+description: National and regional public holidays
+---
+
+## Overview
+
+`GET /v1/holidays` lists holidays with category, schedule kind, and observance metadata.
+
+## Filters
+
+See `GET /v1/holidays/meta` for the full set—typically `year`, `category`, `schedule_kind`, `is_confirmed`, `name`, and date ranges.
+
+## Example
+
+```bash
+curl -sS "https://api.openng.dev/v1/holidays?year=2025&category=national&limit=10"
+```

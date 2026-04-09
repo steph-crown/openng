@@ -1,0 +1,12 @@
+{
+  "title": "Getting started",
+  "icon": "BookOpen",
+  "pages": [
+    "about-the-api",
+    "create-api-key",
+    "authentication",
+    "terminology",
+    "faq",
+    "learn-more"
+  ]
+}

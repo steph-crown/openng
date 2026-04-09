@@ -1,0 +1,14 @@
+---
+title: LGAs
+description: Local government areas within a state
+---
+
+## By state
+
+`GET /v1/ref/states/:slug/lgas` — all LGAs for that state.
+
+## Filtered list
+
+`GET /v1/ref/lgas?state=:slug` — **`state` is required**.
+
+Each LGA includes `state_id` for joins with other datasets.

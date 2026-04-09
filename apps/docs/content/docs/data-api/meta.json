@@ -1,5 +1,4 @@
 {
-  "title": "Data resources",
-  "icon": "Database",
+  "title": "Data API",
   "pages": ["holidays", "fuel-prices", "food-prices"]
 }

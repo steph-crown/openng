@@ -29,10 +29,14 @@ export default async function Page(props: DocPageProps) {
   const markdownUrl = markdownUrlForPage(page.url);
 
   return (
-    <DocsPage full={page.data.full} toc={page.data.toc}>
+    <DocsPage
+      full={false}
+      tableOfContent={{ enabled: true }}
+      toc={page.data.toc}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
-      <div className="not-prose flex flex-row flex-wrap items-center gap-2 border-b border-fd-border pb-6 mb-6">
+      <div className="not-prose mb-6 flex flex-row flex-wrap items-center gap-2 pb-2">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
         <ViewOptionsPopover githubUrl={githubRepo} markdownUrl={markdownUrl} />
       </div>
