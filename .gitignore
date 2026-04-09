@@ -39,5 +39,8 @@ yarn-error.log*
 *.pem
 prd.md
 ROADMAP.md
+
+# Local runbooks (not committed)
+private/
 .history
 .pnpm-store

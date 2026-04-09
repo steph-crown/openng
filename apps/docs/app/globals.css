@@ -1,50 +1,26 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-fira-mono), ui-monospace, monospace;
+
+  --color-fd-primary: hsl(17 93% 57%);
+  --color-fd-primary-foreground: hsl(0 0% 100%);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-fd-primary: hsl(17 93% 52%);
+  --color-fd-primary-foreground: hsl(0 0% 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --color-fd-primary: hsl(17 93% 57%);
+  --color-fd-primary-foreground: hsl(0 0% 100%);
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+.prose :is(h1, h2, h3, h4) {
+  font-family: var(--font-heading);
 }

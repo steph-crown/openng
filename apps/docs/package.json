@@ -11,10 +11,18 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@openng/ui": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/mdx": "^2.0.13",
+    "fumadocs-core": "^16.7.11",
+    "fumadocs-mdx": "^14.2.11",
+    "fumadocs-ui": "^16.7.11",
+    "geist": "^1.7.0",
     "next": "16.2.0",
+    "postcss": "^8.5.9",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4"
   },
   "devDependencies": {
     "@openng/eslint-config": "workspace:*",

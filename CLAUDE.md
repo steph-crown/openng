@@ -73,13 +73,8 @@ openng/
 │   │   └── package.json
 │   │
 │   └── docs/                   ← Fumadocs → docs.openng.dev (Vercel in production)
-│       ├── app/
-│       │   └── docs/
-│       │       ├── page.tsx
-│       │       ├── getting-started/
-│       │       ├── resources/
-│       │       └── api-reference/          ← auto-generated from OpenAPI
-│       ├── content/            ← MDX files (written documentation)
+│       ├── app/docs/[[...slug]]  ← docs routes; `/` redirects to `/docs`
+│       ├── content/docs/       ← MDX + meta.yaml (Fumadocs MDX)
 │       └── package.json
 │
 ├── packages/
