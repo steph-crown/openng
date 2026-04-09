@@ -151,6 +151,8 @@ openng/
 
 ## API application layout (`apps/api`)
 
+**Automated tests:** `apps/api/test/` (Vitest). Integration tests call `createApp().fetch()` with `DATABASE_URL` pointing at **`openng_test`** only (see `apps/api/test/README.md`, `.env.test.example`).
+
 Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical structure under `apps/api/src/{domain}/` (e.g. `auth/routes.ts`, `account/routes.ts`).
 
 | Layer | Role |
@@ -682,6 +684,11 @@ pnpm tsx scripts/cleanup-staging.ts --resource {name} --older-than 90d
 # packages/db — schema migrations (DATABASE_URL required)
 pnpm --filter @openng/db db:generate -- --name={short_description}
 pnpm --filter @openng/db db:migrate
+
+# Tests (`openng_test` DB — see apps/api/test/README.md)
+pnpm test
+pnpm --filter api test
+pnpm --filter shared test
 
 # Lint/type check
 turbo lint

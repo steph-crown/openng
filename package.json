@@ -7,6 +7,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
+    "test": "turbo run test",
     "import-json": "tsx scripts/import-json/index.ts",
     "validate-staging": "tsx scripts/validate-staging/index.ts",
     "migrate-to-prod": "tsx scripts/migrate-to-prod/index.ts"
