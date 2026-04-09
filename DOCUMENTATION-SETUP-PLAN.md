@@ -1,6 +1,6 @@
 # Documentation site — setup plan
 
-**Status:** Fumadocs is integrated in `apps/docs`; run `pnpm --filter docs dev` and open `/docs`. Further work: real content, OpenAPI pipeline, and AI routes from `AI-AND-LLMS.md`.
+**Status:** Fumadocs is integrated in `apps/docs`; run `pnpm --filter docs dev` and open `/` (docs home at site root). Further work: real content, OpenAPI pipeline, and AI routes from `AI-AND-LLMS.md`.
 
 **Precedence:** Where this differs from `prd.md` §15, this plan wins (e.g. **Vercel** for docs). PRD remains useful for IA and OpenAPI goals.
 
@@ -43,11 +43,11 @@ Default **DocsLayout** provides the same class of UI as [fumadocs.dev](https://f
 
 ---
 
-## 6. Brand color (locked)
+## 6. Brand color
 
-- **Primary accent (buttons, key interactive): `#F86128`** (orange‑red).
-- Map to Fumadocs tokens via **`--color-fd-primary`** and **`--color-fd-primary-foreground`** in `app/globals.css` (see [Fumadocs theme](https://fumadocs.dev/docs/ui/theme)).
-- Keep semantic colors distinct: errors **rose/red**, success **green**, so orange stays “brand,” not “warning.”
+- **UI text and chrome:** neutral light/dark only (Fumadocs `neutral.css` preset)—**no orange as body or link color**; readability first (similar to [Zen Browser docs](https://docs.zen-browser.app/)).
+- **`#F86128`:** reserved for the **nav mark / logo icon** (`components/open-nav-logo.tsx`), not for primary text on dark backgrounds.
+- Swap the inline SVG in `open-nav-logo.tsx` when final brand assets are exported.
 
 ---
 
@@ -85,11 +85,12 @@ Prefer **Copy Markdown** + **Open in …** links; full embedded chat needs backe
 
 ## 11. Implemented in repo
 
-- `source.config.ts`, `next.config.mjs` (`createMDX`), Tailwind 4 + Fumadocs CSS presets.
+- `source.config.ts`, `next.config.mjs` (`createMDX`), Tailwind 4 + Fumadocs CSS presets (`neutral` + `preset`, no custom orange on `--color-fd-primary`).
+- `lib/source.ts`: `baseUrl: "/"` so production URLs are `https://docs.openng.dev/` and `https://docs.openng.dev/quickstart` (no `/docs` prefix).
 - `lib/source.ts` imports generated `../.source/server` (required for Turbopack resolution during build).
-- `app/docs/layout.tsx`, `app/docs/[[...slug]]/page.tsx`, `app/api/search/route.ts`, `components/mdx.tsx`.
+- `app/(documentation)/layout.tsx`, `app/(documentation)/[[...slug]]/page.tsx`, `app/api/search/route.ts`, `components/mdx.tsx`.
 - Placeholder pages: `content/docs/index.mdx`, `quickstart.mdx`, `meta.yaml`.
-- `/` → `/docs` redirect.
+- Nav: `OpenNavLogo` (orange icon + `text-fd-foreground` wordmark).
 
 ---
 

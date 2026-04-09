@@ -8,7 +8,7 @@ Stack: [Next.js 16](https://nextjs.org) + [Fumadocs](https://fumadocs.dev) (same
 pnpm --filter docs dev
 ```
 
-Open [http://localhost:3002/docs](http://localhost:3002/docs). `/` redirects to `/docs`.
+Open [http://localhost:3002](http://localhost:3002). With `baseUrl: "/"`, the docs home is the **root** of the app (on production: `https://docs.openng.dev/`, not `/docs`).
 
 ## Content
 

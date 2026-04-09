@@ -6,19 +6,6 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-fira-mono), ui-monospace, monospace;
-
-  --color-fd-primary: hsl(17 93% 57%);
-  --color-fd-primary-foreground: hsl(0 0% 100%);
-}
-
-:root {
-  --color-fd-primary: hsl(17 93% 52%);
-  --color-fd-primary-foreground: hsl(0 0% 100%);
-}
-
-.dark {
-  --color-fd-primary: hsl(17 93% 57%);
-  --color-fd-primary-foreground: hsl(0 0% 100%);
 }
 
 .prose :is(h1, h2, h3, h4) {
