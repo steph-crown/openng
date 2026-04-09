@@ -55,7 +55,7 @@ openng/
 │   │   │   └── ...
 │   │   └── package.json
 │   │
-│   ├── web/                    ← Next.js → openng.dev
+│   ├── web/                    ← Next.js → openng.dev (Vercel in production)
 │   │   ├── app/
 │   │   │   ├── page.tsx                    ← / (landing page)
 │   │   │   ├── explore/
@@ -72,7 +72,7 @@ openng/
 │   │   │       └── page.tsx                ← /contribute
 │   │   └── package.json
 │   │
-│   └── docs/                   ← Fumadocs → docs.openng.dev
+│   └── docs/                   ← Fumadocs → docs.openng.dev (Vercel in production)
 │       ├── app/
 │       │   └── docs/
 │       │       ├── page.tsx
@@ -215,21 +215,19 @@ Hand-written domains (`auth`, `account`, `admin`, …) use the same vertical str
 
 ## Infrastructure
 
-**Production:** Hetzner VPS (CAX21 — 3 ARM vCPU, 4GB RAM)
-**CDN/DNS/WAF:** Cloudflare (free tier)
+**Production:** Hetzner VPS (CAX21 — 3 ARM vCPU, 4GB RAM) runs the **API** (`api.openng.dev`), PostgreSQL, Redis, SigNoz, Caddy, and PM2. **`openng.dev`** and **`docs.openng.dev`** are hosted on **Vercel** (Next.js apps), not on the VPS.
+**CDN/DNS/WAF:** Cloudflare (free tier) — `api.openng.dev` DNS points at the VPS; apex and docs hostnames follow Vercel’s DNS instructions in Cloudflare.
 
 **Service → port mapping on VPS:**
 
 ```
-api.openng.dev  → Hono API         → localhost:3000
-openng.dev      → Next.js web      → localhost:3001
-docs.openng.dev → Fumadocs         → localhost:3002
+api.openng.dev  → Caddy → Hono API → localhost:3000
                   PostgreSQL        → localhost:5432 (internal only)
                   Redis             → localhost:6379 (internal only)
                   SigNoz            → localhost:3301 (internal only)
 ```
 
-Caddy handles TLS, routing, and proxying. No port is exposed externally except 80 and 443.
+Caddy on the VPS terminates TLS and reverse-proxies **only** `api.openng.dev` to the API. No port is exposed externally except 22 (SSH), 80, and 443.
 
 **Local development:**
 
