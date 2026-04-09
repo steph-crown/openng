@@ -5,17 +5,14 @@ icon: Sparkles
 ---
 
 import {
-  Boxes,
+  BookOpen,
   Braces,
   Calendar,
   Fuel,
   Gauge,
-  HeartPulse,
-  KeyRound,
   Map,
   Network,
   PackageOpen,
-  Shield,
   Utensils,
 } from "lucide-react";
 
@@ -55,20 +52,14 @@ Validated rows migrate to **`public`** schema tables. The API reads **only** fro
 
 ## What to read first
 
-These Overview pages use **icons in the sidebar** so you can scan quickly. Start with **Getting started** for keys and auth, then skim **API formats** and **API conventions** before you hit dataset pages.
+Start with [**Getting started**](/getting-started) for base URL, keys, and auth, then skim [**API formats**](/api-formats) and [**API conventions**](/api-conventions) before you open dataset pages.
 
 <Cards className="grid gap-4 sm:grid-cols-2">
   <Card
-    description="Base URL, `/meta`, `/health`, and how resources are versioned."
-    href="/getting-started/about-the-api"
-    icon={<Boxes />}
-    title="About the API"
-  />
-  <Card
-    description="Create a key in the dashboard and send `Authorization: Bearer` from scripts."
-    href="/getting-started/create-api-key"
-    icon={<KeyRound />}
-    title="API keys"
+    description="Base URL, keys, authentication, terminology, FAQ, and next links in one place."
+    href="/getting-started"
+    icon={<BookOpen />}
+    title="Getting started"
   />
   <Card
     description="Anonymous limits vs authenticated limits; headers on every response."
@@ -81,6 +72,12 @@ These Overview pages use **icons in the sidebar** so you can scan quickly. Start
     href="/api-formats"
     icon={<Braces />}
     title="API formats"
+  />
+  <Card
+    description="Headings, examples, and cross-links."
+    href="/how-to-read-docs"
+    icon={<BookOpen />}
+    title="How to read these docs"
   />
 </Cards>
 
@@ -121,14 +118,14 @@ Live and planned resources follow the same **ResourceFactory** contract: list, `
   />
   <Card
     description="`GET /health` and `GET /meta` for probes and discovery."
-    href="/getting-started/about-the-api"
-    icon={<HeartPulse />}
+    href="/getting-started#health"
+    icon={<Gauge />}
     title="Health & discovery"
   />
   <Card
     description="Optional bearer token for higher throughput than anonymous IP limits."
-    href="/getting-started/create-api-key"
-    icon={<Shield />}
+    href="/getting-started#create-an-api-key"
+    icon={<Gauge />}
     title="Authenticated access"
   />
   <Card
@@ -147,140 +144,6 @@ Live and planned resources follow the same **ResourceFactory** contract: list, `
 
 <Callout title="Keep reading">
 
-The **On this page** column on the right tracks headings on **this** page—scroll the main column and watch the marker move. For a longer walkthrough of examples and doc conventions, open [How to read these docs](/how-to-read-docs).
+The **On this page** column lists headings on this page. For detail on keys and auth, use [**Getting started**](/getting-started). For reading conventions, see [**How to read these docs**](/how-to-read-docs).
 
 </Callout>
-
-## Long-form reference (scroll test)
-
-The sections below exist so you can **scroll** past the viewport and confirm the table of contents keeps up. They repeat concepts from other pages in more detail.
-
-### Reliability
-
-OpenNG is designed for **uptime-sensitive** clients: deterministic URLs, cache-friendly `GET`s, and explicit `429` responses when you exceed quotas. Prefer exponential backoff and jitter when you retry.
-
-#### Caching hints
-
-List endpoints emit pagination metadata so you can prefetch the next page without guessing sizes. Immutable reference rows (states, LGAs) should live in your own cache with long TTLs.
-
-#### Idempotency
-
-`GET` requests are safe to repeat. Do not expect idempotent `POST` on the public API—writes for contributed data go through separate flows documented on the main site.
-
-### Observability
-
-Correlate client timestamps with `meta.last_updated` on each response. When numbers look stale, check the advertised `source_url` and `freshness` before opening an issue.
-
-#### Headers worth logging
-
-Store anonymized samples of rate-limit headers to tune your worker pools. Never log bearer tokens or full API keys.
-
-#### Tracing requests
-
-When debugging with maintainers, include resource name, approximate time window, and a redacted example query string—no secrets.
-
-### Geography joins
-
-Most datasets eventually expose `state_id` or `lga_id`. Join against `/v1/ref/states` and `/v1/ref/lgas` **before** you aggregate, so you do not fork state names locally.
-
-#### Slugs vs ids
-
-Prefer **stable ids** in your database and human-readable **slugs** in URLs you share. The API exposes both where applicable.
-
-#### FCT handling
-
-The Federal Capital Territory is modeled like a state for filtering; LGAs under FCT behave like any other state’s LGAs.
-
-### Versioning policy
-
-Non-breaking additions—new optional filters, new columns in `data`—do not change the `/v1` path. Breaking removals or incompatible filter semantics require a new resource version and a migration period announced in the [Changelog](/changelog).
-
-#### Deprecation headers
-
-When a field or route is phased out, responses may include deprecation hints; watch the changelog and upgrade before hard removal.
-
-#### Client libraries
-
-Official SDKs may lag the API slightly—always trust the live `/meta` response when in doubt.
-
-## FAQ
-
-### Do I need an API key to try OpenNG?
-
-No. Start anonymous, then add a key when you need higher limits or automation without throttling.
-
-### Where is the OpenAPI document?
-
-It will ship alongside the docs as generation matures. Until then, use `/meta` and each resource’s `/meta` route for machine-readable field and filter definitions.
-
-### How do I report incorrect rows?
-
-Use [Contributing](/contributing). Link to the official source you expect, the endpoint you called, and the identifiers you received.
-
-### Can I use OpenNG from the browser?
-
-Yes for public `GET`s where CORS allows your origin. For authenticated dashboard flows, use the main web app; for scripts, use API keys server-side.
-
-### Is there a sandbox base URL?
-
-Use a local deployment during development; production is `https://api.openng.dev`. There is no separate sandbox cluster yet.
-
-### What about bulk exports?
-
-Export routes are gated by tier and policy. Watch dataset pages for when `/export` opens up per resource.
-
-## Appendix A — glossary
-
-#### Batch identifier
-
-UUID grouping rows from one import job so validation and migration stored procedures can process them together.
-
-#### ResourceFactory
-
-Configuration-driven router factory in the API—one definition powers list, meta, detail, and export routes for standard datasets.
-
-#### Wide events
-
-Structured logging for each HTTP request; operators use them for latency and error analysis without leaking secrets.
-
-## Appendix B — placeholder depth
-
-#### Level four heading sample one
-
-Short paragraph expanding the glossary with operational detail. Repeat reading for scroll length.
-
-#### Level four heading sample two
-
-Another paragraph. If you still do not see the TOC progress indicator move, shrink your window height and keep scrolling through Appendix C.
-
-### Appendix C — more filler
-
-OpenNG documentation mirrors the Fumadocs layout: sidebar search, collapsible folders, and a right-hand outline. The outline should reflect **this** page’s hierarchy down to `h4` where authors use it.
-
-#### Nested item A
-
-Lorem-style text: public data programs fail when updates are unpredictable—OpenNG encodes **freshness** and **source** on every list response so clients know what they are looking at.
-
-#### Nested item B
-
-Lorem-style text: when you build civic tech, treat the API as a contract. Breaking changes are rare but communicated per resource, not globally.
-
-#### Nested item C
-
-Lorem-style text: prefer reading **API conventions** before you hand-roll query strings—multi-value filters have specific merge rules.
-
-### Appendix D — even more filler
-
-If you have scrolled this far, you should see multiple active regions in the right-hand list as you move. That is the expected Fumadocs behavior: the vertical rail tracks the heading nearest the top of the viewport.
-
-#### Monitoring
-
-Track your own p95 latency separately from OpenNG’s. Sudden spikes often mean cache misses or cold database paths—not necessarily API outages.
-
-#### Fair use
-
-Aggressive polling without caching hurts everyone. Batch reads, use `limit` sensibly, and store reference data locally.
-
-## Learn more
-
-Continue in the sidebar: **Getting started** walks through keys and terminology; **Data API** lists datasets; **Reference API** covers geography endpoints.

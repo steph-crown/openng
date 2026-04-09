@@ -19,3 +19,12 @@
 #nd-page > h1 {
   font-family: var(--font-heading);
 }
+
+#nd-sidebar aside p.inline-flex.items-center.gap-2.mb-1,
+#nd-sidebar-mobile p.inline-flex.items-center.gap-2.mb-1 {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-fd-muted-foreground) 55%, transparent);
+}
