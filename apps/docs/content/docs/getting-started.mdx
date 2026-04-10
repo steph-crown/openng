@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Base URL, keys, authentication, terminology, and next steps
+description: Base URL, keys, authentication, and first requests
 icon: BookOpen
 ---
 
@@ -45,66 +45,405 @@ Paths are grouped as `/v1/{resource}`. Adding fields or filters is non-breaking.
 
 No installation required. OpenNG is an HTTP API — call it from any language, environment, or tool that can make a request.
 
-The fastest way to see it working:
+**Run** issues the request against **`http://localhost:3000`** (typical local API). Tabs are the same code blocks as the rest of the docs; nothing appears below until a response returns.
+
+You should see JSON with every Nigerian public holiday declared for **2026**: dates, types, observance notes, and source links.
+
+<ApiPlayground path="/v1/holidays" query={{ year: 2026 }}>
+  <CodeBlockTabs
+    defaultValue="curl"
+    className="!my-0 rounded-b-none border-b-0 shadow-none"
+  >
+    <CodeBlockTabsList>
+      <CodeBlockTabsTrigger value="curl">curl</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="javascript">JavaScript</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="python">Python</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="rust">Rust</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="java">Java</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="cpp">C++</CodeBlockTabsTrigger>
+    </CodeBlockTabsList>
+    <CodeBlockTab value="curl">
 
 ```bash
-curl "https://api.openng.dev/v1/holidays?year=2026"
+curl -sS "http://localhost:3000/v1/holidays?year=2026" \
+  -H 'Accept: application/json'
 ```
 
-You should get back JSON with every Nigerian public holiday declared for **2026**: confirmed dates, types, observance notes, and source links.
+    </CodeBlockTab>
+    <CodeBlockTab value="javascript">
 
-Try filtering by type:
-
-```bash
-curl "https://api.openng.dev/v1/holidays?year=2026&type=fixed"
+```ts
+const response = await fetch("http://localhost:3000/v1/holidays?year=2026", {
+  headers: { Accept: "application/json" },
+});
+process.stdout.write(await response.text());
 ```
 
-Inspect a resource’s metadata — this lists filters and fields for the endpoint:
-
-```bash
-curl "https://api.openng.dev/v1/holidays/meta"
-```
-
-<CodeBlockTabs defaultValue="js">
-  <CodeBlockTabsList>
-    <CodeBlockTabsTrigger value="js">JavaScript</CodeBlockTabsTrigger>
-    <CodeBlockTabsTrigger value="py">Python</CodeBlockTabsTrigger>
-  </CodeBlockTabsList>
-  <CodeBlockTab value="js">
-
-```js
-const response = await fetch("https://api.openng.dev/v1/holidays?year=2026");
-const { data, meta } = await response.json();
-
-console.log(`${meta.total} holidays in 2026`);
-data.forEach((h) => console.log(`${h.date} — ${h.name}`));
-```
-
-  </CodeBlockTab>
-  <CodeBlockTab value="py">
+    </CodeBlockTab>
+    <CodeBlockTab value="python">
 
 ```python
-import requests
+import sys
+import urllib.request
 
-res = requests.get(
-    "https://api.openng.dev/v1/holidays",
-    params={"year": 2026},
+req = urllib.request.Request(
+    "http://localhost:3000/v1/holidays?year=2026",
+    method="GET",
+    headers={"Accept": "application/json"},
 )
-payload = res.json()
-
-for holiday in payload["data"]:
-    print(f"{holiday['date']} — {holiday['name']}")
+with urllib.request.urlopen(req) as resp:
+    sys.stdout.buffer.write(resp.read())
 ```
 
-  </CodeBlockTab>
-</CodeBlockTabs>
+    </CodeBlockTab>
+    <CodeBlockTab value="rust">
 
-Anonymous requests work for exploration. For production workloads, create a free API key at [openng.dev](https://openng.dev/dashboard) and send it on each request:
+```rust
+// Cargo.toml: ureq = { version = "2.9", features = ["tls"] }
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let resp = ureq::get("http://localhost:3000/v1/holidays?year=2026")
+        .set("Accept", "application/json")
+        .call()?;
+    print!("{}", resp.into_string()?);
+    Ok(())
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="java">
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    HttpClient client =
+        HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
+    HttpRequest req =
+        HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:3000/v1/holidays?year=2026"))
+            .timeout(Duration.ofSeconds(60))
+            .GET()
+            .header("Accept", "application/json")
+            .build();
+    HttpResponse<String> res =
+        client.send(req, HttpResponse.BodyHandlers.ofString());
+    System.out.print(res.body());
+  }
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="cpp">
+
+```cpp
+// g++ -std=c++17 main.cpp -lcurl -o openng_try && ./openng_try
+
+#include <curl/curl.h>
+#include <iostream>
+#include <string>
+
+static size_t writecb(char *ptr, size_t size, size_t nmemb, void *userdata) {
+  auto *out = static_cast<std::string *>(userdata);
+  out->append(ptr, size * nmemb);
+  return size * nmemb;
+}
+
+int main() {
+  const char *url = "http://localhost:3000/v1/holidays?year=2026";
+  CURL *curl = curl_easy_init();
+  if (!curl) return 1;
+  std::string body;
+  struct curl_slist *headers = nullptr;
+  headers = curl_slist_append(headers, "Accept: application/json");
+  curl_easy_setopt(curl, CURLOPT_URL, url);
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writecb);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+  CURLcode rc = curl_easy_perform(curl);
+  curl_slist_free_all(headers);
+  curl_easy_cleanup(curl);
+  if (rc != CURLE_OK) return 1;
+  std::cout << body;
+  return 0;
+}
+```
+
+    </CodeBlockTab>
+  </CodeBlockTabs>
+</ApiPlayground>
+
+Try filtering by type (`fixed` holidays):
+
+<ApiPlayground path="/v1/holidays" query={{ year: 2026, type: "fixed" }}>
+  <CodeBlockTabs
+    defaultValue="curl"
+    className="!my-0 rounded-b-none border-b-0 shadow-none"
+  >
+    <CodeBlockTabsList>
+      <CodeBlockTabsTrigger value="curl">curl</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="javascript">JavaScript</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="python">Python</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="rust">Rust</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="java">Java</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="cpp">C++</CodeBlockTabsTrigger>
+    </CodeBlockTabsList>
+    <CodeBlockTab value="curl">
 
 ```bash
-curl "https://api.openng.dev/v1/holidays?year=2026" \
-  -H "Authorization: Bearer ong_live_your_key_here"
+curl -sS "http://localhost:3000/v1/holidays?year=2026&type=fixed" \
+  -H 'Accept: application/json'
 ```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="javascript">
+
+```ts
+const response = await fetch(
+  "http://localhost:3000/v1/holidays?year=2026&type=fixed",
+  {
+    headers: { Accept: "application/json" },
+  },
+);
+process.stdout.write(await response.text());
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="python">
+
+```python
+import sys
+import urllib.request
+
+req = urllib.request.Request(
+    "http://localhost:3000/v1/holidays?year=2026&type=fixed",
+    method="GET",
+    headers={"Accept": "application/json"},
+)
+with urllib.request.urlopen(req) as resp:
+    sys.stdout.buffer.write(resp.read())
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="rust">
+
+```rust
+// Cargo.toml: ureq = { version = "2.9", features = ["tls"] }
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let resp = ureq::get("http://localhost:3000/v1/holidays?year=2026&type=fixed")
+        .set("Accept", "application/json")
+        .call()?;
+    print!("{}", resp.into_string()?);
+    Ok(())
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="java">
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    HttpClient client =
+        HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
+    HttpRequest req =
+        HttpRequest.newBuilder()
+            .uri(
+                URI.create("http://localhost:3000/v1/holidays?year=2026&type=fixed"))
+            .timeout(Duration.ofSeconds(60))
+            .GET()
+            .header("Accept", "application/json")
+            .build();
+    HttpResponse<String> res =
+        client.send(req, HttpResponse.BodyHandlers.ofString());
+    System.out.print(res.body());
+  }
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="cpp">
+
+```cpp
+// g++ -std=c++17 main.cpp -lcurl -o openng_try && ./openng_try
+
+#include <curl/curl.h>
+#include <iostream>
+#include <string>
+
+static size_t writecb(char *ptr, size_t size, size_t nmemb, void *userdata) {
+  auto *out = static_cast<std::string *>(userdata);
+  out->append(ptr, size * nmemb);
+  return size * nmemb;
+}
+
+int main() {
+  const char *url =
+      "http://localhost:3000/v1/holidays?year=2026&type=fixed";
+  CURL *curl = curl_easy_init();
+  if (!curl) return 1;
+  std::string body;
+  struct curl_slist *headers = nullptr;
+  headers = curl_slist_append(headers, "Accept: application/json");
+  curl_easy_setopt(curl, CURLOPT_URL, url);
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writecb);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+  CURLcode rc = curl_easy_perform(curl);
+  curl_slist_free_all(headers);
+  curl_easy_cleanup(curl);
+  if (rc != CURLE_OK) return 1;
+  std::cout << body;
+  return 0;
+}
+```
+
+    </CodeBlockTab>
+  </CodeBlockTabs>
+</ApiPlayground>
+
+Inspect resource metadata — filters and fields for the endpoint:
+
+<ApiPlayground path="/v1/holidays/meta">
+  <CodeBlockTabs
+    defaultValue="curl"
+    className="!my-0 rounded-b-none border-b-0 shadow-none"
+  >
+    <CodeBlockTabsList>
+      <CodeBlockTabsTrigger value="curl">curl</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="javascript">JavaScript</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="python">Python</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="rust">Rust</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="java">Java</CodeBlockTabsTrigger>
+      <CodeBlockTabsTrigger value="cpp">C++</CodeBlockTabsTrigger>
+    </CodeBlockTabsList>
+    <CodeBlockTab value="curl">
+
+```bash
+curl -sS "http://localhost:3000/v1/holidays/meta" \
+  -H 'Accept: application/json'
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="javascript">
+
+```ts
+const response = await fetch("http://localhost:3000/v1/holidays/meta", {
+  headers: { Accept: "application/json" },
+});
+process.stdout.write(await response.text());
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="python">
+
+```python
+import sys
+import urllib.request
+
+req = urllib.request.Request(
+    "http://localhost:3000/v1/holidays/meta",
+    method="GET",
+    headers={"Accept": "application/json"},
+)
+with urllib.request.urlopen(req) as resp:
+    sys.stdout.buffer.write(resp.read())
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="rust">
+
+```rust
+// Cargo.toml: ureq = { version = "2.9", features = ["tls"] }
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let resp = ureq::get("http://localhost:3000/v1/holidays/meta")
+        .set("Accept", "application/json")
+        .call()?;
+    print!("{}", resp.into_string()?);
+    Ok(())
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="java">
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    HttpClient client =
+        HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
+    HttpRequest req =
+        HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:3000/v1/holidays/meta"))
+            .timeout(Duration.ofSeconds(60))
+            .GET()
+            .header("Accept", "application/json")
+            .build();
+    HttpResponse<String> res =
+        client.send(req, HttpResponse.BodyHandlers.ofString());
+    System.out.print(res.body());
+  }
+}
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab value="cpp">
+
+```cpp
+// g++ -std=c++17 main.cpp -lcurl -o openng_try && ./openng_try
+
+#include <curl/curl.h>
+#include <iostream>
+#include <string>
+
+static size_t writecb(char *ptr, size_t size, size_t nmemb, void *userdata) {
+  auto *out = static_cast<std::string *>(userdata);
+  out->append(ptr, size * nmemb);
+  return size * nmemb;
+}
+
+int main() {
+  const char *url = "http://localhost:3000/v1/holidays/meta";
+  CURL *curl = curl_easy_init();
+  if (!curl) return 1;
+  std::string body;
+  struct curl_slist *headers = nullptr;
+  headers = curl_slist_append(headers, "Accept: application/json");
+  curl_easy_setopt(curl, CURLOPT_URL, url);
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writecb);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+  CURLcode rc = curl_easy_perform(curl);
+  curl_slist_free_all(headers);
+  curl_easy_cleanup(curl);
+  if (rc != CURLE_OK) return 1;
+  std::cout << body;
+  return 0;
+}
+```
+
+    </CodeBlockTab>
+  </CodeBlockTabs>
+</ApiPlayground>
 
 ## Create an API key
 

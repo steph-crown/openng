@@ -4,11 +4,14 @@ import { Callout } from "fumadocs-ui/components/callout";
 import { Card, Cards } from "fumadocs-ui/components/card";
 import type { MDXComponents } from "mdx/types";
 
+import { ApiPlayground } from "@/components/api-playground";
+
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
     Accordion,
     Accordions,
+    ApiPlayground,
     Callout,
     Card,
     Cards,

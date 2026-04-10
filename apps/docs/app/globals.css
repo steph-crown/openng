@@ -338,6 +338,10 @@ body {
   border-radius: 12px;
 }
 
+#nd-page .openng-page-footer-nav > a:hover {
+  background-color: var(--openng-card-hover-bg) !important;
+}
+
 #nd-sidebar aside p.inline-flex.items-center.gap-2.mb-1,
 #nd-sidebar-mobile p.inline-flex.items-center.gap-2.mb-1 {
   font-size: 12px;
