@@ -48,6 +48,11 @@
   font-size: 16px;
 }
 
+.getting-started-faq button {
+  font-size: 14px;
+  font-weight: 500;
+}
+
 #nd-sidebar aside p.inline-flex.items-center.gap-2.mb-1,
 #nd-sidebar-mobile p.inline-flex.items-center.gap-2.mb-1 {
   font-size: 0.625rem;
