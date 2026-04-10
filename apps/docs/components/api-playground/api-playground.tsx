@@ -7,7 +7,7 @@ import {
   CodeBlockTabsTrigger,
 } from "fumadocs-ui/components/codeblock";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { ArrowBigRight, Check, Clipboard, Loader2 } from "lucide-react";
+import { Check, Clipboard, Loader2, Play } from "lucide-react";
 import { Suspense, useCallback, useMemo, useState } from "react";
 
 import { buildOpenngApiUrl } from "@/lib/build-openng-api-url";
@@ -114,7 +114,7 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
       {running ? (
         <Loader2 className="size-3.5 shrink-0 animate-spin text-fd-primary" />
       ) : (
-        <ArrowBigRight
+        <Play
           className="size-3.5 shrink-0 text-fd-primary [&_path]:fill-current [&_path]:stroke-none"
           aria-hidden
         />
