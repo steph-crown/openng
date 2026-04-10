@@ -23,7 +23,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html className={`${plusJakarta.variable} ${GeistSans.variable} ${GeistMono.variable}`} lang="en" suppressHydrationWarning>
-      <body className="flex min-h-screen flex-col font-sans antialiased">
+      <body
+        className="flex min-h-screen flex-col font-sans antialiased"
+        suppressHydrationWarning
+      >
         <RootProvider>{children}</RootProvider>
       </body>
     </html>
