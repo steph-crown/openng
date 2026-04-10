@@ -23,6 +23,10 @@
   --openng-callout-body: #737373;
   --openng-toggle-active-bg: #dadada;
   --openng-selection-foreground: #171717;
+  --openng-inline-code-fg: #1c1c1c;
+  --openng-inline-code-bg: #e6e6e4;
+  --openng-inline-code-border: #cfcfc8;
+  --openng-card-hover-bg: color-mix(in oklab, var(--openng-text-color) 8%, #ffffff);
 
   --color-fd-background: var(--openng-page-bg);
   --color-fd-foreground: var(--openng-text-color);
@@ -54,6 +58,10 @@
   --openng-callout-body: #b3b3b3cc;
   --openng-toggle-active-bg: #6868684d;
   --openng-selection-foreground: #171717;
+  --openng-inline-code-fg: #e8e8e8;
+  --openng-inline-code-bg: #222222;
+  --openng-inline-code-border: #3a3a3a;
+  --openng-card-hover-bg: color-mix(in oklab, #ffffff 9%, var(--openng-page-bg));
 
   --color-fd-background: var(--openng-page-bg);
   --color-fd-foreground: var(--openng-text-color);
@@ -136,11 +144,12 @@ body {
 #nd-page .prose code {
   font-size: 0.9em;
   font-weight: 500;
-  color: var(--openng-accent);
-  background-color: color-mix(in oklab, var(--openng-accent) 14%, transparent);
+  font-family: var(--font-mono);
+  color: var(--openng-inline-code-fg);
+  background-color: var(--openng-inline-code-bg);
   padding: 0.12em 0.4em;
   border-radius: 0.25rem;
-  border: 1px solid color-mix(in oklab, var(--openng-accent) 35%, transparent);
+  border: 1px solid var(--openng-inline-code-border);
 }
 
 #nd-page .prose pre code {
@@ -160,11 +169,16 @@ body {
 #nd-page [data-card] code {
   font-size: 0.9em;
   font-weight: 500;
-  color: var(--openng-accent);
-  background-color: color-mix(in oklab, var(--openng-accent) 14%, transparent);
+  font-family: var(--font-mono);
+  color: var(--openng-inline-code-fg);
+  background-color: var(--openng-inline-code-bg);
   padding: 0.12em 0.35em;
   border-radius: 0.25rem;
-  border: 1px solid color-mix(in oklab, var(--openng-accent) 35%, transparent);
+  border: 1px solid var(--openng-inline-code-border);
+}
+
+#nd-page a[data-card]:hover {
+  background-color: var(--openng-card-hover-bg) !important;
 }
 
 #nd-sidebar a.rounded-lg:hover,

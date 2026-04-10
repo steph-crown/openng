@@ -73,9 +73,7 @@ curl "https://api.openng.dev/v1/holidays/meta"
   <CodeBlockTab value="js">
 
 ```js
-const response = await fetch(
-  "https://api.openng.dev/v1/holidays?year=2026",
-);
+const response = await fetch("https://api.openng.dev/v1/holidays?year=2026");
 const { data, meta } = await response.json();
 
 console.log(`${meta.total} holidays in 2026`);
@@ -163,16 +161,6 @@ Revoke the current key, then create a new one. Old keys stop working immediately
 
 Sessions, bearer API keys, and anonymous `GET` access are documented on the dedicated [**Authentication**](/authentication) page, including when to use each mode and the `Authorization` header shape.
 
-## Terminology
-
-**Resource**: A dataset served at `/v1/{name}` with list, `meta`, and detail routes generated from one config.
-
-**Envelope**: The JSON response shape with `success`, optional `data` or `error`, and `meta`.
-
-**Staging**: Import tables where rows are validated before promotion to `public`.
-
-**Batch**: The identifier tying imported rows together for validation and migration jobs.
-
 ## What You Can Build
 
 OpenNG is infrastructure. The data is the ingredient — what you build is the product.
@@ -191,43 +179,60 @@ If you ship something on OpenNG, [open a GitHub issue](https://github.com/stephc
 
 <Accordions className="getting-started-faq" type="single">
   <Accordion title="Do I need an API key to use OpenNG?" id="faq-api-key">
-    No. Anonymous requests are allowed and work immediately with no signup. Anonymous access is rate-limited to **500 requests per day**. For higher limits and access to bulk exports where available, create a free account at [openng.dev/dashboard](https://openng.dev/dashboard).
+    No. Anonymous requests are allowed and work immediately with no signup.
+    Anonymous access is rate-limited to **500 requests per day**. For higher
+    limits and access to bulk exports where available, create a free account at
+    [openng.dev/dashboard](https://openng.dev/dashboard).
   </Accordion>
   <Accordion title="How often is the data updated?" id="faq-updates">
-    It depends on the resource. Public holidays update when the Federal Government makes a new declaration — roughly 8–10 times per year. Fuel prices update monthly from NBS data. Static resources like postal codes update when the underlying data changes. Every API response includes a `last_updated` field, and `update_frequency` (where applicable) is described in each resource’s `/meta` response.
+    It depends on the resource. Public holidays update when the Federal
+    Government makes a new declaration — roughly 8–10 times per year. Fuel
+    prices update monthly from NBS data. Static resources like postal codes
+    update when the underlying data changes. Every API response includes a
+    `last_updated` field, and `update_frequency` (where applicable) is described
+    in each resource’s `/meta` response.
   </Accordion>
   <Accordion title="Is the data accurate?" id="faq-accurate">
-    Every data point is traceable to its source: the `source_url` field on each record points to the original government publication. If you find an error, open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) — we take data quality seriously and fix errors quickly.
+    Every data point is traceable to its source: the `source_url` field on each
+    record points to the original government publication. If you find an error,
+    open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) — we
+    take data quality seriously and fix errors quickly.
   </Accordion>
-  <Accordion title="Can I use this in a commercial product?" id="faq-commercial">
-    Yes. OpenNG is **MIT licensed**. The data comes from government sources and is in the public domain. There are no restrictions on commercial use beyond the license and normal API terms.
+  <Accordion
+    title="Can I use this in a commercial product?"
+    id="faq-commercial"
+  >
+    Yes. OpenNG is **MIT licensed**. The data comes from government sources and
+    is in the public domain. There are no restrictions on commercial use beyond
+    the license and normal API terms.
   </Accordion>
-  <Accordion title="What happens when my rate limit is hit?" id="faq-rate-limit">
-    You receive **429 Too Many Requests** with a **`Retry-After`** header (seconds to wait). Successful responses include **`RateLimit-Limit`**, **`RateLimit-Remaining`**, and **`RateLimit-Reset`** so you can track usage before hitting the cap. Details in [Rate limits](/rate-limits).
+  <Accordion
+    title="What happens when my rate limit is hit?"
+    id="faq-rate-limit"
+  >
+    You receive **429 Too Many Requests** with a **`Retry-After`** header
+    (seconds to wait). Successful responses include **`RateLimit-Limit`**,
+    **`RateLimit-Remaining`**, and **`RateLimit-Reset`** so you can track usage
+    before hitting the cap. Details in [Rate limits](/rate-limits).
   </Accordion>
-  <Accordion title="A resource I need doesn't exist yet." id="faq-resource-request">
-    Open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) with the **resource request** label: describe the data you need and what you would use it for. The roadmap is driven by real developer requests; if a resource is feasible and the data is publicly available, it gets built.
+  <Accordion
+    title="A resource I need doesn't exist yet."
+    id="faq-resource-request"
+  >
+    Open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) with
+    the **resource request** label: describe the data you need and what you
+    would use it for. The roadmap is driven by real developer requests; if a
+    resource is feasible and the data is publicly available, it gets built.
   </Accordion>
-  <Accordion title="The data for a specific date looks wrong." id="faq-wrong-record">
-    Open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) with the record **`id`** from the response, the value you received, what you believe is correct, and your source. We verify and correct as fast as we can — typically within **48 hours** for clear reports.
+  <Accordion
+    title="The data for a specific date looks wrong."
+    id="faq-wrong-record"
+  >
+    Open a [GitHub issue](https://github.com/stephcrown/openng/issues/new) with
+    the record **`id`** from the response, the value you received, what you
+    believe is correct, and your source. We verify and correct as fast as we can
+    — typically within **48 hours** for clear reports.
   </Accordion>
 </Accordions>
-
-## Learn more
-
-<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-  <Card title="Rate limits" href="/rate-limits" icon={<ShieldCheck />}>
-    Understand headers, reset windows, and backoff behavior.
-  </Card>
-  <Card title="Response format" href="/response-format" icon={<Braces />}>
-    Review the response envelope, list metadata, and error objects.
-  </Card>
-  <Card title="Errors" href="/errors" icon={<CircleAlert />}>
-    Common codes, the error object, and safe client handling.
-  </Card>
-  <Card title="Holidays" href="/data-api/holidays" icon={<Map />}>
-    Jump into a concrete dataset page with filters, examples, and metadata.
-  </Card>
-</Cards>
 
 The [GitHub repository](https://github.com/stephcrown/openng) tracks roadmap discussion and project updates.
