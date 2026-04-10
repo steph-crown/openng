@@ -6,10 +6,24 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-fira-mono), ui-monospace, monospace;
+  --openng-selection-foreground: #171717;
+}
+
+.light {
+  --color-fd-primary: #f86128;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-accent: color-mix(in oklab, #f86128 16%, transparent);
+  --color-fd-accent-foreground: #3b1709;
+  --color-fd-ring: #f86128;
 }
 
 .dark {
   --color-fd-background: #000000;
+  --color-fd-primary: #fff16e;
+  --color-fd-primary-foreground: #171717;
+  --color-fd-accent: color-mix(in oklab, #fff16e 18%, transparent);
+  --color-fd-accent-foreground: #fff9c2;
+  --color-fd-ring: #fff16e;
 }
 
 #nd-page {
@@ -48,9 +62,56 @@
   font-size: 16px;
 }
 
+#nd-page .prose :is(p, li, blockquote, td) a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-fd-primary);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+}
+
+#nd-page [data-card] {
+  text-decoration: none;
+}
+
+#nd-sidebar [data-active="true"],
+#nd-sidebar-mobile [data-active="true"] {
+  color: var(--color-fd-primary);
+}
+
+#nd-sidebar [data-active="true"] svg,
+#nd-sidebar-mobile [data-active="true"] svg {
+  color: var(--color-fd-primary);
+}
+
+#nd-toc [data-active="true"] {
+  color: var(--color-fd-primary);
+}
+
+#nd-toc .bg-fd-primary,
+#nd-toc .stroke-fd-primary,
+[data-toc-popover] .bg-fd-primary,
+[data-toc-popover] .stroke-fd-primary {
+  background-color: var(--color-fd-primary);
+  stroke: var(--color-fd-primary);
+}
+
+#nd-page [role="tab"][data-state="active"] {
+  color: var(--color-fd-primary);
+}
+
+#nd-page [role="tab"][data-state="active"] div {
+  background-color: var(--color-fd-primary);
+}
+
 .getting-started-faq button {
   font-size: 14px;
   font-weight: 500;
+}
+
+::selection {
+  background: var(--color-fd-primary);
+  color: var(--openng-selection-foreground);
 }
 
 #nd-sidebar aside p.inline-flex.items-center.gap-2.mb-1,
