@@ -13,8 +13,16 @@
   --openng-text-color: #2e2e2e;
   /* --openng-page-bg: #efedde; */
   --openng-page-bg: #f3f3f3;
-  --openng-nav-hover-bg: color-mix(in oklab, var(--openng-accent) 6%, transparent);
-  --openng-nav-active-bg: color-mix(in oklab, var(--openng-accent) 10%, transparent);
+  --openng-nav-hover-bg: color-mix(
+    in oklab,
+    var(--openng-accent) 6%,
+    transparent
+  );
+  --openng-nav-active-bg: color-mix(
+    in oklab,
+    var(--openng-accent) 10%,
+    transparent
+  );
   --openng-search-bg: #ededed;
   --openng-search-border: #eae9e2;
   --openng-section-label: #999999;
@@ -26,7 +34,11 @@
   --openng-inline-code-fg: #1c1c1c;
   --openng-inline-code-bg: #e6e6e4;
   --openng-inline-code-border: #cfcfc8;
-  --openng-card-hover-bg: color-mix(in oklab, var(--openng-text-color) 8%, #ffffff);
+  --openng-card-hover-bg: color-mix(
+    in oklab,
+    var(--openng-text-color) 8%,
+    #ffffff
+  );
 
   --color-fd-background: var(--openng-page-bg);
   --color-fd-foreground: var(--openng-text-color);
@@ -48,8 +60,16 @@
   --openng-accent: #fff16e;
   --openng-text-color: #ebebeb;
   --openng-page-bg: #040404;
-  --openng-nav-hover-bg: color-mix(in oklab, var(--openng-accent) 7%, transparent);
-  --openng-nav-active-bg: color-mix(in oklab, var(--openng-accent) 11%, transparent);
+  --openng-nav-hover-bg: color-mix(
+    in oklab,
+    var(--openng-accent) 7%,
+    transparent
+  );
+  --openng-nav-active-bg: color-mix(
+    in oklab,
+    var(--openng-accent) 11%,
+    transparent
+  );
   --openng-search-bg: #2e2e2e;
   --openng-search-border: #2e2e2e;
   --openng-section-label: #999999;
@@ -61,7 +81,11 @@
   --openng-inline-code-fg: #e8e8e8;
   --openng-inline-code-bg: #222222;
   --openng-inline-code-border: #3a3a3a;
-  --openng-card-hover-bg: color-mix(in oklab, #ffffff 9%, var(--openng-page-bg));
+  --openng-card-hover-bg: color-mix(
+    in oklab,
+    #ffffff 9%,
+    var(--openng-page-bg)
+  );
 
   --color-fd-background: var(--openng-page-bg);
   --color-fd-foreground: var(--openng-text-color);
@@ -160,6 +184,7 @@ body {
   padding: 0;
   border: none;
   border-radius: 0;
+  gap: 3px;
 }
 
 #nd-page [data-card] {

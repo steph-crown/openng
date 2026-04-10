@@ -7,7 +7,7 @@ import {
   CodeBlockTabsTrigger,
 } from "fumadocs-ui/components/codeblock";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Loader2, Play } from "lucide-react";
+import { ArrowBigRight, Check, Clipboard, Loader2 } from "lucide-react";
 import { Suspense, useCallback, useMemo, useState } from "react";
 
 import { buildOpenngApiUrl } from "@/lib/build-openng-api-url";
@@ -20,7 +20,7 @@ import {
   buildPlaygroundSnippets,
 } from "@/lib/playground-snippets";
 
-import { RateLimitDialog } from "./rate-limit-dialog";
+import { RateLimitDialog } from "@/components/api-playground/rate-limit-dialog";
 
 const PLAYGROUND_API_BASE = "http://localhost:3000";
 
@@ -46,6 +46,7 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
   const [httpStatus, setHttpStatus] = useState<number | null>(null);
   const [rateOpen, setRateOpen] = useState(false);
   const [retryAfterSec, setRetryAfterSec] = useState<number | null>(null);
+  const [responseCopied, setResponseCopied] = useState(false);
 
   const url = useMemo(
     () => buildOpenngApiUrl(PLAYGROUND_API_BASE, path, query),
@@ -73,7 +74,9 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
       }
     } catch (e) {
       setHttpStatus(0);
-      setBody(e instanceof Error ? e.message : "Request failed in this browser.");
+      setBody(
+        e instanceof Error ? e.message : "Request failed in this browser.",
+      );
     } finally {
       setRunning(false);
     }
@@ -82,12 +85,24 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
   const hideResponse = useCallback(() => {
     setBody(null);
     setHttpStatus(null);
+    setResponseCopied(false);
   }, []);
 
   const displayBody = useMemo(
     () => (body === null ? "" : prettyFormatBody(body)),
     [body],
   );
+
+  const copyResponse = useCallback(async () => {
+    if (!displayBody) return;
+    try {
+      await navigator.clipboard.writeText(displayBody);
+      setResponseCopied(true);
+      window.setTimeout(() => setResponseCopied(false), 2000);
+    } catch {
+      setResponseCopied(false);
+    }
+  }, [displayBody]);
 
   const runControl = (
     <button
@@ -99,7 +114,10 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
       {running ? (
         <Loader2 className="size-3.5 shrink-0 animate-spin text-fd-primary" />
       ) : (
-        <Play className="size-3.5 shrink-0 text-fd-primary" />
+        <ArrowBigRight
+          className="size-3.5 shrink-0 text-fd-primary [&_path]:fill-current [&_path]:stroke-none"
+          aria-hidden
+        />
       )}
       Run
     </button>
@@ -132,17 +150,14 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
                 </div>
               }
             >
-              <DynamicCodeBlock
-                lang={t.shikiLang}
-                code={snippets[t.value]}
-              />
+              <DynamicCodeBlock lang={t.shikiLang} code={snippets[t.value]} />
             </Suspense>
           </CodeBlockTab>
         ))}
       </CodeBlockTabs>
       {body !== null ? (
         <div className="mt-3 rounded-xl border border-fd-border bg-fd-card p-3 text-fd-card-foreground shadow-sm">
-          <div className="mb-2 flex flex-row items-center justify-between gap-2">
+          <div className="mb-2 flex flex-row flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-medium text-fd-muted-foreground">
               Response
               {httpStatus !== null ? (
@@ -151,13 +166,27 @@ export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
                 </span>
               ) : null}
             </span>
-            <button
-              type="button"
-              onClick={hideResponse}
-              className="rounded-md px-2 py-1 text-xs font-medium text-fd-muted-foreground hover:bg-fd-accent/40 hover:text-fd-foreground"
-            >
-              Hide
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => void copyResponse()}
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-fd-muted-foreground hover:bg-fd-accent/40 hover:text-fd-foreground"
+              >
+                {responseCopied ? (
+                  <Check className="size-3.5 text-fd-primary" aria-hidden />
+                ) : (
+                  <Clipboard className="size-3.5" aria-hidden />
+                )}
+                {responseCopied ? "Copied" : "Copy"}
+              </button>
+              <button
+                type="button"
+                onClick={hideResponse}
+                className="rounded-md px-2 py-1 text-xs font-medium text-fd-muted-foreground hover:bg-fd-accent/40 hover:text-fd-foreground"
+              >
+                Hide
+              </button>
+            </div>
           </div>
           <pre className="max-h-96 overflow-auto whitespace-pre break-words rounded-md border border-fd-border bg-fd-background p-3 font-mono text-[0.8125rem] text-fd-foreground [tab-size:2]">
             {displayBody}
