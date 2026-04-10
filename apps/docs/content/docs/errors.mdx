@@ -1,0 +1,37 @@
+---
+title: Errors
+description: Error envelope, common codes, and safe client handling
+icon: CircleAlert
+---
+
+Every failed request returns the same **JSON envelope**: `success: false` and an **`error`** object. Responses never include stack traces, SQL, or internal paths.
+
+## Error object
+
+| Field | Meaning |
+| --- | --- |
+| `code` | Stable machine-readable identifier |
+| `message` | Short, user-safe explanation |
+| `docs` | Link into this site for the condition |
+
+Shape and examples live under [Response format](/response-format#error-responses).
+
+## Common codes
+
+| Code | When |
+| --- | --- |
+| `INVALID_FILTER` | Unknown or malformed query parameter |
+| `NOT_FOUND` | No row for the requested id or slug |
+| `RATE_LIMIT_EXCEEDED` | Too many requests in the window |
+| `UNAUTHORIZED` | Missing or invalid API key or session |
+
+Additional codes may appear per resource; check each dataset’s docs and `GET /v1/{resource}/meta` where applicable.
+
+## Client behavior
+
+Log or surface **`code`** and **`message`** for operators. Use **`docs`** for deep links in your own tooling. On **`RATE_LIMIT_EXCEEDED`**, read [Rate limits](/rate-limits) for headers and backoff. Retry transient failures with jitter; do not parse raw bodies for undocumented fields.
+
+## Related
+
+- [API conventions](/api-conventions#common-error-codes) for filters and pagination errors in context
+- [Authentication](/authentication) when `UNAUTHORIZED` persists after fixing the token

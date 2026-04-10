@@ -2,21 +2,24 @@
   "title": "OpenNG",
   "pages": [
     "---Overview---",
-    "getting-started",
     "index",
+    "getting-started",
+    "authentication",
     "rate-limits",
-    "api-formats",
-    "how-to-read-docs",
+    "response-format",
     "api-conventions",
+    "errors",
     "changelog",
     "---Data---",
     "data-api/holidays",
     "data-api/fuel-prices",
     "data-api/food-prices",
-    "---Reference APIs---",
+    "---Reference---",
     "ref-api/states",
     "ref-api/lgas",
     "---More---",
-    "contributing"
+    "contributing",
+    "roadmap",
+    "open-source"
   ]
 }

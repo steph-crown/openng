@@ -1,0 +1,38 @@
+---
+title: Authentication
+description: Sessions, API keys, bearer tokens, and anonymous access
+icon: LockKeyhole
+---
+
+OpenNG supports three ways callers identify themselves. Pick the one that matches how your client runs.
+
+## Browser sessions
+
+The web app and dashboard use **passwordless email links**. After verification the API sets an **`HttpOnly`** session cookie. JavaScript cannot read it; the browser sends it on same-site requests. Use this path when a person is using the product in the browser.
+
+## API keys
+
+For **scripts, workers, cron jobs, and backend services**, create a key in the dashboard and send it on each request:
+
+```http
+Authorization: Bearer ong_live_…
+```
+
+Keys use the `ong_live_` prefix followed by a secret segment. The plaintext value is shown **once** at creation; store it in a secret manager or environment variable. See [Getting started](/getting-started#create-an-api-key) for the dashboard flow and examples.
+
+## Anonymous access
+
+Public **`GET`** data routes work **without** a key. Anonymous requests are **rate-limited by IP** and have lower throughput than authenticated traffic. Use this for quick experiments; move to a key for production integrations.
+
+## Choosing a mode
+
+| Mode | Typical use |
+| --- | --- |
+| Session cookie | Human in the browser on OpenNG web |
+| API key | Servers, automation, long-lived access |
+| None | Quick reads, prototypes, low volume |
+
+## Related
+
+- [Rate limits](/rate-limits) for how limits differ by tier
+- [Errors](/errors) when a token is missing, invalid, or expired

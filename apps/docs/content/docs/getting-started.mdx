@@ -5,15 +5,12 @@ icon: BookOpen
 ---
 
 import {
-  Activity,
-  BookOpenCheck,
   Braces,
-  CircleHelp,
+  CircleAlert,
   Compass,
   KeyRound,
   LockKeyhole,
   Map,
-  Search,
   ShieldCheck,
 } from "lucide-react";
 
@@ -42,7 +39,7 @@ Read this page in order if you are new: understand the API surface, create a key
   </Card>
   <Card
     title="Authentication"
-    href="#authentication"
+    href="/authentication"
     icon={<LockKeyhole />}
   >
     Browser sessions, API keys, and anonymous access.
@@ -145,13 +142,7 @@ Revoke the current key, then create a new one. Old keys stop working immediately
 
 ## Authentication
 
-Choose the mode that matches your client. The web and dashboard apps use passwordless email links with an `HttpOnly` session cookie. Server-to-server and scripted access should use bearer tokens with the `ong_live_` prefix. Public `GET` routes also work without a key, but limits are lower than authenticated usage.
-
-### When to use what
-
-- Use **browser sessions** when a human is signing into the app.
-- Use **API keys** for scripts, cron jobs, workers, and backend services.
-- Use **anonymous access** for quick experiments and early prototypes.
+Sessions, bearer API keys, and anonymous `GET` access are documented on the dedicated [**Authentication**](/authentication) page, including when to use each mode and the `Authorization` header shape.
 
 ## Terminology
 
@@ -186,11 +177,11 @@ Choose the mode that matches your client. The web and dashboard apps use passwor
   <Card title="Rate limits" href="/rate-limits" icon={<ShieldCheck />}>
     Understand headers, reset windows, and backoff behavior.
   </Card>
-  <Card title="API formats" href="/api-formats" icon={<Braces />}>
+   <Card title="Response format" href="/response-format" icon={<Braces />}>
     Review the response envelope, list metadata, and error objects.
   </Card>
-  <Card title="How to read these docs" href="/how-to-read-docs" icon={<BookOpenCheck />}>
-    Learn how examples, headings, and internal links are organized.
+  <Card title="Errors" href="/errors" icon={<CircleAlert />}>
+    Common codes, the error object, and safe client handling.
   </Card>
   <Card title="Holidays" href="/data-api/holidays" icon={<Map />}>
     Jump into a concrete dataset page with filters, examples, and metadata.

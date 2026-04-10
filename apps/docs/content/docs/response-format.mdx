@@ -1,5 +1,5 @@
 ---
-title: API formats
+title: Response format
 description: JSON envelope, list meta, and error objects
 icon: Braces
 ---
@@ -10,7 +10,7 @@ List endpoints return `success: true`, a `data` array, and `meta` with paginatio
 
 ## Error responses
 
-Errors use `success: false` and an `error` object with `code`, `message`, and `docs` URL—never stack traces or internal SQL.
+Errors use `success: false` and an `error` object with `code`, `message`, and `docs` URL—never stack traces or internal SQL. See [Errors](/errors) for common codes and client handling.
 
 ## Content type
 

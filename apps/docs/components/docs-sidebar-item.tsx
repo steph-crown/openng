@@ -6,31 +6,34 @@ import Link from "fumadocs-core/link";
 import type { LucideIcon } from "lucide-react";
 import {
   BookOpen,
-  BookOpenCheck,
   Braces,
+  CircleAlert,
   FileCode,
   Gauge,
   History,
+  LockKeyhole,
   Sparkles,
 } from "lucide-react";
 
 const overviewIcons: Record<string, LucideIcon> = {
-  BookOpen,
   Sparkles,
+  BookOpen,
+  LockKeyhole,
   Gauge,
   Braces,
-  BookOpenCheck,
   FileCode,
+  CircleAlert,
   History,
 };
 
 const overviewUrls = new Set([
-  "/getting-started",
   "/",
+  "/getting-started",
+  "/authentication",
   "/rate-limits",
-  "/api-formats",
-  "/how-to-read-docs",
+  "/response-format",
   "/api-conventions",
+  "/errors",
   "/changelog",
 ]);
 
@@ -53,7 +56,7 @@ export function DocsSidebarItem({ item }: { item: Item }) {
     <Link
       data-active={active}
       href={item.url}
-      className="relative flex flex-row items-center gap-2 rounded-lg p-2 text-[14px] text-start text-fd-muted-foreground transition-colors wrap-anywhere hover:bg-fd-accent/50 hover:text-fd-foreground data-[active=true]:font-medium"
+      className="relative flex flex-row items-center gap-2 rounded-lg p-2 text-[14px] text-start text-fd-muted-foreground transition-colors wrap-anywhere hover:text-fd-foreground data-[active=true]:font-medium"
     >
       {icon}
       {item.name}

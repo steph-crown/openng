@@ -1,5 +1,5 @@
 ---
-title: What is OpenNG?
+title: Introduction
 description: Nigerian public data as a versioned REST API for developers worldwide
 icon: Sparkles
 ---
@@ -10,6 +10,7 @@ import {
   Calendar,
   Fuel,
   Gauge,
+  LockKeyhole,
   Map,
   Network,
   PackageOpen,
@@ -52,7 +53,7 @@ Validated rows migrate to **`public`** schema tables. The API reads **only** fro
 
 ## What to read first
 
-Start with [**Getting started**](/getting-started) for base URL, keys, and auth, then skim [**API formats**](/api-formats) and [**API conventions**](/api-conventions) before you open dataset pages.
+Start with [**Getting started**](/getting-started) for base URL and first requests, then [**Authentication**](/authentication), [**Response format**](/response-format), and [**API conventions**](/api-conventions) before you open dataset pages.
 
 <Cards className="grid gap-4 sm:grid-cols-2">
   <Card
@@ -69,15 +70,15 @@ Start with [**Getting started**](/getting-started) for base URL, keys, and auth,
   />
   <Card
     description="Success envelope, list `meta`, and structured errors."
-    href="/api-formats"
+    href="/response-format"
     icon={<Braces />}
-    title="API formats"
+    title="Response format"
   />
   <Card
-    description="Headings, examples, and cross-links."
-    href="/how-to-read-docs"
-    icon={<BookOpen />}
-    title="How to read these docs"
+    description="Sessions, API keys, and anonymous access."
+    href="/authentication"
+    icon={<LockKeyhole />}
+    title="Authentication"
   />
 </Cards>
 
@@ -144,6 +145,6 @@ Live and planned resources follow the same **ResourceFactory** contract: list, `
 
 <Callout title="Keep reading">
 
-The **On this page** column lists headings on this page. For detail on keys and auth, use [**Getting started**](/getting-started). For reading conventions, see [**How to read these docs**](/how-to-read-docs).
+The **On this page** column lists headings on this page. For keys and auth detail, use [**Getting started**](/getting-started) and [**Authentication**](/authentication).
 
 </Callout>
