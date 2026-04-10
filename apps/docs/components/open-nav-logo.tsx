@@ -1,8 +1,8 @@
 export function OpenNavLogo() {
   return (
-    <span className="flex items-center gap-2.5 font-bold tracking-tight text-fd-foreground font-heading text-base">
+    <span className="flex items-center gap-2.5 font-bold tracking-tight font-heading text-base">
       <svg
-        className="text-fd-primary"
+        className="text-fd-primary shrink-0"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -27,7 +27,7 @@ export function OpenNavLogo() {
         />
       </svg>
 
-      <span>OpenNG</span>
+      <span className="text-fd-foreground">OpenNG</span>
     </span>
   );
 }

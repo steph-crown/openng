@@ -5,25 +5,85 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-fira-mono), ui-monospace, monospace;
-  --openng-selection-foreground: #171717;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 .light {
-  --color-fd-primary: #f86128;
+  --openng-accent: #f86128;
+  --openng-text-color: #2e2e2e;
+  /* --openng-page-bg: #efedde; */
+  --openng-page-bg: #f3f3f3;
+  --openng-nav-active-bg: #e6e4d7;
+  --openng-search-bg: #ededed;
+  --openng-search-border: #eae9e2;
+  --openng-section-label: #999999;
+  --openng-card-title: #0a0a0a;
+  --openng-card-body: #737373;
+  --openng-callout-body: #737373;
+  --openng-toggle-active-bg: #dadada;
+  --openng-selection-foreground: #171717;
+
+  --color-fd-background: var(--openng-page-bg);
+  --color-fd-foreground: var(--openng-text-color);
+  --color-fd-muted-foreground: var(--openng-text-color);
+  --color-fd-card-foreground: var(--openng-text-color);
+  --color-fd-primary: var(--openng-accent);
   --color-fd-primary-foreground: #ffffff;
-  --color-fd-accent: color-mix(in oklab, #f86128 16%, transparent);
-  --color-fd-accent-foreground: #3b1709;
-  --color-fd-ring: #f86128;
+  --color-fd-accent: color-mix(in oklab, var(--openng-accent) 16%, transparent);
+  --color-fd-accent-foreground: var(--openng-text-color);
+  --color-fd-ring: var(--openng-accent);
+  --color-fd-info: var(--openng-accent);
+  --color-fd-warning: var(--openng-accent);
+  --color-fd-error: var(--openng-accent);
+  --color-fd-success: var(--openng-accent);
+  --color-fd-idea: var(--openng-accent);
 }
 
 .dark {
-  --color-fd-background: #000000;
-  --color-fd-primary: #fff16e;
+  --openng-accent: #fff16e;
+  --openng-text-color: #ebebeb;
+  --openng-page-bg: #040404;
+  --openng-nav-active-bg: #363636;
+  --openng-search-bg: #2e2e2e;
+  --openng-search-border: #2e2e2e;
+  --openng-section-label: #999999;
+  --openng-card-title: #fafafa;
+  --openng-card-body: #b3b3b3cc;
+  --openng-callout-body: #b3b3b3cc;
+  --openng-toggle-active-bg: #6868684d;
+  --openng-selection-foreground: #171717;
+
+  --color-fd-background: var(--openng-page-bg);
+  --color-fd-foreground: var(--openng-text-color);
+  --color-fd-muted-foreground: var(--openng-text-color);
+  --color-fd-card-foreground: var(--openng-text-color);
+  --color-fd-primary: var(--openng-accent);
   --color-fd-primary-foreground: #171717;
-  --color-fd-accent: color-mix(in oklab, #fff16e 18%, transparent);
-  --color-fd-accent-foreground: #fff9c2;
-  --color-fd-ring: #fff16e;
+  --color-fd-accent: color-mix(in oklab, var(--openng-accent) 18%, transparent);
+  --color-fd-accent-foreground: var(--openng-text-color);
+  --color-fd-ring: var(--openng-accent);
+  --color-fd-info: var(--openng-accent);
+  --color-fd-warning: var(--openng-accent);
+  --color-fd-error: var(--openng-accent);
+  --color-fd-success: var(--openng-accent);
+  --color-fd-idea: var(--openng-accent);
+}
+
+body {
+  color: var(--color-fd-foreground);
+  background-color: var(--color-fd-background);
+}
+
+.light #nd-sidebar {
+  background-color: #efefef;
+}
+
+.light #nd-sidebar > div:first-child {
+  background-color: #efefef;
+}
+
+.light #nd-subnav {
+  background-color: #efefef !important;
 }
 
 #nd-page {
@@ -60,6 +120,7 @@
 
 #nd-page .prose :is(p, li, blockquote) {
   font-size: 16px;
+  color: var(--openng-text-color);
 }
 
 #nd-page .prose :is(p, li, blockquote, td) a {
@@ -74,26 +135,25 @@
   text-decoration: none;
 }
 
-#nd-sidebar [data-active="true"],
-#nd-sidebar-mobile [data-active="true"] {
-  color: var(--color-fd-primary);
+#nd-sidebar a[data-active],
+#nd-sidebar-mobile a[data-active] {
+  color: var(--openng-text-color);
 }
 
-#nd-sidebar [data-active="true"] svg,
-#nd-sidebar-mobile [data-active="true"] svg {
-  color: var(--color-fd-primary);
+#nd-sidebar a[data-active] svg,
+#nd-sidebar-mobile a[data-active] svg {
+  color: currentColor;
+}
+
+#nd-sidebar [data-active="true"],
+#nd-sidebar-mobile [data-active="true"] {
+  color: var(--openng-text-color);
+  background-color: var(--openng-nav-active-bg);
+  font-weight: 500;
 }
 
 #nd-toc [data-active="true"] {
-  color: var(--color-fd-primary);
-}
-
-#nd-toc .bg-fd-primary,
-#nd-toc .stroke-fd-primary,
-[data-toc-popover] .bg-fd-primary,
-[data-toc-popover] .stroke-fd-primary {
-  background-color: var(--color-fd-primary);
-  stroke: var(--color-fd-primary);
+  color: var(--openng-text-color);
 }
 
 #nd-page [role="tab"][data-state="active"] {
@@ -104,9 +164,118 @@
   background-color: var(--color-fd-primary);
 }
 
+#nd-sidebar button[data-search-full],
+#nd-sidebar-mobile button[data-search-full] {
+  background-color: var(--openng-search-bg);
+  border-color: var(--openng-search-border);
+  color: var(--openng-text-color);
+}
+
+#nd-sidebar button[data-search-full] kbd,
+#nd-sidebar-mobile button[data-search-full] kbd {
+  border-color: var(--openng-search-border);
+}
+
+#nd-sidebar [data-theme-toggle],
+#nd-sidebar-mobile [data-theme-toggle] {
+  border-color: var(--openng-search-border);
+  background-color: var(--openng-search-bg);
+}
+
+#nd-sidebar [data-theme-toggle],
+#nd-sidebar-mobile [data-theme-toggle] {
+  border-radius: 9999px !important;
+}
+
+#nd-sidebar [data-theme-toggle] *,
+#nd-sidebar-mobile [data-theme-toggle] * {
+  border-radius: 9999px !important;
+}
+
+#nd-sidebar [data-theme-toggle] svg,
+#nd-sidebar-mobile [data-theme-toggle] svg {
+  color: #5d5d5d;
+}
+
+#nd-sidebar [data-theme-toggle] .bg-fd-accent,
+#nd-sidebar-mobile [data-theme-toggle] .bg-fd-accent {
+  background-color: var(--openng-toggle-active-bg);
+  border: 1px solid var(--openng-toggle-active-bg);
+  color: #5d5d5d;
+}
+
+#nd-sidebar [data-theme-toggle] .text-fd-muted-foreground,
+#nd-sidebar-mobile [data-theme-toggle] .text-fd-muted-foreground,
+#nd-sidebar [data-theme-toggle] .text-fd-accent-foreground,
+#nd-sidebar-mobile [data-theme-toggle] .text-fd-accent-foreground {
+  color: #5d5d5d;
+}
+
+.dark #nd-sidebar [data-theme-toggle] svg,
+.dark #nd-sidebar-mobile [data-theme-toggle] svg {
+  color: #e6e6e6;
+}
+
+.dark #nd-sidebar [data-theme-toggle] .bg-fd-accent,
+.dark #nd-sidebar-mobile [data-theme-toggle] .bg-fd-accent {
+  color: #e6e6e6;
+}
+
+.dark #nd-sidebar [data-theme-toggle] .text-fd-muted-foreground,
+.dark #nd-sidebar-mobile [data-theme-toggle] .text-fd-muted-foreground,
+.dark #nd-sidebar [data-theme-toggle] .text-fd-accent-foreground,
+.dark #nd-sidebar-mobile [data-theme-toggle] .text-fd-accent-foreground {
+  color: #e6e6e6;
+}
+
 .getting-started-faq button {
   font-size: 14px;
   font-weight: 500;
+}
+
+#nd-page [style*="--callout-color"] {
+  border-left: 2px solid var(--color-fd-primary);
+  padding-block: 12px;
+  padding-right: 4px;
+  padding-left: 12px;
+}
+
+#nd-page [style*="--callout-color"] > div[role="none"] {
+  display: none;
+}
+
+#nd-page [style*="--callout-color"] > div:last-child > p:first-child {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--openng-text-color);
+}
+
+#nd-page [style*="--callout-color"] .prose-no-margin {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--openng-callout-body);
+}
+
+#nd-page .prose [style*="--callout-color"] .prose-no-margin,
+#nd-page
+  .prose
+  [style*="--callout-color"]
+  .prose-no-margin
+  :is(p, li, blockquote),
+#nd-page [style*="--callout-color"] .prose-no-margin :is(p, li, blockquote) {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--openng-callout-body);
+}
+
+#nd-page [data-card] h3 {
+  font-size: 14px;
+  color: var(--openng-card-title);
+}
+
+#nd-page [data-card] :is(p, div.text-sm) {
+  font-size: 14px;
+  color: var(--openng-card-body);
 }
 
 ::selection {
@@ -114,11 +283,15 @@
   color: var(--openng-selection-foreground);
 }
 
+#nd-page .openng-page-footer-nav > a {
+  border-radius: 12px;
+}
+
 #nd-sidebar aside p.inline-flex.items-center.gap-2.mb-1,
 #nd-sidebar-mobile p.inline-flex.items-center.gap-2.mb-1 {
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-fd-muted-foreground) 55%, transparent);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--openng-section-label);
 }
