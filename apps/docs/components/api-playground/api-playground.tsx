@@ -1,38 +1,46 @@
 "use client";
 
-import { Loader2, Play } from "lucide-react";
 import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useMemo,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+  CodeBlockTab,
+  CodeBlockTabs,
+  CodeBlockTabsList,
+  CodeBlockTabsTrigger,
+} from "fumadocs-ui/components/codeblock";
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { Loader2, Play } from "lucide-react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 
 import { buildOpenngApiUrl } from "@/lib/build-openng-api-url";
 import {
   loadPlaygroundKey,
   touchPlaygroundActivity,
 } from "@/lib/docs-playground-storage";
+import {
+  PLAYGROUND_SNIPPET_TABS,
+  buildPlaygroundSnippets,
+} from "@/lib/playground-snippets";
 
 import { RateLimitDialog } from "./rate-limit-dialog";
 
 const PLAYGROUND_API_BASE = "http://localhost:3000";
 
-function mergeTabShellClass(existing: string | undefined): string {
-  return [existing, "!my-0 rounded-b-none border-b-0 shadow-none"].filter(Boolean).join(" ");
+function prettyFormatBody(raw: string): string {
+  const t = raw.trim();
+  if (!t) return raw;
+  try {
+    const parsed: unknown = JSON.parse(t);
+    return JSON.stringify(parsed, null, 2);
+  } catch {
+    return raw;
+  }
 }
 
 export type ApiPlaygroundProps = {
   path: string;
   query?: Record<string, string | number | boolean | undefined>;
-  children: ReactNode;
 };
 
-export function ApiPlayground({ path, query, children }: ApiPlaygroundProps) {
+export function ApiPlayground({ path, query }: ApiPlaygroundProps) {
   const [running, setRunning] = useState(false);
   const [body, setBody] = useState<string | null>(null);
   const [httpStatus, setHttpStatus] = useState<number | null>(null);
@@ -44,14 +52,7 @@ export function ApiPlayground({ path, query, children }: ApiPlaygroundProps) {
     [path, query],
   );
 
-  const patchedTabs = useMemo(() => {
-    return Children.map(children, (child) => {
-      if (!isValidElement<{ className?: string }>(child)) return child;
-      return cloneElement(child as ReactElement<{ className?: string }>, {
-        className: mergeTabShellClass(child.props.className),
-      });
-    });
-  }, [children]);
+  const snippets = useMemo(() => buildPlaygroundSnippets(url), [url]);
 
   const run = useCallback(async () => {
     setRunning(true);
@@ -83,6 +84,27 @@ export function ApiPlayground({ path, query, children }: ApiPlaygroundProps) {
     setHttpStatus(null);
   }, []);
 
+  const displayBody = useMemo(
+    () => (body === null ? "" : prettyFormatBody(body)),
+    [body],
+  );
+
+  const runControl = (
+    <button
+      type="button"
+      disabled={running}
+      onClick={() => void run()}
+      className="inline-flex shrink-0 items-center gap-1.5 py-1.5 text-sm font-medium text-fd-primary hover:opacity-80 disabled:opacity-50"
+    >
+      {running ? (
+        <Loader2 className="size-3.5 shrink-0 animate-spin text-fd-primary" />
+      ) : (
+        <Play className="size-3.5 shrink-0 text-fd-primary" />
+      )}
+      Run
+    </button>
+  );
+
   return (
     <div className="not-prose my-4">
       <RateLimitDialog
@@ -90,22 +112,34 @@ export function ApiPlayground({ path, query, children }: ApiPlaygroundProps) {
         retryAfterSec={retryAfterSec}
         onOpenChange={setRateOpen}
       />
-      {patchedTabs}
-      <div className="-mt-px flex justify-end rounded-b-xl border border-t-0 border-fd-border bg-fd-card px-2 py-2">
-        <button
-          type="button"
-          disabled={running}
-          onClick={() => void run()}
-          className="inline-flex items-center gap-2 rounded-lg border border-fd-border bg-fd-primary px-3 py-1.5 text-sm font-medium text-fd-primary-foreground disabled:opacity-50"
-        >
-          {running ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Play className="size-4" />
-          )}
-          Run
-        </button>
-      </div>
+      <CodeBlockTabs defaultValue="curl" className="!my-0">
+        <div className="flex w-full min-w-0 flex-row items-stretch border-b border-fd-border">
+          <CodeBlockTabsList className="min-w-0 flex-1 border-0 bg-transparent">
+            {PLAYGROUND_SNIPPET_TABS.map((t) => (
+              <CodeBlockTabsTrigger key={t.value} value={t.value}>
+                {t.label}
+              </CodeBlockTabsTrigger>
+            ))}
+          </CodeBlockTabsList>
+          <div className="flex shrink-0 items-center px-2">{runControl}</div>
+        </div>
+        {PLAYGROUND_SNIPPET_TABS.map((t) => (
+          <CodeBlockTab key={t.value} value={t.value}>
+            <Suspense
+              fallback={
+                <div className="bg-fd-secondary px-4 py-3 text-sm text-fd-muted-foreground">
+                  Loading…
+                </div>
+              }
+            >
+              <DynamicCodeBlock
+                lang={t.shikiLang}
+                code={snippets[t.value]}
+              />
+            </Suspense>
+          </CodeBlockTab>
+        ))}
+      </CodeBlockTabs>
       {body !== null ? (
         <div className="mt-3 rounded-xl border border-fd-border bg-fd-card p-3 text-fd-card-foreground shadow-sm">
           <div className="mb-2 flex flex-row items-center justify-between gap-2">
@@ -125,8 +159,8 @@ export function ApiPlayground({ path, query, children }: ApiPlaygroundProps) {
               Hide
             </button>
           </div>
-          <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-all rounded-md border border-fd-border bg-fd-background p-3 font-mono text-[0.8125rem] text-fd-foreground">
-            {body}
+          <pre className="max-h-96 overflow-auto whitespace-pre break-words rounded-md border border-fd-border bg-fd-background p-3 font-mono text-[0.8125rem] text-fd-foreground [tab-size:2]">
+            {displayBody}
           </pre>
         </div>
       ) : null}

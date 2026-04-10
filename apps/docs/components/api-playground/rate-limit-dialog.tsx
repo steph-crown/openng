@@ -57,7 +57,7 @@ export function RateLimitDialog({
           <ul className="mt-4 list-inside list-disc space-y-2 text-sm text-fd-muted-foreground">
             <li>
               <a
-                className="text-fd-foreground underline decoration-fd-primary underline-offset-2"
+                className="text-fd-primary no-underline hover:opacity-80"
                 href="https://openng.dev/dashboard"
                 rel="noreferrer"
                 target="_blank"
@@ -67,7 +67,7 @@ export function RateLimitDialog({
             </li>
             <li>
               <Link
-                className="text-fd-foreground underline decoration-fd-primary underline-offset-2"
+                className="text-fd-primary no-underline hover:opacity-80"
                 href="/getting-started#create-an-api-key"
               >
                 Docs — create an API key
