@@ -14,37 +14,24 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-OpenNG exposes **versioned JSON** under `https://api.openng.dev` in production. This page gives you the shortest path from first read to first successful request.
+## Introduction
 
-<Callout title="Start here">
+OpenNG is an open REST API for Nigerian public data. Data that currently lives in government PDFs, broken portals, and scattered Excel files is collected, cleaned, validated, and served through clean versioned endpoints.
 
-Read this page in order if you are new: understand the API surface, create a key if you need higher limits, choose the right authentication mode, then use the dataset pages for resource-specific filters and response details.
+OpenNG has two parts:
 
-</Callout>
-
-<Cards className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-  <Card
-    title="About the API"
-    href="#about-the-api"
-    icon={<Compass />}
-  >
-    Base URL, versioning, discovery, and health checks.
+<Cards className="grid gap-4 sm:grid-cols-2">
+  <Card title="The API" href="#about-the-api" icon={<Compass />}>
+    `api.openng.dev` serves data across multiple domains: public holidays, fuel
+    prices, postal codes, and more.
   </Card>
-  <Card
-    title="Create an API key"
-    href="#create-an-api-key"
-    icon={<KeyRound />}
-  >
-    Dashboard flow, secret handling, and example authorization headers.
-  </Card>
-  <Card
-    title="Authentication"
-    href="/authentication"
-    icon={<LockKeyhole />}
-  >
-    Browser sessions, API keys, and anonymous access.
+  <Card title="The Explorer" href="#create-an-api-key" icon={<KeyRound />}>
+    `openng.dev` gives you an interactive data explorer to browse and filter
+    data without writing code.
   </Card>
 </Cards>
+
+OpenNG is fully open source. The code, the database schema, the data pipeline, and the seed files are all on GitHub. If you find an error in the data or want to add a new resource, contributions are welcome.
 
 ## About the API
 
@@ -158,16 +145,19 @@ Sessions, bearer API keys, and anonymous `GET` access are documented on the dedi
 
 <Accordions className="getting-started-faq" type="single">
   <Accordion title="Do I need an API key?" id="do-i-need-an-api-key">
-    No for basic use. Keys raise rate limits and unlock higher-throughput access for scripts and integrations.
+    No for basic use. Keys raise rate limits and unlock higher-throughput access
+    for scripts and integrations.
   </Accordion>
   <Accordion title="Is there GraphQL?" id="is-there-graphql">
     Not currently. OpenNG is a REST API under `/v1`.
   </Accordion>
   <Accordion title="Where is the OpenAPI spec?" id="where-is-the-openapi-spec">
-    It will be published with the docs as generation matures. Until then, use `/meta` and each resource's `/meta` route for machine-readable discovery.
+    It will be published with the docs as generation matures. Until then, use
+    `/meta` and each resource's `/meta` route for machine-readable discovery.
   </Accordion>
   <Accordion title="How do I report bad data?" id="how-do-i-report-bad-data">
-    See [Contributing](/contributing) and include the official source, the affected endpoint, and the identifiers you received.
+    See [Contributing](/contributing) and include the official source, the
+    affected endpoint, and the identifiers you received.
   </Accordion>
 </Accordions>
 
@@ -177,7 +167,7 @@ Sessions, bearer API keys, and anonymous `GET` access are documented on the dedi
   <Card title="Rate limits" href="/rate-limits" icon={<ShieldCheck />}>
     Understand headers, reset windows, and backoff behavior.
   </Card>
-   <Card title="Response format" href="/response-format" icon={<Braces />}>
+  <Card title="Response format" href="/response-format" icon={<Braces />}>
     Review the response envelope, list metadata, and error objects.
   </Card>
   <Card title="Errors" href="/errors" icon={<CircleAlert />}>
