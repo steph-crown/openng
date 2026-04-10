@@ -133,8 +133,38 @@ body {
   text-underline-offset: 0.18em;
 }
 
+#nd-page .prose code {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--openng-accent);
+  background-color: color-mix(in oklab, var(--openng-accent) 14%, transparent);
+  padding: 0.12em 0.4em;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in oklab, var(--openng-accent) 35%, transparent);
+}
+
+#nd-page .prose pre code {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
 #nd-page [data-card] {
   text-decoration: none;
+}
+
+#nd-page [data-card] code {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--openng-accent);
+  background-color: color-mix(in oklab, var(--openng-accent) 14%, transparent);
+  padding: 0.12em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in oklab, var(--openng-accent) 35%, transparent);
 }
 
 #nd-sidebar a.rounded-lg:hover,
