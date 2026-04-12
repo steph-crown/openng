@@ -4,28 +4,29 @@ export function SearchAndShadcnSection() {
   return (
     <section className={styles.grid}>
       <article className={styles.card}>
-        <h3>Enhance your search experience.</h3>
+        <h3>Machine-readable by design.</h3>
         <p>
-          Integrate with Orama Search and Algolia Search in your docs easily.
+          Every resource exposes a `/meta` endpoint describing fields, filters,
+          freshness, source, and version.
         </p>
-        <a href="/docs">Learn More</a>
+        <a href="https://api.openng.dev/v1/holidays/meta">Try /meta</a>
         <div className={styles.searchMock}>
-          <p>Search...</p>
+          <p>curl https://api.openng.dev/v1/holidays/meta</p>
           <ul>
-            <li>Getting Started</li>
-            <li>Components</li>
-            <li>MDX Content</li>
+            <li>resource: holidays</li>
+            <li>record_count: 91</li>
+            <li>filters: year, type, is_confirmed</li>
           </ul>
         </div>
       </article>
       <article className={styles.cardImage}>
         <div className={styles.cardCopy}>
-          <h3>The shadcn/ui for docs</h3>
+          <h3>Open source. Fork it. Own it.</h3>
           <p>
-            Fumadocs CLI creates interactive components for your docs, offering a
-            rich experience to your users.
+            OpenNG is MIT licensed. API server, data pipeline, schema, and seed
+            data all live in one public monorepo.
           </p>
-          <a href="/docs/cli">Commands</a>
+          <a href="https://github.com/stephcrown/openng">View on GitHub</a>
         </div>
         <img src="/landing/shadcn.0wdg9wvt5u2ue.png" alt="" loading="lazy" />
       </article>

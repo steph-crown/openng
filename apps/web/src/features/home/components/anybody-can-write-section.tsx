@@ -3,35 +3,38 @@ import styles from "./anybody-can-write-section.module.css";
 export function AnybodyCanWriteSection() {
   return (
     <section className={styles.section}>
-      <h2>Anybody can write.</h2>
+      <h2>Any language. Any tool. Any environment.</h2>
       <p>
-        Native support for Markdown &amp; MDX, offering intuitive, convenient and
-        extensive syntax for non-dev writers, developers, and AI agents.
+        OpenNG is HTTP. If your language can make a network request, it can use
+        OpenNG.
       </p>
       <div className={styles.content}>
         <article className={styles.codeBlock}>
           <pre>
             <code>
-              ---{"\n"}title: Hello World{"\n"}---{"\n"}
-              {"\n"}## Overview{"\n"}
-              {"\n"}I love **Fumadocs**!{"\n"}
-              {"\n"}```ts tab=&quot;Tab 1&quot;{"\n"}console.log(&quot;Hello World&quot;)
-              {"\n"}```{"\n"}
+              {`# Get Nigerian fuel prices for Lagos, March 2026
+curl "https://api.openng.dev/v1/fuel?state=Lagos&period=2026-03" \
+  -H "Authorization: Bearer ong_live_your_key"
+
+const fuel = await fetch("https://api.openng.dev/v1/fuel?state=Lagos&period=2026-03")
+  .then((r) => r.json())
+
+print("Lagos PMS price", fuel["data"][0]["pms_price"])`}
             </code>
           </pre>
         </article>
         <article className={styles.textBlock}>
-          <h3>The familiar syntax.</h3>
+          <h3>Every data point, traceable.</h3>
           <p>
-            It is just Markdown, with additional features seamlessly composing
-            into the syntax.
+            The API keeps provenance and freshness first so product teams can
+            trust what they ship.
           </p>
           <ul>
-            <li>Markdown features, including images</li>
-            <li>Syntax highlighting (Powered by Shiki)</li>
-            <li>Codeblock Groups</li>
-            <li>Callouts</li>
-            <li>Custom Heading Anchors</li>
+            <li>source_url on every record to the original publication</li>
+            <li>source_date and last_updated for freshness tracking</li>
+            <li>is_confirmed for variable or tentative dates</li>
+            <li>Validated staging pipeline before production release</li>
+            <li>Pagination and standard filters on list endpoints</li>
           </ul>
         </article>
       </div>

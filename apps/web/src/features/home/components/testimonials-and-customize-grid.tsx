@@ -6,12 +6,12 @@ export function TestimonialsAndCustomizeGrid() {
   return (
     <section className={styles.grid}>
       <article className={styles.cardLarge}>
-        <h3>A framework people love.</h3>
+        <h3>One platform. Multiple surfaces.</h3>
         <p>
-          Loved by teams and developers from startups like Unkey, Vercel, Orama
-          — evolving everyday to be your favourite docs framework.
+          Browse and filter resources in Explorer, manage API keys and usage in
+          Dashboard, and integrate from complete docs with examples.
         </p>
-        <a href="/showcase">Showcase</a>
+        <a href="/explore">Open Explorer</a>
       </article>
       <article className={styles.testimonialsCard}>
         {testimonials.map((item) => (
@@ -28,19 +28,19 @@ export function TestimonialsAndCustomizeGrid() {
         <img src="/landing/banner.0ktv71..ooo1j.png" alt="" loading="lazy" />
         <div className={styles.tabBar}>
           <button className={styles.tabActive} type="button">
-            Docs
+            Explorer
           </button>
-          <button type="button">Notebook</button>
-          <button type="button">OpenAPI</button>
+          <button type="button">Dashboard</button>
+          <button type="button">Docs</button>
         </div>
       </article>
       <article className={styles.cardLarge}>
-        <h3>Minimal aesthetics, Maximum customizability.</h3>
+        <h3>Clean, consistent, predictable.</h3>
         <p>
-          Fumadocs offer well-designed themes, with a headless mode to plug your
-          own UI.
+          Every endpoint returns the same envelope with predictable fields, and
+          errors are just as clean.
         </p>
-        <code>pnpm dlx @fumadocs/cli customise</code>
+        <code>{`{ "success": true, "data": [...], "meta": { "total": 432 } }`}</code>
       </article>
     </section>
   );

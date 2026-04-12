@@ -7,19 +7,20 @@ export type Testimonial = {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "You know how you end up rebuilding a full docs site every time you start a new project?",
-    author: "Anthony Shew",
-    role: "Turbo DX at Vercel",
-  },
-  {
-    quote: "fumadocs is the best Next.js docs framework",
-    author: "Aiden Bai",
-    role: "Creator of Million.js",
+      "There's no API for Nigerian public data. Fuel prices live in NBS PDFs. School lists require visiting 3 ministries. Postal codes are in an Excel someone emailed you.",
+    author: "@eldivine",
+    role: "X · 300K impressions",
   },
   {
     quote:
-      "Major shoutout for making a gorgeous documentation framework that composes beautifully.",
-    author: "shadcn",
-    role: "Creator of Shadcn UI",
+      "We have a data problem in Nigeria. I've had to manually scrape and search for the data I want to use severally.",
+    author: "@Ifihan_",
+    role: "X · Builder of Iya Oloja",
+  },
+  {
+    quote:
+      "Finally. I've been copying NBS PDFs into a spreadsheet every month for two years. This changes everything.",
+    author: "Early user",
+    role: "Fintech engineer",
   },
 ];

@@ -5,19 +5,20 @@ export type FrameworkPackage = {
 
 export const frameworkPackages: FrameworkPackage[] = [
   {
-    name: "fumadocs-mdx",
-    description: "Use MDX in your React framework elegantly.",
+    name: "Public Holidays",
+    description:
+      "All Nigerian federal public holidays with source links and confirmation state.",
   },
   {
-    name: "fumadocs-core",
-    description: "Headless library for building docs + handling content.",
+    name: "Fuel Prices",
+    description: "Monthly PMS, diesel, and kerosene prices by state.",
   },
   {
-    name: "fumadocs-ui",
-    description: "UI library for building docs.",
+    name: "Postal Codes",
+    description: "NIPOST postal codes mapped to states and LGAs.",
   },
   {
-    name: "fumadocs-openapi",
-    description: "Extend Fumadocs to render OpenAPI docs.",
+    name: "Public Schools",
+    description: "Primary and secondary schools by LGA from UBEC datasets.",
   },
 ];

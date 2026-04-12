@@ -39,6 +39,14 @@
   color: var(--color-brand);
 }
 
+.subtext {
+  max-width: 540px;
+  color: var(--color-muted);
+  line-height: 1.58;
+  margin-bottom: 26px;
+  font-size: 16px;
+}
+
 .actions {
   display: flex;
   align-items: center;
@@ -82,9 +90,16 @@
   border: 1px solid var(--color-border);
 }
 
-.preview {
+.terminalPreview {
   width: 100%;
-  display: block;
+  margin: 0;
+  padding: 22px 24px;
+  background: #080808;
+  color: #e5e5e5;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
 }
 
 @media (max-width: 1100px) {
@@ -100,6 +115,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .subtext {
+    max-width: 760px;
   }
 }
 

@@ -3,7 +3,7 @@ import styles from "./docs-for-engineers-section.module.css";
 export function DocsForEngineersSection() {
   return (
     <section className={styles.section}>
-      <h2>Docs For Engineers.</h2>
+      <h2>Browse without code.</h2>
       <article className={styles.story}>
         <img
           className={styles.image}
@@ -12,13 +12,13 @@ export function DocsForEngineersSection() {
           loading="lazy"
         />
         <div className={styles.overlayCard}>
-          <h3>Fumadocs Story</h3>
+          <h3>Data Explorer</h3>
           <p>
-            Built for UI component libraries — bring an interactive playground to
-            showcase your components vividly.
+            Browse, filter, and export OpenNG resources with zero code. Generated
+            filters stay in sync with API metadata.
           </p>
-          <a href="/docs">Explore</a>
-          <div className={styles.callout}>This is a Callout</div>
+          <a href="/explore">Explore</a>
+          <div className={styles.callout}>View API call for current filters</div>
         </div>
       </article>
     </section>

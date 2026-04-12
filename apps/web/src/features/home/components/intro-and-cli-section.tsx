@@ -3,13 +3,7 @@ import styles from "./intro-and-cli-section.module.css";
 export function IntroAndCliSection() {
   return (
     <section className={styles.section}>
-      <p className={styles.intro}>
-        Fumadocs is a <span>React.js</span> documentation framework for{" "}
-        <span>Developers</span>, beautifully designed by <span>Fuma Nama</span>.
-        Bringing powerful features for your docs workflows, with high
-        customizability to fit your preferences, works seamlessly with any
-        React.js framework, CMS — anything.
-      </p>
+      <p className={styles.intro}>Try it now</p>
       <article className={styles.cliCard}>
         <img
           className={styles.background}
@@ -19,20 +13,29 @@ export function IntroAndCliSection() {
         />
         <div className={styles.panel}>
           <div className={styles.panelTop}>
-            <h3>TRY IT OUT</h3>
-            <code>pnpm create fumadocs-app</code>
+            <h3>CURL</h3>
+            <code>GET /v1/holidays?year=2026</code>
           </div>
           <div className={styles.terminal}>
-            <p>pnpm create fumadocs-app</p>
-            <p>◇ Project name</p>
-            <p>│ my-app</p>
-            <p>◆ Choose a framework</p>
-            <p>│ ○ Next.js</p>
-            <p>│ ○ Tanstack Start</p>
-            <p>└ ○ React Router</p>
+            <p>{`curl "https://api.openng.dev/v1/holidays?year=2026"`}</p>
+            <p></p>
+            <p>
+              {`const res = await fetch("https://api.openng.dev/v1/holidays?year=2026")`}
+            </p>
+            <p>const {"{ data, meta }"} = await res.json()</p>
+            <p></p>
+            <p>import requests</p>
+            <p>
+              {
+                `requests.get("https://api.openng.dev/v1/holidays", params={ 'year': 2026 })`
+              }
+            </p>
           </div>
         </div>
       </article>
+      <p className={styles.subheadline}>
+        A tool Nigerian developers have been waiting for.
+      </p>
     </section>
   );
 }

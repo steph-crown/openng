@@ -4,8 +4,7 @@ export type NavLink = {
 };
 
 export const navLinks: NavLink[] = [
-  { label: "Documentation", href: "/docs" },
-  { label: "Blog", href: "/blog" },
-  { label: "Showcase", href: "/showcase" },
-  { label: "Sponsors", href: "/sponsors" },
+  { label: "Documentation", href: "https://docs.openng.dev" },
+  { label: "Explore", href: "/explore" },
+  { label: "Changelog", href: "/changelog" },
 ];

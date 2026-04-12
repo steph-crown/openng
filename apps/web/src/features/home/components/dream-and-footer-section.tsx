@@ -3,14 +3,17 @@ import styles from "./dream-and-footer-section.module.css";
 export function DreamAndFooterSection() {
   return (
     <section className={styles.section}>
-      <h2>A Framework of Dream.</h2>
+      <h2>Built in public.</h2>
       <div className={styles.grid}>
         <article className={styles.card}>
-          <h3>Made Possible by You.</h3>
-          <p>Fumadocs is 100% powered by passion and open source community.</p>
+          <h3>Contributors make OpenNG better.</h3>
+          <p>
+            Data corrections, new resources, bug fixes, and docs improvements are
+            all welcome.
+          </p>
           <div className={styles.actions}>
-            <button type="button">Sponsors</button>
-            <button type="button">Contributors</button>
+            <a href="/contribute">Contribute data</a>
+            <a href="https://github.com/stephcrown/openng">GitHub</a>
           </div>
           <div className={styles.avatars}>
             {Array.from({ length: 16 }).map((_, index) => (
@@ -25,13 +28,13 @@ export function DreamAndFooterSection() {
       </div>
       <article className={styles.footerCard}>
         <ul>
-          <li>Battery guaranteed. Actively maintained, open for contributions.</li>
-          <li>Fully open-source. Open source, available on GitHub.</li>
-          <li>Within seconds. Initialize a new project instantly with CLI.</li>
+          <li>Open API for Nigerian public data.</li>
+          <li>MIT licensed and built by Steph Crown.</li>
+          <li>Documentation, API reference, and contribution guides are public.</li>
         </ul>
         <div className={styles.footerActions}>
-          <a href="/docs">Read docs</a>
-          <a href="https://github.com/fuma-nama/fumadocs">Open GitHub</a>
+          <a href="https://docs.openng.dev">Documentation</a>
+          <a href="https://github.com/stephcrown/openng">Open GitHub</a>
         </div>
       </article>
     </section>

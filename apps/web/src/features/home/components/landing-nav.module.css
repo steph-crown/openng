@@ -33,6 +33,7 @@
 .link {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   padding: 8px 10px;
   border-radius: 8px;
   color: var(--color-muted);
@@ -54,27 +55,25 @@
   gap: 8px;
 }
 
-.search {
+.starBadge {
   border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-muted);
   border-radius: 999px;
-  min-width: 166px;
+  padding: 1px 8px;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.apiKeyButton {
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
   height: 34px;
-  padding: 0 6px 0 12px;
+  padding: 0 14px;
   font-size: 13px;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.kbd {
-  border: 1px solid var(--color-border);
-  border-radius: 7px;
-  padding: 2px 6px;
-  font-size: 11px;
-  background: var(--color-bg);
+  justify-content: center;
+  font-weight: 500;
 }
 
 .github {
@@ -107,8 +106,8 @@
     display: none;
   }
 
-  .search {
-    min-width: 120px;
+  .apiKeyButton {
+    padding-inline: 12px;
   }
 }
 
@@ -117,15 +116,7 @@
     padding-inline: 12px;
   }
 
-  .search {
-    min-width: 34px;
-    width: 34px;
-    padding-inline: 0;
-    justify-content: center;
-  }
-
-  .search span,
-  .kbd {
+  .apiKeyButton {
     display: none;
   }
 }

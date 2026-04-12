@@ -6,23 +6,23 @@ export function FrameworkCardsGrid() {
   return (
     <section className={styles.grid}>
       <article className={styles.card}>
-        <h3>Framework Agnostic</h3>
+        <h3>Works with everything.</h3>
         <p>
-          Official support for Next.js, Tanstack Start, React Router, Waku —
-          portable to any React.js framework.
+          OpenNG is HTTP. No SDK required. Works with Postman, Insomnia, Node.js,
+          Python, Go, Rust, React, Vue, Excel, and Google Sheets.
         </p>
         <div className={styles.badges}>
-          <span>N</span>
-          <span>R</span>
-          <span>T</span>
-          <span>W</span>
+          <span>JS</span>
+          <span>Py</span>
+          <span>Go</span>
+          <span>CSV</span>
         </div>
       </article>
       <article className={styles.card}>
-        <h3>A truly composable framework.</h3>
+        <h3>The data you&apos;ve been collecting manually.</h3>
         <p>
-          Separated as Content → Core → UI, offering the high composability that
-          engineers love.
+          OpenNG covers the data domains Nigerian developers need most. New
+          resources ship continuously.
         </p>
         <ul className={styles.packageList}>
           {frameworkPackages.map((item) => (
@@ -34,14 +34,12 @@ export function FrameworkCardsGrid() {
         </ul>
       </article>
       <article className={styles.card}>
-        <h3>Adopts your content.</h3>
+        <h3>Built for what Nigerians are building.</h3>
         <p>
-          Designed to integrate with any content source, Fumadocs works on MDX,
-          content collections, and your own CMS.
+          Fintech, proptech, edtech, logistics, civic tech, and healthcare teams
+          can build on the same trusted public data foundation.
         </p>
-        <code>
-          import &#123; loader &#125; from &apos;fumadocs-core/source&apos;;
-        </code>
+        <code>Use cases: reminders, pricing, address validation, facility lookup</code>
       </article>
       <article className={styles.mediaCard}>
         <img src="/landing/bg-2.0ghkt8u4me4hk.png" alt="" loading="lazy" />

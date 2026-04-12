@@ -45,14 +45,14 @@
   gap: 8px;
 }
 
-.actions button {
+.actions a {
   border: 1px solid var(--color-border);
   background: var(--color-button-secondary);
   border-radius: 999px;
   padding: 8px 13px;
 }
 
-.actions button:first-child {
+.actions a:first-child {
   background: var(--color-brand);
   color: var(--color-brand-foreground);
   border-color: transparent;

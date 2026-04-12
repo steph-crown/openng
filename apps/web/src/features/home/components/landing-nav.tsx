@@ -18,12 +18,22 @@ export function LandingNav() {
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                className={styles.link}
+                href="https://github.com/stephcrown/openng"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                GitHub
+                <span className={styles.starBadge}>★ 0.1k</span>
+              </a>
+            </li>
           </ul>
           <div className={styles.actions}>
-            <button type="button" className={styles.search}>
-              <span>Search</span>
-              <kbd className={styles.kbd}>⌘K</kbd>
-            </button>
+            <a className={styles.apiKeyButton} href="/dashboard">
+              Get API Key
+            </a>
             <ThemeToggle />
             <a
               href="https://github.com/stephcrown/openng"
