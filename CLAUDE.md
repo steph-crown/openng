@@ -245,6 +245,12 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 - Use **TanStack Router loaders** for data needed to render a route; keep loaders thin—call functions in `features/.../api` or `src/lib/api`.
 - Use **`createServerFn`** only when execution must run on the server; validate every input with **Zod**. Do not duplicate business rules that already live in `apps/api`—the web app orchestrates UX, not authoritative validation for persistence.
 
+### Deployment (Vercel)
+
+- TanStack Start on Vercel requires Nitro integration in `apps/web/vite.config.ts`: include `nitro()` from `nitro/vite` with `plugins: [tanstackStart(), nitro(), viteReact()]`.
+- Production output for web SSR runs from Nitro output (`apps/web/.output/server/index.mjs`), not `dist/server/server.js`.
+- For Vercel monorepo deploys, set the project Root Directory to `apps/web` so routes are served by the web app build.
+
 ### Security (client and SSR boundary)
 
 - **Secrets:** Never put API secrets, private keys, or privileged tokens in code that ships to the browser. Only explicitly public build-time vars (e.g. `VITE_*`) are visible client-side—treat them as public.
