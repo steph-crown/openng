@@ -14,7 +14,7 @@
   position: relative;
   z-index: 2;
   padding: 56px 32px 24px;
-  max-width: 560px;
+  max-width: 700px;
 }
 
 .badge {
@@ -99,7 +99,43 @@
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.55;
-  white-space: pre-wrap;
+}
+
+.terminalPreview code {
+  display: grid;
+  gap: 2px;
+}
+
+.line {
+  display: block;
+}
+
+.tokenPrompt {
+  color: #9ca3af;
+}
+
+.tokenCommand {
+  color: #fde68a;
+}
+
+.tokenString {
+  color: #86efac;
+}
+
+.tokenKey {
+  color: #93c5fd;
+}
+
+.tokenBoolean {
+  color: #f9a8d4;
+}
+
+.tokenNumber {
+  color: #fcd34d;
+}
+
+.tokenPunctuation {
+  color: #d4d4d8;
 }
 
 @media (max-width: 1100px) {

@@ -17,18 +17,38 @@ export function IntroAndCliSection() {
             <code>GET /v1/holidays?year=2026</code>
           </div>
           <div className={styles.terminal}>
-            <p>{`curl "https://api.openng.dev/v1/holidays?year=2026"`}</p>
-            <p></p>
             <p>
-              {`const res = await fetch("https://api.openng.dev/v1/holidays?year=2026")`}
+              <span className={styles.tokenCommand}>curl</span>{" "}
+              <span className={styles.tokenString}>
+                &quot;https://api.openng.dev/v1/holidays?year=2026&quot;
+              </span>
             </p>
-            <p>const {"{ data, meta }"} = await res.json()</p>
             <p></p>
-            <p>import requests</p>
             <p>
-              {
-                `requests.get("https://api.openng.dev/v1/holidays", params={ 'year': 2026 })`
-              }
+              <span className={styles.tokenKeyword}>const</span> res{" "}
+              <span className={styles.tokenKeyword}>=</span>{" "}
+              <span className={styles.tokenKeyword}>await</span> fetch(
+              <span className={styles.tokenString}>
+                &quot;https://api.openng.dev/v1/holidays?year=2026&quot;
+              </span>
+              )
+            </p>
+            <p>
+              <span className={styles.tokenKeyword}>const</span>{" "}
+              {"{ data, meta }"} <span className={styles.tokenKeyword}>=</span>{" "}
+              <span className={styles.tokenKeyword}>await</span> res.json()
+            </p>
+            <p></p>
+            <p>
+              <span className={styles.tokenKeyword}>import</span> requests
+            </p>
+            <p>
+              requests.get(
+              <span className={styles.tokenString}>
+                &quot;https://api.openng.dev/v1/holidays&quot;
+              </span>
+              , params={"{"} <span className={styles.tokenString}>&apos;year&apos;</span>:{" "}
+              <span className={styles.tokenNumber}>2026</span> {"}"})
             </p>
           </div>
         </div>

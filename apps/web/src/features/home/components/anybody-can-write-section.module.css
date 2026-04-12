@@ -41,7 +41,36 @@
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.6;
-  color: color-mix(in oklab, var(--color-fg) 86%, #76a9ff 14%);
+  color: #d4d4d8;
+}
+
+.codeBlock code {
+  display: grid;
+  gap: 2px;
+}
+
+.line {
+  display: block;
+}
+
+.tokenComment {
+  color: #9ca3af;
+}
+
+.tokenCommand {
+  color: #facc15;
+}
+
+.tokenKeyword {
+  color: #f472b6;
+}
+
+.tokenString {
+  color: #22c55e;
+}
+
+.tokenNumber {
+  color: #f59e0b;
 }
 
 .textBlock {

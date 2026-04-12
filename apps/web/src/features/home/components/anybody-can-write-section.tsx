@@ -12,14 +12,49 @@ export function AnybodyCanWriteSection() {
         <article className={styles.codeBlock}>
           <pre>
             <code>
-              {`# Get Nigerian fuel prices for Lagos, March 2026
-curl "https://api.openng.dev/v1/fuel?state=Lagos&period=2026-03" \
-  -H "Authorization: Bearer ong_live_your_key"
-
-const fuel = await fetch("https://api.openng.dev/v1/fuel?state=Lagos&period=2026-03")
-  .then((r) => r.json())
-
-print("Lagos PMS price", fuel["data"][0]["pms_price"])`}
+              <span className={styles.line}>
+                <span className={styles.tokenComment}>
+                  # Get Nigerian fuel prices for Lagos, March 2026
+                </span>
+              </span>
+              <span className={styles.line}>
+                <span className={styles.tokenCommand}>curl</span>{" "}
+                <span className={styles.tokenString}>
+                  &quot;https://api.openng.dev/v1/fuel?state=Lagos&amp;period=2026-03&quot;
+                </span>{" "}
+                \
+              </span>
+              <span className={styles.line}>
+                {"  "}-H{" "}
+                <span className={styles.tokenString}>
+                  &quot;Authorization: Bearer ong_live_your_key&quot;
+                </span>
+              </span>
+              <span className={styles.line}></span>
+              <span className={styles.line}>
+                <span className={styles.tokenKeyword}>const</span> fuel{" "}
+                <span className={styles.tokenKeyword}>=</span>{" "}
+                <span className={styles.tokenKeyword}>await</span> fetch(
+              </span>
+              <span className={styles.line}>
+                {"  "}
+                <span className={styles.tokenString}>
+                  &quot;https://api.openng.dev/v1/fuel?state=Lagos&amp;period=2026-03&quot;
+                </span>
+                )
+              </span>
+              <span className={styles.line}>
+                {"  "}.then((r) <span className={styles.tokenKeyword}>=&gt;</span>{" "}
+                r.json())
+              </span>
+              <span className={styles.line}></span>
+              <span className={styles.line}>
+                print(
+                <span className={styles.tokenString}>&quot;Lagos PMS price&quot;</span>,
+                fuel[<span className={styles.tokenString}>&quot;data&quot;</span>][
+                <span className={styles.tokenNumber}>0</span>][
+                <span className={styles.tokenString}>&quot;pms_price&quot;</span>])
+              </span>
             </code>
           </pre>
         </article>

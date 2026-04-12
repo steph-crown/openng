@@ -50,6 +50,27 @@
   padding: 10px 12px;
   font-family: var(--font-mono);
   font-size: 13px;
+  background: color-mix(in oklab, var(--color-surface-strong) 85%, transparent);
+}
+
+.snippet {
+  line-height: 1.6;
+}
+
+.tokenPunctuation {
+  color: var(--color-fg);
+}
+
+.tokenKey {
+  color: #60a5fa;
+}
+
+.tokenBoolean {
+  color: #f472b6;
+}
+
+.tokenNumber {
+  color: #f59e0b;
 }
 
 .testimonialsCard {

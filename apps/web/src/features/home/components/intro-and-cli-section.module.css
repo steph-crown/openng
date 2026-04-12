@@ -73,6 +73,26 @@
   background: color-mix(in oklab, var(--color-bg) 85%, transparent);
 }
 
+.terminal p {
+  margin: 0;
+}
+
+.tokenKeyword {
+  color: #f472b6;
+}
+
+.tokenCommand {
+  color: #facc15;
+}
+
+.tokenString {
+  color: #22c55e;
+}
+
+.tokenNumber {
+  color: #f59e0b;
+}
+
 .subheadline {
   margin-top: 6px;
   text-align: center;

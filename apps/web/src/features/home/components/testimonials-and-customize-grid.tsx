@@ -40,7 +40,25 @@ export function TestimonialsAndCustomizeGrid() {
           Every endpoint returns the same envelope with predictable fields, and
           errors are just as clean.
         </p>
-        <code>{`{ "success": true, "data": [...], "meta": { "total": 432 } }`}</code>
+        <code className={styles.snippet}>
+          <span className={styles.tokenPunctuation}>{"{"}</span>{" "}
+          <span className={styles.tokenKey}>&quot;success&quot;</span>
+          <span className={styles.tokenPunctuation}>:</span>{" "}
+          <span className={styles.tokenBoolean}>true</span>
+          <span className={styles.tokenPunctuation}>,</span>{" "}
+          <span className={styles.tokenKey}>&quot;data&quot;</span>
+          <span className={styles.tokenPunctuation}>:</span> [
+          <span className={styles.tokenPunctuation}>...</span>]
+          <span className={styles.tokenPunctuation}>,</span>{" "}
+          <span className={styles.tokenKey}>&quot;meta&quot;</span>
+          <span className={styles.tokenPunctuation}>:</span>{" "}
+          <span className={styles.tokenPunctuation}>{"{"}</span>{" "}
+          <span className={styles.tokenKey}>&quot;total&quot;</span>
+          <span className={styles.tokenPunctuation}>:</span>{" "}
+          <span className={styles.tokenNumber}>432</span>{" "}
+          <span className={styles.tokenPunctuation}>{"}"}</span>{" "}
+          <span className={styles.tokenPunctuation}>{"}"}</span>
+        </code>
       </article>
     </section>
   );
