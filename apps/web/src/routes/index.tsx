@@ -1,39 +1,57 @@
-import Image, { type ImageProps } from "next/image";
 import { Button } from "@openng/ui/button";
-import styles from "./page.module.css";
+import { createFileRoute } from "@tanstack/react-router";
+import type { ComponentPropsWithoutRef } from "react";
 
-type Props = Omit<ImageProps, "src"> & {
+import styles from "./index.module.css";
+
+export const Route = createFileRoute("/")({
+  component: Home,
+});
+
+type ThemeImgProps = Omit<
+  ComponentPropsWithoutRef<"img">,
+  "src" | "srcSet"
+> & {
   srcLight: string;
   srcDark: string;
 };
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+function ThemeImage(props: ThemeImgProps) {
+  const { srcLight, srcDark, className, alt, ...rest } = props;
 
   return (
     <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
+      <img
+        {...rest}
+        src={srcLight}
+        className={`${className ?? ""} imgLight`.trim()}
+        alt={alt}
+      />
+      <img
+        {...rest}
+        src={srcDark}
+        className={`${className ?? ""} imgDark`.trim()}
+        alt={alt}
+      />
     </>
   );
-};
+}
 
-export default function Home() {
+function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <ThemeImage
           className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
+          srcLight="/turborepo-dark.svg"
+          srcDark="/turborepo-light.svg"
           alt="Turborepo logo"
           width={180}
           height={38}
-          priority
         />
         <ol>
           <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
+            Get started by editing <code>apps/web/src/routes/index.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
@@ -45,7 +63,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
+            <img
               className={styles.logo}
               src="/vercel.svg"
               alt="Vercel logomark"
@@ -73,10 +91,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
+          <img
             aria-hidden
             src="/window.svg"
-            alt="Window icon"
+            alt=""
             width={16}
             height={16}
           />
@@ -87,10 +105,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
+          <img
             aria-hidden
             src="/globe.svg"
-            alt="Globe icon"
+            alt=""
             width={16}
             height={16}
           />

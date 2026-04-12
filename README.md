@@ -15,7 +15,7 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
+- `web`: [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router) for `openng.dev`
 - `@openng/ui`: a stub React component library shared by both `web` and `docs` applications
 - `@openng/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@openng/typescript-config`: `tsconfig.json`s used throughout the monorepo
