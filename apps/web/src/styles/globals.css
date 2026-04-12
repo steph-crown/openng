@@ -1,34 +1,76 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --font-geist-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  --font-geist-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
-    Consolas, monospace;
+  --font-sans: "Geist", "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --layout-width: 1400px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --duration-fast: 0.16s;
+  --duration-base: 0.24s;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --color-bg: #f5f5f5;
+  --color-fg: #171717;
+  --color-muted: #6a6a6a;
+  --color-border: #cccccc80;
+  --color-surface: #f1f1f1;
+  --color-surface-strong: #e9e9e9;
+  --color-overlay: #ffffffcc;
+  --color-nav-bg: #f5f5f5cc;
+  --color-button-secondary: #ededed;
+  --color-brand: #f86128;
+  --color-brand-foreground: #fff8ef;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.dark {
+  --color-bg: #0a0a0a;
+  --color-fg: #f3f3f3;
+  --color-muted: #b4b4b4;
+  --color-border: #3f3f3f8f;
+  --color-surface: #0f0f0f;
+  --color-surface-strong: #111111;
+  --color-overlay: #0f0f0fcf;
+  --color-nav-bg: #0a0a0acc;
+  --color-button-secondary: #151515;
+  --color-brand: #fff16e;
+  --color-brand-foreground: #111111;
 }
 
-html,
-body {
+html {
   max-width: 100vw;
   overflow-x: hidden;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-geist-sans);
+  margin: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
+  color: var(--color-fg);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
 }
 
@@ -37,19 +79,19 @@ a {
   text-decoration: none;
 }
 
-.imgDark {
-  display: none;
+button,
+input,
+textarea {
+  font: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

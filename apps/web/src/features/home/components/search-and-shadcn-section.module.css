@@ -1,0 +1,95 @@
+.grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card,
+.cardImage {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.card {
+  padding: 24px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.card h3,
+.cardCopy h3 {
+  font-size: clamp(30px, 2.5vw, 38px);
+  letter-spacing: -0.02em;
+}
+
+.card p,
+.cardCopy p {
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.card a,
+.cardCopy a {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.searchMock {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.searchMock p {
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+  padding-bottom: 8px;
+  color: var(--color-muted);
+}
+
+.searchMock ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.searchMock li {
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 8px 10px;
+}
+
+.cardImage {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.cardCopy {
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

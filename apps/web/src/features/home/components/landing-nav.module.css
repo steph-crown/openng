@@ -1,0 +1,131 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 56px;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-nav-bg);
+}
+
+.container {
+  width: min(100%, var(--layout-width));
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.nav {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 10px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--color-muted);
+  font-size: 13px;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  color: var(--color-fg);
+  background: color-mix(in oklab, var(--color-brand) 14%, transparent);
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  border-radius: 999px;
+  min-width: 166px;
+  height: 34px;
+  padding: 0 6px 0 12px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kbd {
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 2px 6px;
+  font-size: 11px;
+  background: var(--color-bg);
+}
+
+.github {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+.github svg {
+  width: 17px;
+  height: 17px;
+}
+
+.github:hover {
+  color: var(--color-fg);
+  background: var(--color-surface-strong);
+}
+
+@media (max-width: 960px) {
+  .links {
+    display: none;
+  }
+
+  .search {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-inline: 12px;
+  }
+
+  .search {
+    min-width: 34px;
+    width: 34px;
+    padding-inline: 0;
+    justify-content: center;
+  }
+
+  .search span,
+  .kbd {
+    display: none;
+  }
+}

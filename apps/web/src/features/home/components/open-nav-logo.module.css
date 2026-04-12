@@ -1,0 +1,17 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.logoIcon {
+  color: var(--color-brand);
+  flex-shrink: 0;
+}
+
+.logoText {
+  color: var(--color-fg);
+  font-size: 15px;
+}

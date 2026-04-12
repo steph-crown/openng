@@ -1,0 +1,143 @@
+.grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.cardLarge,
+.testimonialsCard,
+.imageCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
+.cardLarge {
+  min-height: 300px;
+  padding: 26px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.cardLarge h3 {
+  font-size: clamp(24px, 2.4vw, 40px);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.cardLarge p {
+  color: var(--color-muted);
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.cardLarge a {
+  justify-self: start;
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 16px;
+}
+
+.cardLarge code {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.testimonialsCard {
+  min-height: 300px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-brand) 84%, transparent),
+    color-mix(in oklab, var(--color-bg) 30%, transparent)
+  );
+  padding: 12px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.quote {
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+  background: color-mix(in oklab, var(--color-bg) 72%, transparent);
+  padding: 14px;
+  display: grid;
+  align-content: space-between;
+  min-height: 200px;
+}
+
+.quote p {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.quote div {
+  display: grid;
+  margin-top: 20px;
+}
+
+.quote strong {
+  font-size: 13px;
+}
+
+.quote span {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.imageCard {
+  overflow: hidden;
+  padding: 0;
+}
+
+.imageCard img {
+  width: 100%;
+  display: block;
+}
+
+.tabBar {
+  padding: 10px 12px 12px;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.tabBar button {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.tabBar .tabActive {
+  color: var(--color-brand-foreground);
+  background: var(--color-brand);
+  border-color: color-mix(in oklab, var(--color-brand) 70%, transparent);
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonialsCard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .testimonialsCard {
+    grid-template-columns: 1fr;
+  }
+}

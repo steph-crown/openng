@@ -44,3 +44,5 @@ ROADMAP.md
 private/
 .history
 .pnpm-store
+
+fumadocs/*

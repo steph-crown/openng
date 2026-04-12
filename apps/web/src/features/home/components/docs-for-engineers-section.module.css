@@ -1,0 +1,69 @@
+.section {
+  margin-top: 80px;
+}
+
+.section h2 {
+  text-align: center;
+  font-size: clamp(38px, 4.2vw, 58px);
+  line-height: 1.05;
+  color: var(--color-brand);
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+}
+
+.story {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlayCard {
+  position: relative;
+  margin: 22px auto;
+  width: min(460px, calc(100% - 30px));
+  background: var(--color-overlay);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.overlayCard h3 {
+  font-size: 33px;
+  letter-spacing: -0.02em;
+}
+
+.overlayCard p {
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.overlayCard a {
+  justify-self: start;
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
+  font-weight: 500;
+  padding: 9px 15px;
+}
+
+.callout {
+  margin-top: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--color-surface);
+}
