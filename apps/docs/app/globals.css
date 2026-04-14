@@ -60,7 +60,7 @@
 .dark {
   --openng-accent: var(--openng-color-brand-dark);
   --openng-text-color: #ebebeb;
-  --openng-page-bg: #040404;
+  --openng-page-bg: #121212;
   --openng-nav-hover-bg: color-mix(
     in oklab,
     var(--openng-accent) 7%,
