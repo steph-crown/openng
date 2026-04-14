@@ -3,7 +3,6 @@ import { DocsForEngineersSection } from "./components/docs-for-engineers-section
 import { DreamAndFooterSection } from "./components/dream-and-footer-section";
 import { FrameworkCardsGrid } from "./components/framework-cards-grid";
 import { HeroSection } from "./components/hero-section";
-import { IntroAndCliSection } from "./components/intro-and-cli-section";
 import { LandingNav } from "./components/landing-nav";
 import { SearchAndShadcnSection } from "./components/search-and-shadcn-section";
 import { TestimonialsAndCustomizeGrid } from "./components/testimonials-and-customize-grid";
@@ -16,7 +15,6 @@ export function HomeLanding() {
       <LandingNav />
       <main className={styles.main}>
         <HeroSection />
-        <IntroAndCliSection />
         <TestimonialsAndCustomizeGrid />
         <AnybodyCanWriteSection />
         <DocsForEngineersSection />
