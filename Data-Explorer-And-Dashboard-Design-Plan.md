@@ -6,7 +6,7 @@
 
 The Data Explorer is the no-code interface to the OpenNG API. It allows any user — developer, journalist, researcher, NGO analyst, student — to browse, filter, sort, and export Nigerian public data without writing a single line of code. It lives inside a larger dashboard shell that also handles API key management, usage analytics, and account settings.
 
-The explorer is not a separate app. It is a module within the main `openng.dev` Next.js web application, accessible at `openng.dev/explore`.
+The explorer is not a separate app. It is a module within the main `openng.dev` TanStack Start web application, accessible at `openng.dev/explore`.
 
 ---
 
@@ -37,6 +37,7 @@ The sidebar is persistent on desktop (collapsible to icon-only on medium screens
 │  🏠  Overview               │
 │                             │
 │  📊  Data Explorer    [↓]   │  ← collapsible
+│      All resources          │
 │      Holidays     ● Live    │
 │      Fuel prices  ○ Soon    │
 │      Postal codes ○ Soon    │
@@ -65,6 +66,7 @@ The sidebar is persistent on desktop (collapsible to icon-only on medium screens
 **Data Explorer collapsible behaviour:**
 - Default state: expanded, showing all resources
 - Collapsed state: shows "Data Explorer" label with a count badge of live resources
+- "All resources" is always the first child and links to `/explore`
 - Live resources are clickable and navigate directly to that resource's explorer view
 - Coming soon resources are listed but grayed out (50% opacity) with a "Soon" badge
 - Clicking a coming soon resource navigates to a "Coming soon" state within the explorer
@@ -73,7 +75,7 @@ The sidebar is persistent on desktop (collapsible to icon-only on medium screens
 **Rate limit status in sidebar bottom:**
 - Visible at all times for logged-in users
 - Shows plan name, remaining requests for the current period
-- On hover: expands to show full limit, used, remaining, and reset time
+- No hover expansion in v1; keep it compact and readable
 - For anonymous users: shows "Anonymous · Limited access" with a "Create account" link
 
 ---
@@ -87,7 +89,7 @@ The home page of the dashboard. Entry point after login or after clicking "Dashb
 **Elements:**
 
 **Header:**
-- "Good morning, Steph" (time-aware greeting with the user's name if logged in)
+- "Good morning" (time-aware greeting without personal name)
 - For anonymous: "Welcome to OpenNG" with a "Create free account" CTA
 
 **Stats row (4 cards):**
@@ -109,12 +111,12 @@ For anonymous users: all four cards show with an overlay and "Log in to track us
 - Abbreviated version — shows live resources only, with a "View all" link to `/explore`
 
 **Quick actions:**
-- "Copy my API key" button (one-click, no navigation) — if logged in
+- "Go to API Keys" button — if logged in
 - "View docs" link
 - "Request a resource" link (opens GitHub issues)
 
 **API key status (if logged in):**
-- Key prefix displayed (e.g. `ngd_live_xK3...`)
+- Key prefix displayed (e.g. `ong_live_xK3...`)
 - Created date
 - "Manage key" link → goes to API Keys page
 
@@ -129,12 +131,16 @@ For anonymous users: all four cards show with an overlay and "Log in to track us
 - Subtitle: "Your API key authenticates your requests and unlocks higher rate limits."
 
 **Current key card (if key exists):**
-- Key display: `ngd_live_••••••••••••••••••••••••••••••••` (masked by default)
-- "Show" / "Hide" toggle to reveal the full key
-- "Copy" button — copies the full key to clipboard, shows tick confirmation
+- Key display: `ong_live_••••••••••••••••••••••••••••••••` (masked, never fully revealable after creation)
+- "Copy prefix" button — copies only prefix/reference text
 - Created: `April 1, 2026`
 - Last used: `2 hours ago` (or "Never used")
 - Plan: `Free — 5,000 requests/day`
+
+**One-time secret handling:**
+- Plaintext API key is shown only immediately after create/regenerate
+- The UI warns clearly: "Copy and store this key now. You will not be able to view it again."
+- If user loses it, they regenerate a new key and replace it in their apps
 
 **Regenerate key section:**
 - "Regenerate key" button — outlined danger button
@@ -208,7 +214,6 @@ For anonymous users: all four cards show with an overlay and "Log in to track us
 
 **Profile section:**
 - Email address (display only, not editable yet)
-- Display name (editable text input + Save button)
 - Account created date
 
 **Preferences section:**
@@ -290,16 +295,18 @@ The main explorer view. This is where users spend most of their time.
 ┌─────────────────────────────────────────────────────────────────┐
 │  Sidebar nav (persistent)                                        │
 ├──────────────┬──────────────────────────────────────────────────┤
-│  Filter      │  Main content area                               │
-│  Panel       │  ┌─────────────────────────────────────────────┐ │
-│  (left)      │  │ Resource header                             │ │
-│              │  ├─────────────────────────────────────────────┤ │
-│              │  │ Toolbar (copy API / share / refresh / cols) │ │
-│              │  ├─────────────────────────────────────────────┤ │
-│              │  │ Table                                       │ │
-│              │  ├─────────────────────────────────────────────┤ │
-│              │  │ Pagination                                  │ │
-│              │  └─────────────────────────────────────────────┘ │
+│  Main content area                               │  Filter      │
+│  ┌─────────────────────────────────────────────┐ │  Panel       │
+│  │ Resource header                             │ │  (right)     │
+│  ├─────────────────────────────────────────────┤ │              │
+│  │ Toolbar (copy API / share / refresh / cols) │ │              │
+│  ├─────────────────────────────────────────────┤ │              │
+│  │ Table                                       │ │              │
+│  ├─────────────────────────────────────────────┤ │              │
+│  │ Pagination                                  │ │              │
+│  └─────────────────────────────────────────────┘ │              │
+├─────────────────────────────────────────────────────────────────┤
+│  Mobile: filters open in a modal/sheet via "Filters" button    │
 └──────────────┴──────────────────────────────────────────────────┘
 ```
 
@@ -322,7 +329,7 @@ The main explorer view. This is where users spend most of their time.
 
 #### 5.2.2 Filter Panel
 
-Left sidebar panel, collapsible. When collapsed: shows only a "Filters" icon + active filter count badge.
+Right sidebar panel, hideable. When hidden: show a "Filters" button with active filter count badge.
 
 **Panel header:**
 - "Filters" label
@@ -354,9 +361,10 @@ Each filter field is rendered based on the filter's `type` declared in the Resou
   - Default pre-selected based on ResourceConfig `defaultSortOrder`
 
 **Apply behaviour:**
-- Filters apply automatically on change (debounced 400ms for text inputs)
-- No "Apply" button needed — instant feedback
-- Sort applies immediately on change
+- Filter controls are draft state until user clicks "Apply"
+- Include explicit "Apply" and "Reset all" actions
+- Sort and pagination can still apply immediately
+- Optional debounce is only for local input UX, not automatic network fetches
 
 **Holiday-specific filters example:**
 1. Year — number input (exact)
@@ -386,10 +394,9 @@ Sits between the resource header and the table. Contains actions that apply to t
 3. **Share view** — icon button (share icon). Copies the current URL including all filter state as query params to clipboard. Tooltip: "Copy link to this view". Shows "Copied!" confirmation.
 
 4. **Copy API call** — button with code icon. Primary action.
-   - If anonymous: copies `curl https://api.openng.dev/v1/holidays?year=2026&type=fixed` with a `# Add -H "Authorization: Bearer YOUR_KEY" for higher limits` comment
-   - If logged in: opens a small dropdown:
-     - "Copy with key" — includes `Authorization: Bearer ngd_live_xxx` header
-     - "Copy without key" — copies clean URL only
+   - Default: copies request URL as curl without credentials
+   - Secondary option: copy curl with `Authorization: Bearer $OPENNG_API_KEY` placeholder
+   - Do not offer "Copy with key" because plaintext key is not retrievable after creation
 
 5. **Export CSV** — button. Exports only the current page (not all pages, not all filtered results — just what's visible). Downloads a `.csv` file named `openng-holidays-2026-04-10.csv`.
 
@@ -677,8 +684,8 @@ All API responses made by the explorer are cached in the browser. The cache is:
 4. API key copy (when anonymous, the copy includes a "Sign up for an API key" note)
 
 **After login:**
-- API key is fetched and stored in the session
-- All subsequent explorer API calls include the `Authorization: Bearer ngd_live_xxx` header
+- Explorer calls to `api.openng.dev` use session auth (`openng_session`) with `credentials: "include"`
+- No client-side storage of plaintext API key
 - Rate limit display in sidebar updates to show their actual quota
 - In-memory cache carries over (no flush on login)
 
@@ -715,7 +722,7 @@ The explorer must be functional on mobile, even if the experience is simplified.
 
 **Tablet layout (768px–1024px):**
 - Sidebar collapses to icon-only (tooltips on hover)
-- Filter panel stays as a left sidebar but narrower
+- Filter panel stays as a right sidebar but narrower
 - Table remains full-width
 
 ---
@@ -745,7 +752,7 @@ A keyboard shortcut reference is accessible via `?` key — shows a small modal 
 | Column visibility | localStorage | Permanent |
 | Recently visited resources | localStorage | 30 days |
 | API response cache | In-memory (JS Map) | 5 minutes or page reload |
-| Auth session / API key | Clerk session cookie | Until logout |
+| Auth session | `openng_session` cookie | Until logout |
 | Default page size from settings | User settings (DB) | Permanent for logged-in |
 
 ---
@@ -797,20 +804,21 @@ When a user navigates to `openng.dev/explore/fuel` and fuel prices are not yet l
 
 ### Tech stack for the explorer:
 
-- **Framework:** Next.js App Router (`apps/web`) — same app as the main website
+- **Framework:** TanStack Start + TanStack Router (`apps/web`)
 - **State management:** URL search params as the source of truth (no Redux/Zustand needed)
-- **Data fetching:** React Server Components for initial load, client-side fetch for filter changes
-- **Cache:** in-memory Map stored in a React context, initialized on mount
-- **Table:** build custom — do not use a heavy table library. The requirements are specific enough that a custom table is simpler and lighter.
-- **Charts (Usage page):** Recharts (already in monorepo dependencies)
+- **Data fetching:** TanStack Query for all API requests
+- **Cache:** TanStack Query cache (with stale time/gc time) plus optional lightweight in-memory metadata for custom cache badges
+- **Table:** TanStack Table + UI primitives in `packages/ui`
+- **Charts (Usage page):** Recharts
 - **Date picker:** `react-day-picker` or a simple HTML date input with styling
-- **Auth:** Clerk — the session provides the user's API key which is fetched once and stored in a React context, available throughout the explorer
+- **Auth:** existing magic-link + session cookies from OpenNG API (`/auth/*`, `/account/*`)
 
 ### API calls from the explorer:
 
-The explorer calls `api.openng.dev` directly from the browser. It does not proxy through the Next.js server. This means:
+The explorer calls `api.openng.dev` directly from the browser. It does not proxy through the TanStack Start server. This means:
 - CORS must be configured on the Hono API to allow requests from `openng.dev`
-- API keys are sent in the `Authorization` header on every request (client-side)
+- Explorer requests include `credentials: "include"` so session-authenticated users get their higher tier without exposing keys in client state
+- Optional external-copy snippets can include `Authorization: Bearer $OPENNG_API_KEY` placeholders
 - Rate limit headers (`X-RateLimit-Remaining`, `X-RateLimit-Reset`) are read from responses and used to update the sidebar display
 
 ### ResourceConfig drives everything:
@@ -826,3 +834,9 @@ This is achieved by fetching `api.openng.dev/v1/{resource}/meta` on mount and us
 - Subsequent filter changes: debounced client-side fetches
 - Cache hit: synchronous from memory — table updates in < 16ms
 - Target: filter change → visible table update in < 200ms (cache hit) or < 1000ms (API call)
+
+### Delivery scope for this cycle:
+
+- Focus is UI implementation first (dashboard shell, explorer pages, filters, table, pagination, states, responsiveness)
+- For data/usage endpoints not yet implemented, use deterministic dummy data adapters in `apps/web`
+- After UI is complete, produce a concrete API endpoint backlog for implementation
