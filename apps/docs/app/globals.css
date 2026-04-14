@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@openng/ui/styles/globals.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
@@ -9,7 +10,7 @@
 }
 
 .light {
-  --openng-accent: #f86128;
+  --openng-accent: var(--openng-color-brand-light);
   --openng-text-color: #2e2e2e;
   /* --openng-page-bg: #efedde; */
   --openng-page-bg: #f3f3f3;
@@ -57,7 +58,7 @@
 }
 
 .dark {
-  --openng-accent: #fff16e;
+  --openng-accent: var(--openng-color-brand-dark);
   --openng-text-color: #ebebeb;
   --openng-page-bg: #040404;
   --openng-nav-hover-bg: color-mix(

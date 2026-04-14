@@ -98,11 +98,12 @@ openng/
 │   │   │   └── shared/         ← PDF parser, HTTP client, R2 uploader
 │   │   └── package.json
 │   │
-│   ├── ui/                     ← shared component library
+│   ├── ui/                     ← shared component and token package
 │   │   ├── src/
-│   │   │   ├── components/     ← buttons, tables, filters, cards
-│   │   │   └── tokens/         ← design tokens, colors, typography
-│   │   └── package.json        ← used by both apps/web and apps/docs
+│   │   │   ├── button.tsx      ← shared Button primitive
+│   │   │   ├── open-nav-logo.tsx
+│   │   │   └── tokens.css      ← shared CSS variables (brand + semantic tokens)
+│   │   └── package.json        ← exports TSX primitives + `./tokens.css`
 │   │
 │   └── shared/                 ← types, response formatters, Zod schemas
 │       └── package.json
@@ -239,6 +240,15 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 - **Hooks:** `use-kebab-case.ts` exporting `useFuelFilters` (camelCase function name).
 - **Consistency with repo-wide table:** variables/functions `camelCase`, types/interfaces `PascalCase` (see **Naming Conventions**).
 
+### Styling (Tailwind-first)
+
+- `apps/web` uses **Tailwind CSS v4** utilities directly in JSX (`className`) as the primary styling approach.
+- Tailwind is wired via `@tailwindcss/vite` in `apps/web/vite.config.ts` and `@import "tailwindcss";` in `apps/web/src/styles/globals.css`.
+- Shared OpenNG design tokens live in `@openng/ui/styles/globals.css` and are imported by both `apps/web/src/styles/globals.css` and `apps/docs/app/globals.css`.
+- **Do not introduce CSS Modules** (`*.module.css`) in `apps/web`. Existing and new UI styling should be Tailwind utility classes (including arbitrary values/variants when needed).
+- Reusable primitives (for example buttons and nav logo) belong in `@openng/ui` and should be reused in both web and docs rather than duplicating inline class strings.
+- Keep shared design tokens in CSS variables and consume them through Tailwind arbitrary values.
+
 ### Data loading and server code
 
 - Prefer **TanStack Query** for server state (caching, deduplication, retries, stale times). Define query keys per feature; avoid global god objects.
@@ -247,7 +257,9 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 
 ### Deployment (Vercel)
 
-- TanStack Start on Vercel requires Nitro integration in `apps/web/vite.config.ts`: include `nitro()` from `nitro/vite` with `plugins: [tanstackStart(), nitro(), viteReact()]`.
+- TanStack Start on Vercel requires Nitro integration in `apps/web/vite.config.ts`: include `nitro()` from `nitro/vite`.
+- Tailwind v4 for `apps/web` is configured through Vite plugin integration: include `tailwindcss()` from `@tailwindcss/vite`.
+- Current plugin order in `apps/web/vite.config.ts` is `plugins: [tanstackStart(), nitro(), tailwindcss(), viteReact()]`.
 - Production output for web SSR runs from Nitro output (`apps/web/.output/server/index.mjs`), not `dist/server/server.js`.
 - For Vercel monorepo deploys, set the project Root Directory to `apps/web` so routes are served by the web app build.
 
@@ -273,6 +285,7 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 - Fat route files mixing data, UI, and styling beyond a short composition layer.
 - Importing from **`features/foo`** inside **`features/bar`**.
 - A catch-all **`shared/`** folder name inside `apps/web`.
+- CSS Modules (`*.module.css`) in `apps/web` after the Tailwind migration.
 - Unvalidated `fetch` JSON cast to arbitrary types.
 - Duplicating `@openng/ui` primitives inside a feature instead of composing them.
 

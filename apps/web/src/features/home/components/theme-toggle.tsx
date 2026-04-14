@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import styles from "./theme-toggle.module.css";
-
 type ThemeMode = "light" | "dark";
 
 const themeStorageKey = "openng-theme";
@@ -46,11 +44,11 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className={styles.toggle}
+      className="inline-flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] transition-[border-color,color,background] duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-surface-strong)] hover:text-[var(--color-fg)]"
       aria-label="Toggle Theme"
       onClick={toggleTheme}
     >
-      <span className={styles.icon}>{theme === "dark" ? "☾" : "☼"}</span>
+      <span className="text-sm leading-none">{theme === "dark" ? "☾" : "☼"}</span>
     </button>
   );
 }

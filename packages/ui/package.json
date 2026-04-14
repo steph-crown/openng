@@ -3,7 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./components/button": "./src/components/button.tsx",
+    "./components/open-nav-logo": "./src/components/open-nav-logo.tsx",
+    "./components/card": "./src/components/card.tsx",
+    "./components/code": "./src/components/code.tsx",
+    "./styles/globals.css": "./src/styles/globals.css"
+  },
+  "typesVersions": {
+    "*": {
+      "components/*": [
+        "src/components/*"
+      ],
+      "styles/globals.css": [
+        "src/styles/globals.css"
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

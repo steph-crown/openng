@@ -6,7 +6,6 @@ import {
   heroPreviewEndpoints,
   type HeroPreviewEndpoint,
 } from "../data/hero-preview-endpoints";
-import styles from "./hero-api-preview.module.css";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -30,6 +29,12 @@ const defaultEndpoint: HeroPreviewEndpoint = {
   label: "Holidays (list)",
   path: "/v1/holidays?year=2026",
 };
+
+const tokenDefaultClass = "text-[#d1d5db]";
+const tokenStringClass = "text-[#86efac]";
+const tokenBooleanClass = "text-[#f9a8d4]";
+const tokenNumberClass = "text-[#fcd34d]";
+const tokenPunctuationClass = "text-[#aab2c2]";
 
 function isJsonRecord(value: unknown): value is JsonRecord {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -75,18 +80,18 @@ function highlightOutputLine(line: string): ReactNode[] {
       tokens.push(line.slice(lastIndex, tokenIndex));
     }
 
-    let tokenClassName = styles.tokenDefault;
+    let tokenClassName = tokenDefaultClass;
     if (match[1]) {
       tokenClassName =
         tokenValue.startsWith('"') && tokenValue.endsWith('"')
-          ? styles.tokenString
-          : styles.tokenDefault;
+          ? tokenStringClass
+          : tokenDefaultClass;
     } else if (match[2]) {
-      tokenClassName = styles.tokenBoolean;
+      tokenClassName = tokenBooleanClass;
     } else if (match[3]) {
-      tokenClassName = styles.tokenNumber;
+      tokenClassName = tokenNumberClass;
     } else if (match[4]) {
-      tokenClassName = styles.tokenPunctuation;
+      tokenClassName = tokenPunctuationClass;
     }
 
     tokens.push(
@@ -193,24 +198,30 @@ export function HeroApiPreview() {
   };
 
   return (
-    <div className={styles.window}>
-      <div className={styles.windowHeader}>
-        <div className={styles.dots}>
-          <span />
-          <span />
-          <span />
+    <div className="grid h-full min-h-0 min-w-0 w-full grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-[14px] border border-[color-mix(in_oklab,var(--color-border)_75%,#1f1f1f)] bg-[#03050a] font-[var(--font-mono)] text-[#e5e7eb]">
+      <div className="grid h-[34px] grid-cols-[auto_1fr_auto] items-center gap-[10px] border-b border-[#1d2430] px-3">
+        <div className="inline-flex items-center gap-1.5">
+          <span className="h-[9px] w-[9px] rounded-full bg-[#ff5f57]" />
+          <span className="h-[9px] w-[9px] rounded-full bg-[#febc2e]" />
+          <span className="h-[9px] w-[9px] rounded-full bg-[#28c840]" />
         </div>
-        <span className={styles.endpointLabel}>{activeEndpoint.label}</span>
-        <div className={styles.headerRight}>
-          {showSpinner ? <span className={styles.spinner} /> : null}
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap text-[11px] text-[#8fa0b8]">
+          {activeEndpoint.label}
+        </span>
+        <div className="inline-flex min-w-4 justify-end">
+          {showSpinner ? (
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-[#2f3a4e] border-t-[#7dd3fc]" />
+          ) : null}
         </div>
       </div>
 
-      <div className={styles.commandBox}>
-        <code className={styles.commandText}>{typedCommandText}</code>
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-[#1d2430] px-3 py-[10px]">
+        <code className="block max-w-full min-w-0 overflow-x-hidden overflow-y-hidden text-ellipsis whitespace-nowrap text-xs text-[#a5f3fc] max-[640px]:text-[11px]">
+          {typedCommandText}
+        </code>
         {typingDone ? (
           <button
-            className={styles.copyButton}
+            className="cursor-pointer rounded-lg border border-[#2e3d56] bg-[#081225] px-[10px] py-1 text-[11px] text-[#b5c4d8] hover:border-[#476287] hover:text-[#f4f7fb]"
             type="button"
             onClick={copyCommand}
           >
@@ -219,12 +230,12 @@ export function HeroApiPreview() {
         ) : null}
       </div>
 
-      <div className={styles.outputBox}>
-        <pre className={styles.outputPre}>
-          <code className={styles.outputCode}>
+      <div className="relative mx-3 mb-3 mt-[10px] min-h-0 min-w-0 rounded-[10px] border border-[#1d2430] bg-[#050b16]">
+        <pre className="m-0 h-full w-full max-w-full min-h-0 overflow-auto p-3 pb-[38px] text-xs leading-[1.5] [scrollbar-width:thin] max-[900px]:text-[11px]">
+          <code className="grid w-max min-w-full max-w-full gap-px">
             {renderedLines.map((line, index) => (
               <span
-                className={styles.outputLine}
+                className="whitespace-pre"
                 key={`${activeEndpoint.id}-${index}`}
               >
                 {highlightOutputLine(line)}
@@ -234,7 +245,7 @@ export function HeroApiPreview() {
         </pre>
         {visibleLineCount > 0 ? (
           <button
-            className={styles.copyOutputButton}
+            className="absolute bottom-2 right-2 cursor-pointer rounded-lg border border-[#2e3d56] bg-[#081225] px-[10px] py-1 text-[11px] text-[#b5c4d8] hover:border-[#476287] hover:text-[#f4f7fb]"
             type="button"
             onClick={copyOutput}
           >

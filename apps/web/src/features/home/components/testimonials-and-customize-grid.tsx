@@ -1,8 +1,7 @@
 import { useState } from "react";
+import { Button } from "@openng/ui/components/button";
 
 import { socialProofPosts } from "../data/testimonials";
-
-import styles from "./testimonials-and-customize-grid.module.css";
 
 type Surface = {
   id: string;
@@ -39,35 +38,39 @@ export function TestimonialsAndCustomizeGrid() {
   const marqueePosts = [...socialProofPosts, ...socialProofPosts];
 
   return (
-    <section className={styles.grid}>
-      <article className={styles.painpointCard}>
-        <h3>A tool Nigerian developers have been waiting for.</h3>
-        <p>
+    <section className="mt-[72px] grid grid-cols-2 gap-5 max-[1100px]:mt-[52px] max-[1100px]:grid-cols-1 max-[700px]:gap-[14px]">
+      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
+        <h3 className="text-[clamp(24px,2.4vw,40px)] font-medium tracking-[-0.02em]">
+          A tool Nigerian developers have been waiting for.
+        </h3>
+        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
           Public records are spread across PDFs, spreadsheets, and broken portals.
           Teams still spend hours collecting and cleaning data before they can ship
           products.
         </p>
-        <p>
+        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
           The demand has been loud for years: one dependable way to access Nigerian
           public data without manual copy-paste workflows.
         </p>
-        <a href="/explore">Start with Explorer</a>
+        <a href="/explore" className="justify-self-start">
+          <Button type="button">Start with Explorer</Button>
+        </a>
       </article>
-      <article className={styles.carouselCard}>
-        <div className={styles.carouselViewport}>
-          <div className={styles.carouselTrack}>
+      <article className="group min-h-[300px] min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-3">
+        <div className="h-full overflow-hidden">
+          <div className="flex w-max gap-3 animate-[posts-marquee_75s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
             {marqueePosts.map((item, index) => (
               <a
-                className={styles.post}
+                className="grid min-h-[240px] w-[280px] content-between gap-5 rounded-xl border border-[color-mix(in_oklab,var(--color-border)_70%,transparent)] bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)] p-[14px] max-[1200px]:min-h-[220px] max-[1200px]:w-[250px] max-[1100px]:w-[min(78vw,300px)] max-[700px]:w-[min(84vw,280px)]"
                 key={`${item.id}-${index}`}
                 href={item.url}
                 target="_blank"
                 rel="noreferrer"
               >
-                <p>{item.text}</p>
-                <div>
-                  <strong>{item.author}</strong>
-                  <span>
+                <p className="text-sm leading-[1.45] text-[var(--color-fg)]">{item.text}</p>
+                <div className="grid gap-1">
+                  <strong className="text-[13px]">{item.author}</strong>
+                  <span className="text-xs text-[var(--color-muted)]">
                     {item.handle} · {item.dateLabel}
                   </span>
                 </div>
@@ -76,14 +79,23 @@ export function TestimonialsAndCustomizeGrid() {
           </div>
         </div>
       </article>
-      <article className={styles.surfaceCard}>
-        <div className={styles.surfaceMedia}>
-          <img src={activeSurface.imageSrc} alt={activeSurface.imageAlt} loading="lazy" />
+      <article className="relative grid min-h-[300px] min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-[14px] max-[700px]:p-[10px]">
+        <div className="min-h-0 overflow-hidden rounded-2xl border border-[color-mix(in_oklab,var(--color-border)_70%,transparent)] bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)] px-3 pb-[70px] pt-3 max-[700px]:px-[10px] max-[700px]:pb-16 max-[700px]:pt-[10px]">
+          <img
+            src={activeSurface.imageSrc}
+            alt={activeSurface.imageAlt}
+            loading="lazy"
+            className="block h-full max-h-[320px] w-full rounded-[10px] object-cover object-top max-[700px]:max-h-[250px]"
+          />
         </div>
-        <div className={styles.floatingTabs}>
+        <div className="absolute bottom-5 left-1/2 inline-flex w-max max-w-[calc(100%-28px)] -translate-x-1/2 gap-2 rounded-full border border-[color-mix(in_oklab,var(--color-border)_75%,transparent)] bg-[color-mix(in_oklab,var(--color-bg)_80%,transparent)] p-2 backdrop-blur-[8px] max-[700px]:bottom-[14px] max-[700px]:max-w-[calc(100%-20px)]">
           {surfaces.map((surface) => (
             <button
-              className={surface.id === activeSurface.id ? styles.tabActive : undefined}
+              className={
+                surface.id === activeSurface.id
+                  ? "whitespace-nowrap rounded-full border border-[color-mix(in_oklab,var(--color-brand)_70%,transparent)] bg-[var(--color-brand)] px-3 py-[7px] text-xs text-[var(--color-brand-foreground)] max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
+                  : "whitespace-nowrap rounded-full border border-[var(--color-border)] bg-transparent px-3 py-[7px] text-xs text-[var(--color-muted)] max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
+              }
               key={surface.id}
               onClick={() => setActiveSurfaceId(surface.id)}
               type="button"
@@ -93,18 +105,22 @@ export function TestimonialsAndCustomizeGrid() {
           ))}
         </div>
       </article>
-      <article className={styles.surfaceTextCard}>
-        <h3>APIs plus product surfaces your team can use immediately.</h3>
-        <p>
+      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
+        <h3 className="text-[clamp(24px,2.4vw,40px)] font-medium tracking-[-0.02em]">
+          APIs plus product surfaces your team can use immediately.
+        </h3>
+        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
           OpenNG is not only an API endpoint directory. Explorer lets anyone browse
           data visually, Dashboard handles keys and usage, and Docs give engineers
           integration-ready references.
         </p>
-        <p>
+        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
           This means policy teams, analysts, and developers can all work from the
           same source of truth without waiting for custom data wrangling.
         </p>
-        <a href="/docs">Read the docs</a>
+        <a href="/docs" className="justify-self-start">
+          <Button type="button">Read the docs</Button>
+        </a>
       </article>
     </section>
   );

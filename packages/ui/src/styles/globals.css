@@ -1,0 +1,43 @@
+:root {
+  --openng-color-brand-light: #f86128;
+  --openng-color-brand-dark: #fff16e;
+  --openng-color-brand-foreground-light: #ffffff;
+  --openng-color-brand-foreground-dark: #111111;
+  --font-sans: "Geist", "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --layout-width: 1400px;
+  --nav-height: 56px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --duration-fast: 0.16s;
+  --duration-base: 0.24s;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --color-bg: #f5f5f5;
+  --color-fg: #171717;
+  --color-muted: #6a6a6a;
+  --color-border: #cccccc80;
+  --color-surface: #f1f1f1;
+  --color-surface-strong: #e9e9e9;
+  --color-overlay: #ffffffcc;
+  --color-nav-bg: #f5f5f5cc;
+  --color-button-secondary: #ededed;
+  --color-brand: var(--openng-color-brand-light);
+  --color-brand-foreground: var(--openng-color-brand-foreground-light);
+}
+
+html.dark {
+  --color-bg: #0a0a0a;
+  --color-fg: #f3f3f3;
+  --color-muted: #b4b4b4;
+  --color-border: #3f3f3f8f;
+  --color-surface: #0f0f0f;
+  --color-surface-strong: #111111;
+  --color-overlay: #0f0f0fcf;
+  --color-nav-bg: #0a0a0acc;
+  --color-button-secondary: #151515;
+  --color-brand: var(--openng-color-brand-dark);
+  --color-brand-foreground: var(--openng-color-brand-foreground-dark);
+}

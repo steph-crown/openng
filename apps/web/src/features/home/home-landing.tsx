@@ -7,13 +7,11 @@ import { LandingNav } from "./components/landing-nav";
 import { SearchAndShadcnSection } from "./components/search-and-shadcn-section";
 import { TestimonialsAndCustomizeGrid } from "./components/testimonials-and-customize-grid";
 
-import styles from "./home-landing.module.css";
-
 export function HomeLanding() {
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-fg)]">
       <LandingNav />
-      <main className={styles.main}>
+      <main className="mx-auto w-full max-w-[var(--layout-width)] px-5 pb-14 pt-10 max-[1024px]:px-4 max-[640px]:px-3 max-[640px]:pb-10">
         <HeroSection />
         <TestimonialsAndCustomizeGrid />
         <AnybodyCanWriteSection />
