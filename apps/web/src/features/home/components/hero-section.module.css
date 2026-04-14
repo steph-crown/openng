@@ -13,7 +13,7 @@
 }
 
 .content {
-  padding: 42px 32px 0;
+  padding: 42px 42px 0;
   max-width: 800px;
 }
 
@@ -30,7 +30,7 @@
   margin-top: 12px;
   margin-bottom: 22px;
   font-size: clamp(50px, 6vw, 72px);
-  line-height: 0.98;
+  line-height: 1;
   letter-spacing: -0.03em;
   font-weight: 500;
 }
@@ -88,7 +88,7 @@
   min-width: 0;
   height: 100%;
   width: 100%;
-  padding: 0 16px 12px;
+  padding: 0 42px 12px;
   display: flex;
   align-items: stretch;
 }
@@ -142,7 +142,7 @@
   .heading {
     font-size: 42px;
     margin-top: 0;
-    line-height: 1.2;
+    line-height: 1.05;
   }
 
   .subtext {
@@ -165,7 +165,8 @@
   }
 }
 
-@media (max-width: 500px) and (min-height: 740px) {
+@media (max-width: 500px) and (min-height: 741px),
+  (max-width: 500px) and (min-device-height: 741px) {
   .hero {
     row-gap: 50px;
   }

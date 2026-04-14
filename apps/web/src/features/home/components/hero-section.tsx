@@ -8,8 +8,7 @@ export function HeroSection() {
       <div className={styles.content}>
         <h1 className={styles.heading}>
           Nigerian public data,
-          <br className={styles.headingBreak} />
-          finally in an <span>API</span>.
+          <br className={styles.headingBreak} /> finally in an <span>API</span>.
         </h1>
         <p className={styles.subtext}>
           OpenNG gives developers programmatic access to Nigerian public data
