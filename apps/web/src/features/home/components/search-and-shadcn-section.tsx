@@ -1,6 +1,9 @@
+import { buildApiUrl } from "../../../lib/api-base-url";
 import styles from "./search-and-shadcn-section.module.css";
 
 export function SearchAndShadcnSection() {
+  const holidaysMetaUrl = buildApiUrl("/v1/holidays/meta");
+
   return (
     <section className={styles.grid}>
       <article className={styles.card}>
@@ -9,9 +12,9 @@ export function SearchAndShadcnSection() {
           Every resource exposes a `/meta` endpoint describing fields, filters,
           freshness, source, and version.
         </p>
-        <a href="https://api.openng.dev/v1/holidays/meta">Try /meta</a>
+        <a href={holidaysMetaUrl}>Try /meta</a>
         <div className={styles.searchMock}>
-          <p>curl https://api.openng.dev/v1/holidays/meta</p>
+          <p>curl {holidaysMetaUrl}</p>
           <ul>
             <li>resource: holidays</li>
             <li>record_count: 91</li>

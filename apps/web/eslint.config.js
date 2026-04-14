@@ -4,6 +4,6 @@ import { config as reactInternal } from "@openng/eslint-config/react-internal";
 export default [
   ...reactInternal,
   {
-    ignores: ["src/routeTree.gen.ts", ".next/**", "dist/**"],
+    ignores: ["src/routeTree.gen.ts", ".next/**", "dist/**", ".output/**"],
   },
 ];

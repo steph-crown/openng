@@ -1,0 +1,12 @@
+---
+description: Web app rules for TanStack Start and React
+globs: apps/web/src/**/*.{ts,tsx}
+---
+
+Read the project root **CLAUDE.md** before editing `apps/web`.
+
+## React Hooks
+
+- Never call React hooks conditionally.
+- Never call hooks after an early return that can skip hook execution in another render.
+- Keep hook order stable across renders in every component and custom hook.

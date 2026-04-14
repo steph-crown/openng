@@ -255,6 +255,7 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 
 - **Secrets:** Never put API secrets, private keys, or privileged tokens in code that ships to the browser. Only explicitly public build-time vars (e.g. `VITE_*`) are visible client-side—treat them as public.
 - **Env and URLs:** Centralize public config (e.g. `API_URL`, `APP_URL`) in **`src/lib/`** (one module pattern) and import from there; avoid scattering string literals for origins.
+- **Web API base URL:** Use `VITE_API_BASE_URL` (default fallback `https://api.openng.dev`) via a single utility module in `apps/web/src/lib/`; do not hardcode API origins in route or feature components.
 - **Cookies:** Session cookies are **`HttpOnly`**—JavaScript must not read them. Use **`credentials: 'include'`** on `fetch` to the API when relying on cookie sessions, and respect same-site behavior.
 - **XSS:** Prefer React’s default escaping. Avoid `dangerouslySetInnerHTML`; if ever required, sanitize with a maintained library and document why.
 - **Open redirects / links:** Do not build `href` or redirect targets from unsanitized user input; allowlist known external hosts when linking out.
@@ -265,6 +266,7 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 - Obey **Coding Standards** in this file: **no code comments**, TypeScript **strict**, **Zod** for untrusted input, no `any` without exceptional justification.
 - Prefer **typed API contracts**: reuse **`@openng/shared`** (or API-generated types, when introduced) for response shapes instead of ad-hoc `as` casts.
 - **No `console.log`** in code paths meant for production; if server-side logging is added in Start server functions, use structured logging consistent with the rest of the monorepo when applicable.
+- **React hooks:** never call hooks conditionally, never place hooks after early returns that can skip them, and keep hook order stable across renders.
 
 ### Anti-patterns (web)
 

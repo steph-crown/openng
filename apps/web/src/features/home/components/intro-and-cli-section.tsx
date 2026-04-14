@@ -1,6 +1,10 @@
+import { buildApiUrl } from "../../../lib/api-base-url";
 import styles from "./intro-and-cli-section.module.css";
 
 export function IntroAndCliSection() {
+  const holidaysListUrl = buildApiUrl("/v1/holidays?year=2026");
+  const holidaysBaseUrl = buildApiUrl("/v1/holidays");
+
   return (
     <section className={styles.section}>
       <p className={styles.intro}>Try it now</p>
@@ -19,18 +23,14 @@ export function IntroAndCliSection() {
           <div className={styles.terminal}>
             <p>
               <span className={styles.tokenCommand}>curl</span>{" "}
-              <span className={styles.tokenString}>
-                &quot;https://api.openng.dev/v1/holidays?year=2026&quot;
-              </span>
+              <span className={styles.tokenString}>{`"${holidaysListUrl}"`}</span>
             </p>
             <p></p>
             <p>
               <span className={styles.tokenKeyword}>const</span> res{" "}
               <span className={styles.tokenKeyword}>=</span>{" "}
               <span className={styles.tokenKeyword}>await</span> fetch(
-              <span className={styles.tokenString}>
-                &quot;https://api.openng.dev/v1/holidays?year=2026&quot;
-              </span>
+              <span className={styles.tokenString}>{`"${holidaysListUrl}"`}</span>
               )
             </p>
             <p>
@@ -44,9 +44,7 @@ export function IntroAndCliSection() {
             </p>
             <p>
               requests.get(
-              <span className={styles.tokenString}>
-                &quot;https://api.openng.dev/v1/holidays&quot;
-              </span>
+              <span className={styles.tokenString}>{`"${holidaysBaseUrl}"`}</span>
               , params={"{"} <span className={styles.tokenString}>&apos;year&apos;</span>:{" "}
               <span className={styles.tokenNumber}>2026</span> {"}"})
             </p>

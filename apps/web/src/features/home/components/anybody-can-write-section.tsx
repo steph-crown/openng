@@ -1,6 +1,9 @@
+import { buildApiUrl } from "../../../lib/api-base-url";
 import styles from "./anybody-can-write-section.module.css";
 
 export function AnybodyCanWriteSection() {
+  const fuelUrl = buildApiUrl("/v1/fuel?state=Lagos&period=2026-03");
+
   return (
     <section className={styles.section}>
       <h2>Any language. Any tool. Any environment.</h2>
@@ -19,9 +22,7 @@ export function AnybodyCanWriteSection() {
               </span>
               <span className={styles.line}>
                 <span className={styles.tokenCommand}>curl</span>{" "}
-                <span className={styles.tokenString}>
-                  &quot;https://api.openng.dev/v1/fuel?state=Lagos&amp;period=2026-03&quot;
-                </span>{" "}
+                <span className={styles.tokenString}>{`"${fuelUrl}"`}</span>{" "}
                 \
               </span>
               <span className={styles.line}>
@@ -38,9 +39,7 @@ export function AnybodyCanWriteSection() {
               </span>
               <span className={styles.line}>
                 {"  "}
-                <span className={styles.tokenString}>
-                  &quot;https://api.openng.dev/v1/fuel?state=Lagos&amp;period=2026-03&quot;
-                </span>
+                <span className={styles.tokenString}>{`"${fuelUrl}"`}</span>
                 )
               </span>
               <span className={styles.line}>
