@@ -141,10 +141,20 @@ export function DashboardShell({
       "xl:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_320px_minmax(0,min(4rem,7vw))]",
   );
 
+  const desktopShellMaxWidth = cx(
+    "lg:mx-auto lg:max-w-[min(100vw,calc(var(--layout-width)+286px+min(8rem,14vw)))]",
+    railShows &&
+      "xl:max-w-[min(100vw,calc(var(--layout-width)+286px+320px+min(8rem,14vw)))]",
+  );
+
   return (
     <div className="h-[100svh] w-screen overflow-hidden bg-(--color-bg) text-(--color-fg)">
       <div
-        className={cx("grid h-full w-full grid-cols-1", desktopGridTemplate)}
+        className={cx(
+          "grid h-full w-full max-w-full grid-cols-1",
+          desktopShellMaxWidth,
+          desktopGridTemplate,
+        )}
       >
         <div
           aria-hidden
@@ -154,7 +164,7 @@ export function DashboardShell({
           <div className="h-full overflow-y-auto">{navContent}</div>
         </aside>
         <main className="h-full min-h-0 overflow-y-auto bg-(--color-bg)">
-          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:mx-auto lg:w-full lg:max-w-(--layout-width) lg:px-6 lg:py-5">
+          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:mx-auto lg:w-full lg:max-w-(--layout-width) lg:px-8 lg:py-5">
             <header className="mb-4 flex items-center justify-between rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 lg:hidden">
               <button
                 type="button"
@@ -180,10 +190,7 @@ export function DashboardShell({
             <div className="h-full overflow-y-auto p-4">{rightRail}</div>
           </aside>
         ) : null}
-        <div
-          aria-hidden
-          className="hidden min-h-0 bg-(--color-bg) lg:block"
-        />
+        <div aria-hidden className="hidden min-h-0 bg-(--color-bg) lg:block" />
       </div>
       {mobileNavOpen ? (
         <div className="fixed inset-0 z-40 bg-black/45 lg:hidden">
