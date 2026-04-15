@@ -36,7 +36,7 @@ export function OpenNavLogo({
 
   const svgIcon = (
     <svg
-      className={cx("h-6 w-6 shrink-0 text-[var(--color-brand)]", iconClassName)}
+      className={cx("h-6 w-6 shrink-0 text-(--color-brand)", iconClassName)}
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -66,7 +66,7 @@ export function OpenNavLogo({
     return (
       <span className={sharedClassName} {...props}>
         {svgIcon}
-        <span className={cx("text-[15px] font-semibold text-[var(--color-fg)]", textClassName)}>
+        <span className={cx("text-[15px] font-semibold text-(--color-fg)", textClassName)}>
           OpenNG
         </span>
       </span>
@@ -76,7 +76,7 @@ export function OpenNavLogo({
   return (
     <a className={sharedClassName} {...props}>
       {svgIcon}
-      <span className={cx("text-[15px] font-semibold text-[var(--color-fg)]", textClassName)}>
+      <span className={cx("text-[15px] font-semibold text-(--color-fg)", textClassName)}>
         OpenNG
       </span>
     </a>

@@ -27,9 +27,9 @@ export function DashboardOverviewPage() {
   return (
     <DashboardShell currentPath="/dashboard">
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,36px)] font-medium tracking-[-0.02em]">Good day</h1>
-          <p className="mt-2 text-[15px] text-[var(--color-muted)]">
+          <p className="mt-2 text-[15px] text-(--color-muted)">
             Track your API usage, manage your keys, and explore available resources.
           </p>
         </header>
@@ -47,9 +47,9 @@ export function DashboardOverviewPage() {
             <p className="text-2xl font-semibold">
               {dummyUsageSummary.remainingToday.toLocaleString()}
             </p>
-            <div className="mt-3 h-2 rounded-full bg-[var(--color-surface-strong)]">
+            <div className="mt-3 h-2 rounded-full bg-(--color-surface-strong)">
               <div
-                className="h-2 rounded-full bg-[var(--color-brand)]"
+                className="h-2 rounded-full bg-(--color-brand)"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -68,21 +68,21 @@ export function DashboardOverviewPage() {
               <a
                 key={resource.id}
                 href={`/explore/${resource.id}`}
-                className="grid gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4 transition-colors duration-[160ms] ease-[var(--ease-standard)] hover:border-[var(--color-brand)]"
+                className="grid gap-2 rounded-xl border border-(--color-border) bg-(--color-bg) p-4 transition-colors duration-[160ms] ease-(--ease-standard) hover:border-(--color-brand)"
               >
                 <div className="flex items-center justify-between">
                   <strong>{resource.name}</strong>
                   <span
                     className={`rounded-full px-2 py-1 text-xs ${
                       resource.status === "live"
-                        ? "bg-[var(--color-sidebar-active-bg)] text-[var(--color-sidebar-active-fg)]"
-                        : "bg-[var(--color-surface-strong)] text-[var(--color-muted)]"
+                        ? "bg-(--color-sidebar-active-bg) text-(--color-sidebar-active-fg)"
+                        : "bg-(--color-surface-strong) text-(--color-muted)"
                     }`}
                   >
                     {resource.status === "live" ? "Live" : "Soon"}
                   </span>
                 </div>
-                <p className="text-sm text-[var(--color-muted)]">{resource.description}</p>
+                <p className="text-sm text-(--color-muted)">{resource.description}</p>
               </a>
             ))}
           </div>
@@ -92,10 +92,10 @@ export function DashboardOverviewPage() {
           <ShellCard title="API key status">
             <div className="grid gap-1 text-sm">
               <p className="font-mono text-[13px]">ong_live_xK3*********************</p>
-              <p className="text-[var(--color-muted)]">Created: April 1, 2026</p>
+              <p className="text-(--color-muted)">Created: April 1, 2026</p>
               <a
                 href="/dashboard/keys"
-                className="mt-2 inline-flex items-center gap-1 text-sm text-[var(--color-brand)]"
+                className="mt-2 inline-flex items-center gap-1 text-sm text-(--color-brand)"
               >
                 Manage key
                 <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
@@ -104,15 +104,15 @@ export function DashboardOverviewPage() {
           </ShellCard>
           <ShellCard title="Quick links">
             <div className="grid gap-2 text-sm">
-              <a href="/dashboard/keys" className="text-[var(--color-brand)]">
+              <a href="/dashboard/keys" className="text-(--color-brand)">
                 Go to API keys
               </a>
-              <a href="/explore" className="text-[var(--color-brand)]">
+              <a href="/explore" className="text-(--color-brand)">
                 Open explorer
               </a>
               <a
                 href="https://docs.openng.dev"
-                className="inline-flex items-center gap-1 text-[var(--color-brand)]"
+                className="inline-flex items-center gap-1 text-(--color-brand)"
               >
                 View docs
                 <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
@@ -122,14 +122,14 @@ export function DashboardOverviewPage() {
         </section>
 
         <ShellCard title="Live resource snapshot">
-          <div className="text-sm text-[var(--color-muted)]">
+          <div className="text-sm text-(--color-muted)">
             {holidaysMetaQuery.isLoading
               ? "Loading latest metadata..."
               : holidaysMetaQuery.data
                 ? `Holidays: sorted by ${holidaysMetaQuery.data.default_sort} (${holidaysMetaQuery.data.default_sort_order}), updates ${holidaysMetaQuery.data.update_frequency.toLowerCase()}.`
                 : "Metadata unavailable right now."}
           </div>
-          <p className="mt-2 text-xs text-[var(--color-muted)]">
+          <p className="mt-2 text-xs text-(--color-muted)">
             {liveResources.length} live resource currently visible in explorer.
           </p>
         </ShellCard>

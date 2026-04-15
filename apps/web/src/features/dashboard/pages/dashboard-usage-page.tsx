@@ -52,9 +52,9 @@ export function DashboardUsagePage() {
   return (
     <DashboardShell currentPath="/dashboard/usage">
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,34px)] font-medium tracking-[-0.02em]">Usage</h1>
-          <p className="mt-2 text-[15px] text-[var(--color-muted)]">
+          <p className="mt-2 text-[15px] text-(--color-muted)">
             Dummy analytics data for UI phase. Real endpoint integration comes next.
           </p>
           <div className="mt-4 inline-flex flex-wrap gap-2">
@@ -65,8 +65,8 @@ export function DashboardUsagePage() {
                 onClick={() => setPeriod(item)}
                 className={`rounded-full px-3 py-1.5 text-sm ${
                   item === period
-                    ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
-                    : "border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-muted)]"
+                    ? "bg-(--color-brand) text-(--color-brand-foreground)"
+                    : "border border-(--color-border) bg-(--color-bg) text-(--color-muted)"
                 }`}
               >
                 {item.replaceAll("-", " ")}
@@ -130,7 +130,7 @@ export function DashboardUsagePage() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] border-separate border-spacing-y-2 text-sm">
               <thead>
-                <tr className="text-left text-[var(--color-muted)]">
+                <tr className="text-left text-(--color-muted)">
                   <th className="px-2 py-1 font-medium">Timestamp</th>
                   <th className="px-2 py-1 font-medium">Resource</th>
                   <th className="px-2 py-1 font-medium">Status</th>
@@ -140,7 +140,7 @@ export function DashboardUsagePage() {
               </thead>
               <tbody>
                 {dummyRequestLogs.map((row) => (
-                  <tr key={row.id} className="rounded-lg bg-[var(--color-bg)]">
+                  <tr key={row.id} className="rounded-lg bg-(--color-bg)">
                     <td className="px-2 py-2">{new Date(row.timestamp).toLocaleString()}</td>
                     <td className="px-2 py-2">{row.resource}</td>
                     <td className={`px-2 py-2 font-medium ${statusColor(row.status)}`}>

@@ -9,18 +9,18 @@ export function DashboardSettingsPage() {
   return (
     <DashboardShell currentPath="/dashboard/settings">
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,34px)] font-medium tracking-[-0.02em]">Settings</h1>
-          <p className="mt-2 text-[15px] text-[var(--color-muted)]">
+          <p className="mt-2 text-[15px] text-(--color-muted)">
             Preferences are currently local-only for UI phase.
           </p>
         </header>
 
         <ShellCard title="Profile">
           <div className="grid gap-2 text-sm">
-            <p className="text-[var(--color-muted)]">Email</p>
+            <p className="text-(--color-muted)">Email</p>
             <p>you@example.com</p>
-            <p className="mt-2 text-[var(--color-muted)]">Account created</p>
+            <p className="mt-2 text-(--color-muted)">Account created</p>
             <p>April 01, 2026</p>
           </div>
         </ShellCard>
@@ -28,14 +28,14 @@ export function DashboardSettingsPage() {
         <ShellCard title="Preferences">
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <label className="text-sm text-[var(--color-muted)]" htmlFor="theme-select">
+              <label className="text-sm text-(--color-muted)" htmlFor="theme-select">
                 Theme
               </label>
               <select
                 id="theme-select"
                 value={themePreference}
                 onChange={(event) => setThemePreference(event.target.value)}
-                className="h-11 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm"
+                className="h-11 rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm"
               >
                 <option value="system">System</option>
                 <option value="light">Light</option>
@@ -44,14 +44,14 @@ export function DashboardSettingsPage() {
             </div>
 
             <div className="grid gap-2">
-              <label className="text-sm text-[var(--color-muted)]" htmlFor="page-size-select">
+              <label className="text-sm text-(--color-muted)" htmlFor="page-size-select">
                 Default explorer page size
               </label>
               <select
                 id="page-size-select"
                 value={pageSize}
                 onChange={(event) => setPageSize(event.target.value)}
-                className="h-11 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm"
+                className="h-11 rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm"
               >
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -61,7 +61,7 @@ export function DashboardSettingsPage() {
 
             <button
               type="button"
-              className="w-fit rounded-full bg-[var(--color-brand)] px-5 py-3 text-[15px] font-[500] text-[var(--color-brand-foreground)]"
+              className="w-fit rounded-full bg-(--color-brand) px-5 py-3 text-[15px] font-[500] text-(--color-brand-foreground)"
             >
               Save preferences
             </button>
@@ -70,7 +70,7 @@ export function DashboardSettingsPage() {
 
         <ShellCard title="Danger zone">
           <div className="rounded-xl border border-red-400/40 bg-red-500/5 p-4">
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-(--color-muted)">
               Deleting your account invalidates all keys and removes dashboard history.
             </p>
             <button

@@ -53,7 +53,7 @@ function GithubButton() {
       href="https://github.com/stephcrown/openng"
       rel="noreferrer noopener"
       target="_blank"
-      className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] transition-[color,background] duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-surface-strong)] hover:text-[var(--color-fg)]"
+      className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-(--color-muted) transition-[color,background] duration-160 ease-(--ease-standard) hover:bg-(--color-surface-strong) hover:text-(--color-fg)"
       aria-label="GitHub"
     >
       <svg
@@ -81,7 +81,7 @@ function NavigationGroup({
 }) {
   return (
     <section className="grid gap-1">
-      <p className="px-2 text-[12px] font-medium tracking-normal text-[var(--color-sidebar-section-label)]">
+      <p className="px-2 text-[12px] font-medium tracking-normal text-(--color-sidebar-section-label)">
         {title}
       </p>
       {items.map((item) => {
@@ -129,7 +129,7 @@ function DataExplorerNav({
     <section className="grid gap-1">
       <button
         type="button"
-        className="inline-flex items-center justify-between rounded-lg p-2 text-[14px] text-[var(--color-muted)] transition-colors duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]"
+        className="inline-flex items-center justify-between rounded-lg p-2 text-[14px] text-(--color-muted) transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)"
         onClick={() => setExpanded((value) => !value)}
       >
         <span className="inline-flex items-center gap-2">
@@ -138,7 +138,7 @@ function DataExplorerNav({
         </span>
         <ChevronDownIcon
           className={cx(
-            "h-4 w-4 transition-transform duration-[160ms] ease-[var(--ease-standard)]",
+            "h-4 w-4 transition-transform duration-[160ms] ease-(--ease-standard)",
             expanded && "rotate-180",
           )}
         />
@@ -149,10 +149,10 @@ function DataExplorerNav({
             href="/explore"
             onClick={onNavigate}
             className={cx(
-              "inline-flex items-center gap-2 rounded-lg p-2 text-[14px] transition-colors duration-[160ms] ease-[var(--ease-standard)]",
+              "inline-flex items-center gap-2 rounded-lg p-2 text-[14px] transition-colors duration-[160ms] ease-(--ease-standard)",
               isActivePath(currentPath, "/explore")
-                ? "bg-[var(--color-sidebar-active-bg)] font-medium text-[var(--color-brand)]"
-                : "text-[var(--color-muted)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]",
+                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
+                : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
             )}
           >
             <RectangleStackIcon className="h-4 w-4" />
@@ -177,10 +177,10 @@ function DataExplorerNav({
                 className={cx(
                   "inline-flex items-center justify-between rounded-lg p-2 text-[14px] transition-colors duration-160 ease-(--ease-standard)",
                   isActivePath(currentPath, href)
-                    ? "bg-[var(--color-sidebar-active-bg)] font-medium text-[var(--color-brand)]"
+                    ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
                     : resource.status === "soon"
-                      ? "text-[var(--color-muted)] opacity-70 hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]"
-                      : "text-(--color-muted) hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]",
+                      ? "text-(--color-muted) opacity-70 hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)"
+                      : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
                 )}
               >
                 <span className="inline-flex items-center gap-2">
@@ -188,7 +188,7 @@ function DataExplorerNav({
                   {resource.name}
                 </span>
                 {resource.status === "live" ? (
-                  <span className="text-[11px] text-[var(--color-brand)]">
+                  <span className="text-[11px] text-(--color-brand)">
                     Live
                   </span>
                 ) : (
@@ -298,7 +298,7 @@ export function DashboardShell({
         currentPath={currentPath}
         onNavigate={closeMobileNav}
       />
-      <div className="mt-auto grid gap-3 border-t border-[var(--color-border)] pt-3">
+      <div className="mt-auto grid gap-3 border-t border-(--color-border) pt-3">
         <div className="flex items-center justify-between">
           <ThemeToggle />
           <GithubButton />
@@ -317,23 +317,23 @@ export function DashboardShell({
   );
 
   return (
-    <div className="h-[100svh] w-screen overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
+    <div className="h-[100svh] w-screen overflow-hidden bg-(--color-bg) text-(--color-fg)">
       <div
         className={cx("grid h-full w-full grid-cols-1", desktopGridTemplate)}
       >
         <div
           aria-hidden
-          className="hidden min-h-0 bg-[var(--color-sidebar-bg)] lg:block"
+          className="hidden min-h-0 bg-(--color-sidebar-bg) lg:block"
         />
         <aside className="hidden h-full min-h-0 border-r border-(--color-border) bg-(--color-sidebar-bg) p-4 lg:block">
           <div className="h-full overflow-y-auto">{navContent}</div>
         </aside>
-        <main className="h-full min-h-0 overflow-y-auto bg-[var(--color-bg)]">
-          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:mx-auto lg:w-full lg:max-w-[var(--layout-width)] lg:px-6 lg:py-5">
-            <header className="mb-4 flex items-center justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 lg:hidden">
+        <main className="h-full min-h-0 overflow-y-auto bg-(--color-bg)">
+          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:mx-auto lg:w-full lg:max-w-(--layout-width) lg:px-6 lg:py-5">
+            <header className="mb-4 flex items-center justify-between rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 lg:hidden">
               <button
                 type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg) text-(--color-fg)"
                 onClick={() => setMobileNavOpen(true)}
                 aria-label="Open navigation"
               >
@@ -357,16 +357,16 @@ export function DashboardShell({
         ) : null}
         <div
           aria-hidden
-          className="hidden min-h-0 bg-[var(--color-bg)] lg:block"
+          className="hidden min-h-0 bg-(--color-bg) lg:block"
         />
       </div>
       {mobileNavOpen ? (
         <div className="fixed inset-0 z-40 bg-black/45 lg:hidden">
-          <aside className="h-full w-[86%] max-w-[320px] border-r border-[var(--color-border)] bg-[var(--color-sidebar-bg)] p-4">
+          <aside className="h-full w-[86%] max-w-[320px] border-r border-(--color-border) bg-(--color-sidebar-bg) p-4">
             <div className="mb-3 flex justify-end">
               <button
                 type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg)]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg) text-(--color-fg)"
                 onClick={closeMobileNav}
                 aria-label="Close navigation"
               >

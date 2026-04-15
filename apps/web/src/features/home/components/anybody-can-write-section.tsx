@@ -5,16 +5,16 @@ export function AnybodyCanWriteSection() {
 
   return (
     <section className="mt-[72px]">
-      <h2 className="text-center text-[clamp(38px,4.6vw,62px)] leading-[1.05] tracking-[-0.02em] text-[var(--color-brand)]">
+      <h2 className="text-center text-[clamp(38px,4.6vw,62px)] leading-[1.05] tracking-[-0.02em] text-(--color-brand)">
         Any language. Any tool. Any environment.
       </h2>
-      <p className="mx-auto mb-7 mt-5 max-w-[800px] text-center leading-[1.65] text-[var(--color-muted)]">
+      <p className="mx-auto mb-7 mt-5 max-w-[800px] text-center leading-[1.65] text-(--color-muted)">
         OpenNG is HTTP. If your language can make a network request, it can use
         OpenNG.
       </p>
       <div className="grid grid-cols-2 gap-5 max-[960px]:grid-cols-1">
-        <article className="min-h-[320px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[18px]">
-          <pre className="m-0 font-[var(--font-mono)] text-[13px] leading-[1.6] text-[#d4d4d8]">
+        <article className="min-h-[320px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-[18px]">
+          <pre className="m-0 font-(--font-mono) text-[13px] leading-[1.6] text-[#d4d4d8]">
             <code className="grid gap-0.5">
               <span className="block">
                 <span className="text-[#9ca3af]">
@@ -58,11 +58,11 @@ export function AnybodyCanWriteSection() {
             </code>
           </pre>
         </article>
-        <article className="grid min-h-[320px] content-start gap-[14px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+        <article className="grid min-h-[320px] content-start gap-[14px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-6">
           <h3 className="text-[clamp(26px,2.2vw,36px)] tracking-[-0.02em]">
             Every data point, traceable.
           </h3>
-          <p className="leading-[1.55] text-[var(--color-muted)]">
+          <p className="leading-[1.55] text-(--color-muted)">
             The API keeps provenance and freshness first so product teams can
             trust what they ship.
           </p>

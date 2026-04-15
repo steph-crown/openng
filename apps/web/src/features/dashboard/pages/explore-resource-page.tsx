@@ -252,10 +252,10 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
     return (
       <DashboardShell currentPath={`/explore/${resourceId}`}>
         <ShellCard title="Resource not found">
-          <p className="text-sm text-[var(--color-muted)]">
+          <p className="text-sm text-(--color-muted)">
             This resource does not exist in the current catalog.
           </p>
-          <a href="/explore" className="mt-2 inline-flex text-sm text-[var(--color-brand)]">
+          <a href="/explore" className="mt-2 inline-flex text-sm text-(--color-brand)">
             Back to explorer
           </a>
         </ShellCard>
@@ -267,17 +267,17 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
     return (
       <DashboardShell currentPath={`/explore/${resourceId}`}>
         <ShellCard title={`${resource.name} · Coming soon`}>
-          <p className="text-sm text-[var(--color-muted)]">{resource.description}</p>
+          <p className="text-sm text-(--color-muted)">{resource.description}</p>
           <div className="mt-3 inline-flex gap-2">
             <a
               href="https://github.com/stephcrown/openng/issues"
-              className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+              className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
             >
               Request access
             </a>
             <a
               href="/contribute"
-              className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+              className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
             >
               Contribute data
             </a>
@@ -302,7 +302,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         <h2 className="text-sm font-medium">Filters</h2>
         <button
           type="button"
-          className="hidden h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-muted)] xl:inline-flex"
+          className="hidden h-8 w-8 items-center justify-center rounded-full border border-(--color-border) text-(--color-muted) xl:inline-flex"
           onClick={() => setDesktopFiltersVisible(false)}
           aria-label="Hide filters"
         >
@@ -310,38 +310,38 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </button>
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Search</label>
+        <label className="text-xs text-(--color-muted)">Search</label>
         <input
           value={draft.q ?? ""}
           onChange={(event) => setDraft((prev) => ({ ...prev, q: event.target.value }))}
           placeholder="Search name"
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         />
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Year</label>
+        <label className="text-xs text-(--color-muted)">Year</label>
         <input
           value={draft.year ?? ""}
           onChange={(event) =>
             setDraft((prev) => ({ ...prev, year: event.target.value || undefined }))
           }
           placeholder="2026"
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         />
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Category</label>
+        <label className="text-xs text-(--color-muted)">Category</label>
         <input
           value={draft.category ?? ""}
           onChange={(event) =>
             setDraft((prev) => ({ ...prev, category: event.target.value || undefined }))
           }
           placeholder="fixed"
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         />
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Is confirmed</label>
+        <label className="text-xs text-(--color-muted)">Is confirmed</label>
         <select
           value={draft.is_confirmed ?? ""}
           onChange={(event) =>
@@ -350,7 +350,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               is_confirmed: event.target.value || undefined,
             }))
           }
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         >
           <option value="">Any</option>
           <option value="true">Yes</option>
@@ -358,35 +358,35 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </select>
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Date from</label>
+        <label className="text-xs text-(--color-muted)">Date from</label>
         <input
           type="date"
           value={draft.date_from ?? ""}
           onChange={(event) =>
             setDraft((prev) => ({ ...prev, date_from: event.target.value || undefined }))
           }
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         />
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Date to</label>
+        <label className="text-xs text-(--color-muted)">Date to</label>
         <input
           type="date"
           value={draft.date_to ?? ""}
           onChange={(event) =>
             setDraft((prev) => ({ ...prev, date_to: event.target.value || undefined }))
           }
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         />
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Sort by</label>
+        <label className="text-xs text-(--color-muted)">Sort by</label>
         <select
           value={draft.sort ?? metaQuery.data?.default_sort ?? "date"}
           onChange={(event) =>
             setDraft((prev) => ({ ...prev, sort: event.target.value || undefined }))
           }
-          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+          className="h-10 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-sm"
         >
           {(metaQuery.data?.sortable_columns ?? ["date", "name", "year"]).map((value) => (
             <option key={value} value={value}>
@@ -396,15 +396,15 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </select>
       </div>
       <div className="grid gap-1">
-        <label className="text-xs text-[var(--color-muted)]">Direction</label>
+        <label className="text-xs text-(--color-muted)">Direction</label>
         <div className="inline-flex gap-2">
           <button
             type="button"
             className={cx(
               "rounded-full px-3 py-1.5 text-sm",
               (draft.order ?? metaQuery.data?.default_sort_order ?? "asc") === "asc"
-                ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
-                : "border border-[var(--color-border)]",
+                ? "bg-(--color-brand) text-(--color-brand-foreground)"
+                : "border border-(--color-border)",
             )}
             onClick={() => setDraft((prev) => ({ ...prev, order: "asc" }))}
           >
@@ -415,8 +415,8 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             className={cx(
               "rounded-full px-3 py-1.5 text-sm",
               (draft.order ?? metaQuery.data?.default_sort_order ?? "asc") === "desc"
-                ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
-                : "border border-[var(--color-border)]",
+                ? "bg-(--color-brand) text-(--color-brand-foreground)"
+                : "border border-(--color-border)",
             )}
             onClick={() => setDraft((prev) => ({ ...prev, order: "desc" }))}
           >
@@ -427,7 +427,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
       <div className="mt-2 inline-flex gap-2">
         <button
           type="button"
-          className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm text-[var(--color-brand-foreground)]"
+          className="rounded-full bg-(--color-brand) px-4 py-2 text-sm text-(--color-brand-foreground)"
           onClick={() => {
             applyDraftFilters();
             setMobileFiltersOpen(false);
@@ -437,7 +437,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </button>
         <button
           type="button"
-          className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+          className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
           onClick={() => {
             resetFilters();
             setMobileFiltersOpen(false);
@@ -456,20 +456,20 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
       rightRailVisible={desktopFiltersVisible}
     >
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="grid gap-2">
               <h1 className="text-[clamp(24px,2.6vw,34px)] font-medium tracking-[-0.02em]">
                 {resource.name}
               </h1>
-              <p className="max-w-[760px] text-sm text-[var(--color-muted)]">
+              <p className="max-w-[760px] text-sm text-(--color-muted)">
                 {metaQuery.data?.description ?? resource.description}
               </p>
-              <div className="flex flex-wrap gap-2 text-xs text-[var(--color-muted)]">
-                <span className="rounded-full border border-[var(--color-border)] px-2 py-1">
+              <div className="flex flex-wrap gap-2 text-xs text-(--color-muted)">
+                <span className="rounded-full border border-(--color-border) px-2 py-1">
                   {total} records
                 </span>
-                <span className="rounded-full border border-[var(--color-border)] px-2 py-1">
+                <span className="rounded-full border border-(--color-border) px-2 py-1">
                   Updates: {metaQuery.data?.update_frequency ?? resource.updateFrequency}
                 </span>
               </div>
@@ -479,7 +479,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 href={resource.docsUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+                className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
               >
                 View docs
               </a>
@@ -487,7 +487,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 href={resource.sourceUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+                className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
               >
                 View source
               </a>
@@ -496,16 +496,16 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </header>
 
         <div className="grid gap-4">
-            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="text-sm text-[var(--color-muted)]">
+                <div className="text-sm text-(--color-muted)">
                   Showing {rows.length} of {total} results
                 </div>
                 <div className="inline-flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => void listQuery.refetch()}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
                   >
                     <ArrowPathIcon className="h-3.5 w-3.5" />
                     Refresh
@@ -513,7 +513,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   <button
                     type="button"
                     onClick={() => setShowColumnPicker((value) => !value)}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
                   >
                     <AdjustmentsHorizontalIcon className="h-3.5 w-3.5" />
                     Columns
@@ -521,7 +521,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   <button
                     type="button"
                     onClick={() => copyText(window.location.href, "url")}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
                   >
                     {copiedState === "url" ? (
                       <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
@@ -533,7 +533,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   <button
                     type="button"
                     onClick={() => copyText(curlCommand, "api")}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
                   >
                     {copiedState === "api" ? (
                       <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
@@ -545,7 +545,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   <button
                     type="button"
                     onClick={() => copyText(JSON.stringify(rows, null, 2), "list")}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
                   >
                     {copiedState === "list" ? (
                       <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
@@ -556,7 +556,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs xl:hidden"
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs xl:hidden"
                     onClick={() => setMobileFiltersOpen(true)}
                   >
                     <FunnelIcon className="h-3.5 w-3.5" />
@@ -564,7 +564,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   </button>
                   <button
                     type="button"
-                    className="hidden items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs xl:inline-flex"
+                    className="hidden items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs xl:inline-flex"
                     onClick={() => setDesktopFiltersVisible((value) => !value)}
                   >
                     <FunnelIcon className="h-3.5 w-3.5" />
@@ -573,7 +573,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 </div>
               </div>
               {showColumnPicker ? (
-                <div className="mt-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+                <div className="mt-3 rounded-xl border border-(--color-border) bg-(--color-bg) p-3">
                   <div className="grid grid-cols-2 gap-2 max-[700px]:grid-cols-1">
                     {allColumnNames.map((columnName) => {
                       const checked = visibleColumns.includes(columnName);
@@ -599,7 +599,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                   </div>
                   <button
                     type="button"
-                    className="mt-3 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs"
+                    className="mt-3 rounded-full border border-(--color-border) px-3 py-1.5 text-xs"
                     onClick={() => setVisibleColumns(defaultColumns)}
                   >
                     Reset to default
@@ -608,7 +608,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               ) : null}
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+            <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface)">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[760px] border-separate border-spacing-y-1 p-3 text-sm">
                   <thead>
@@ -617,7 +617,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                         {headerGroup.headers.map((header) => (
                           <th
                             key={header.id}
-                            className="px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.03em] text-[var(--color-muted)]"
+                            className="px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.03em] text-(--color-muted)"
                           >
                             {header.isPlaceholder
                               ? null
@@ -633,7 +633,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                           <tr key={`skeleton-${index}`}>
                             {visibleColumns.map((columnName) => (
                               <td key={`${columnName}-${index}`} className="px-3 py-3">
-                                <div className="h-4 w-[80%] animate-pulse rounded bg-[var(--color-surface-strong)]" />
+                                <div className="h-4 w-[80%] animate-pulse rounded bg-(--color-surface-strong)" />
                               </td>
                             ))}
                           </tr>
@@ -641,7 +641,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                       : table.getRowModel().rows.map((row, index) => (
                           <tr
                             key={row.id}
-                            className="cursor-pointer rounded-xl bg-[var(--color-bg)] transition-colors duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-surface-strong)]"
+                            className="cursor-pointer rounded-xl bg-(--color-bg) transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-surface-strong)"
                             onClick={() => setSelectedRowIndex(index)}
                           >
                             {row.getVisibleCells().map((cell) => (
@@ -657,12 +657,12 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               {!listQuery.isLoading && rows.length === 0 ? (
                 <div className="grid place-items-center gap-2 p-8 text-center">
                   <p className="text-base font-medium">No results</p>
-                  <p className="text-sm text-[var(--color-muted)]">
+                  <p className="text-sm text-(--color-muted)">
                     No records match your current filters.
                   </p>
                   <button
                     type="button"
-                    className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+                    className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
                     onClick={resetFilters}
                   >
                     Reset filters
@@ -671,7 +671,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               ) : null}
             </div>
 
-            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="inline-flex items-center gap-2 text-sm">
                   <span>per page</span>
@@ -684,7 +684,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                         limit: Number(event.target.value),
                       });
                     }}
-                    className="h-9 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 text-sm"
+                    className="h-9 rounded-lg border border-(--color-border) bg-(--color-bg) px-2 text-sm"
                   >
                     <option value={10}>10</option>
                     <option value={25}>25</option>
@@ -696,7 +696,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                     type="button"
                     onClick={() => onApplySearch({ ...search, page: Math.max(1, page - 1) })}
                     disabled={page <= 1}
-                    className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-50"
+                    className="rounded-full border border-(--color-border) px-3 py-1.5 text-sm disabled:opacity-50"
                   >
                     Previous
                   </button>
@@ -708,8 +708,8 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                       className={cx(
                         "h-8 min-w-8 rounded-full px-2 text-sm",
                         pageNumber === page
-                          ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
-                          : "border border-[var(--color-border)]",
+                          ? "bg-(--color-brand) text-(--color-brand-foreground)"
+                          : "border border-(--color-border)",
                       )}
                     >
                       {pageNumber}
@@ -719,12 +719,12 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                     type="button"
                     onClick={() => onApplySearch({ ...search, page: Math.min(pages, page + 1) })}
                     disabled={page >= pages}
-                    className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-50"
+                    className="rounded-full border border-(--color-border) px-3 py-1.5 text-sm disabled:opacity-50"
                   >
                     Next
                   </button>
                 </div>
-                <p className="text-sm text-[var(--color-muted)]">
+                <p className="text-sm text-(--color-muted)">
                   Page {page} of {pages}
                 </p>
               </div>
@@ -734,11 +734,11 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
 
       {mobileFiltersOpen ? (
         <div className="fixed inset-0 z-40 bg-black/45 xl:hidden">
-          <aside className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-[var(--color-border)] bg-[var(--color-bg)] p-4">
+          <aside className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-(--color-border) bg-(--color-bg) p-4">
             <div className="mb-3 flex justify-end">
               <button
                 type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-fg)]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-(--color-fg)"
                 onClick={() => setMobileFiltersOpen(false)}
                 aria-label="Close filters"
               >
@@ -752,17 +752,17 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
 
       {selectedRow ? (
         <div className="fixed inset-0 z-40 grid place-items-center bg-black/45 p-3">
-          <div className="max-h-[90svh] w-full max-w-[780px] overflow-y-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <div className="max-h-[90svh] w-full max-w-[780px] overflow-y-auto rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-xl font-medium">{resource.name} record</h2>
-                <p className="text-sm text-[var(--color-muted)]">
+                <p className="text-sm text-(--color-muted)">
                   {selectedRowIndex === null ? 0 : selectedRowIndex + 1} of {rows.length}
                 </p>
               </div>
               <button
                 type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border)"
                 onClick={() => setSelectedRowIndex(null)}
               >
                 <XMarkIcon className="h-4 w-4" />
@@ -771,7 +771,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             <div className="grid gap-2">
               {Object.entries(selectedRow).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-[180px_minmax(0,1fr)] gap-3 text-sm">
-                  <p className="font-medium text-[var(--color-muted)]">{key}</p>
+                  <p className="font-medium text-(--color-muted)">{key}</p>
                   <p className="break-words">{formatCellValue(value, fieldTypeMap.get(key))}</p>
                 </div>
               ))}
@@ -779,7 +779,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             <div className="mt-4 inline-flex gap-2">
               <button
                 type="button"
-                className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+                className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
                 onClick={() => copyText(stringifyRecord(selectedRow), "row")}
               >
                 {copiedState === "row" ? "Copied" : "Copy as JSON"}
@@ -788,7 +788,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 href={resource.docsUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+                className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
               >
                 View docs
               </a>

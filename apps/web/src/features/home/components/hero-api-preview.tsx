@@ -198,7 +198,7 @@ export function HeroApiPreview() {
   };
 
   return (
-    <div className="grid h-full min-h-0 min-w-0 w-full grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-[14px] border border-[color-mix(in_oklab,var(--color-border)_75%,#1f1f1f)] bg-[#03050a] font-[var(--font-mono)] text-[#e5e7eb]">
+    <div className="grid h-full min-h-0 min-w-0 w-full grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-[14px] border border-[color-mix(in_oklab,var(--color-border)_75%,#1f1f1f)] bg-[#03050a] font-(--font-mono) text-[#e5e7eb]">
       <div className="grid h-[34px] grid-cols-[auto_1fr_auto] items-center gap-[10px] border-b border-[#1d2430] px-3">
         <div className="inline-flex items-center gap-1.5">
           <span className="h-[9px] w-[9px] rounded-full bg-[#ff5f57]" />

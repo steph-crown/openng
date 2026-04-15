@@ -43,11 +43,11 @@ export function ExploreHomePage() {
   return (
     <DashboardShell currentPath="/explore">
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,34px)] font-medium tracking-[-0.02em]">
             Data Explorer
           </h1>
-          <p className="mt-2 text-[15px] text-[var(--color-muted)]">
+          <p className="mt-2 text-[15px] text-(--color-muted)">
             Browse and filter Nigerian public data without writing code.
           </p>
           <div className="mt-4">
@@ -55,7 +55,7 @@ export function ExploreHomePage() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search resources..."
-              className="h-11 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm outline-none focus:border-[var(--color-brand)]"
+              className="h-11 w-full rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm outline-none focus:border-(--color-brand)"
             />
           </div>
         </header>
@@ -67,10 +67,10 @@ export function ExploreHomePage() {
                 <a
                   key={item.resourceId}
                   href={`/explore/${item.resourceId}`}
-                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
                 >
                   <span>{item.name}</span>
-                  <span className="text-xs text-[var(--color-muted)]">
+                  <span className="text-xs text-(--color-muted)">
                     {timeAgoLabel(item.minutesAgo)}
                   </span>
                 </a>
@@ -83,22 +83,22 @@ export function ExploreHomePage() {
           {filteredResources.map((resource) => (
             <article
               key={resource.id}
-              className="grid gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="grid gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4"
             >
               <div className="flex items-center justify-between">
                 <strong className="text-base">{resource.name}</strong>
                 <span
                   className={`rounded-full px-2 py-1 text-xs ${
                     resource.status === "live"
-                      ? "bg-[var(--color-sidebar-active-bg)] text-[var(--color-sidebar-active-fg)]"
-                      : "bg-[var(--color-surface-strong)] text-[var(--color-muted)]"
+                      ? "bg-(--color-sidebar-active-bg) text-(--color-sidebar-active-fg)"
+                      : "bg-(--color-surface-strong) text-(--color-muted)"
                   }`}
                 >
                   {resource.status === "live" ? "Live" : "Coming soon"}
                 </span>
               </div>
-              <p className="text-sm text-[var(--color-muted)]">{resource.description}</p>
-              <p className="text-xs text-[var(--color-muted)]">
+              <p className="text-sm text-(--color-muted)">{resource.description}</p>
+              <p className="text-xs text-(--color-muted)">
                 {resource.status === "live" && holidaysMetaQuery.data
                   ? `${holidaysMetaQuery.data.fields.length} fields · updates ${resource.updateFrequency.toLowerCase()}`
                   : `Updates ${resource.updateFrequency.toLowerCase()}`}
@@ -108,8 +108,8 @@ export function ExploreHomePage() {
                   href={`/explore/${resource.id}`}
                   className={`inline-flex items-center gap-1 text-sm ${
                     resource.status === "live"
-                      ? "text-[var(--color-brand)]"
-                      : "cursor-not-allowed text-[var(--color-muted)]"
+                      ? "text-(--color-brand)"
+                      : "cursor-not-allowed text-(--color-muted)"
                   }`}
                 >
                   {resource.status === "live" ? "Explore" : "Coming soon"}
@@ -124,12 +124,12 @@ export function ExploreHomePage() {
 
         {filteredResources.length === 0 ? (
           <ShellCard title="No resources found">
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-(--color-muted)">
               No resources match &quot;{search}&quot;. Try another term or request a resource.
             </p>
             <a
               href="https://github.com/stephcrown/openng/issues"
-              className="mt-2 inline-flex items-center gap-1 text-sm text-[var(--color-brand)]"
+              className="mt-2 inline-flex items-center gap-1 text-sm text-(--color-brand)"
             >
               Request a resource
               <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />

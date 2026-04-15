@@ -3,15 +3,15 @@ import { Button } from "@openng/ui/components/button";
 export function DreamAndFooterSection() {
   return (
     <section className="mt-[76px]">
-      <h2 className="mb-5 text-center text-[clamp(38px,4.6vw,60px)] leading-[1.05] tracking-[-0.02em] text-[var(--color-brand)]">
+      <h2 className="mb-5 text-center text-[clamp(38px,4.6vw,60px)] leading-[1.05] tracking-[-0.02em] text-(--color-brand)">
         Built in public.
       </h2>
       <div className="grid grid-cols-2 gap-5 max-[1000px]:grid-cols-1">
-        <article className="grid gap-[14px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+        <article className="grid gap-[14px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-6">
           <h3 className="text-[clamp(30px,2.8vw,40px)] tracking-[-0.02em]">
             Contributors make OpenNG better.
           </h3>
-          <p className="text-[var(--color-muted)]">
+          <p className="text-(--color-muted)">
             Data corrections, new resources, bug fixes, and docs improvements are
             all welcome.
           </p>
@@ -37,11 +37,11 @@ export function DreamAndFooterSection() {
               </span>
             ))}
           </div>
-          <small className="text-[var(--color-muted)]">
+          <small className="text-(--color-muted)">
             Some of our best contributors.
           </small>
         </article>
-        <article className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <article className="overflow-hidden rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface)">
           <img
             src="/landing/bg-2.0ghkt8u4me4hk.png"
             alt=""
@@ -50,7 +50,7 @@ export function DreamAndFooterSection() {
           />
         </article>
       </div>
-      <article className="mt-5 grid gap-[18px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[22px]">
+      <article className="mt-5 grid gap-[18px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-[22px]">
         <ul className="m-0 grid gap-3 pl-[18px]">
           <li>Open API for Nigerian public data.</li>
           <li>MIT licensed and built by Steph Crown.</li>

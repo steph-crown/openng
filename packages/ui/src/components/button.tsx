@@ -9,10 +9,10 @@ function cx(...parts: Array<string | undefined | false>) {
 
 function resolveVariantClass(variant: ButtonVariant) {
   if (variant === "secondary") {
-    return "border border-[var(--color-border)] bg-[var(--color-button-secondary)] text-[var(--color-fg)]";
+    return "border border-(--color-border) bg-(--color-button-secondary) text-(--color-fg)";
   }
 
-  return "border border-transparent bg-[var(--color-brand)] text-[var(--color-brand-foreground)]";
+  return "border border-transparent bg-(--color-brand) text-(--color-brand-foreground)";
 }
 
 function resolveSizeClass(size: ButtonSize) {

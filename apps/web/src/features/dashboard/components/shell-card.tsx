@@ -13,11 +13,11 @@ export function ShellCard({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 ${className ?? ""}`}
+      className={`rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 ${className ?? ""}`}
     >
       <div className="mb-4 grid gap-1">
         <h2 className="text-lg font-medium tracking-[-0.01em]">{title}</h2>
-        {description ? <p className="text-sm text-[var(--color-muted)]">{description}</p> : null}
+        {description ? <p className="text-sm text-(--color-muted)">{description}</p> : null}
       </div>
       {children}
     </section>

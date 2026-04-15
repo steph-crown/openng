@@ -6,15 +6,15 @@ import { ThemeToggle } from "./theme-toggle";
 
 export function LandingNav() {
   return (
-    <header className="sticky top-0 z-20 h-14 border-b border-[var(--color-border)] bg-[var(--color-nav-bg)] backdrop-blur-[12px]">
-      <div className="mx-auto w-full max-w-[var(--layout-width)] px-5 max-[640px]:px-3">
+    <header className="sticky top-0 z-20 h-14 border-b border-(--color-border) bg-(--color-nav-bg) backdrop-blur-[12px]">
+      <div className="mx-auto w-full max-w-(--layout-width) px-5 max-[640px]:px-3">
         <nav className="flex h-14 items-center gap-[14px]">
           <OpenNavLogo href="/" />
           <ul className="m-0 flex list-none items-center gap-1 px-[10px] max-[960px]:hidden">
             {navLinks.map((item) => (
               <li key={item.label}>
                 <a
-                  className="inline-flex items-center gap-1.5 rounded-lg px-[10px] py-2 text-[13px] text-[var(--color-muted)] transition-[color,background] duration-[160ms] ease-[var(--ease-standard)] hover:bg-[color-mix(in_oklab,var(--color-brand)_14%,transparent)] hover:text-[var(--color-fg)]"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-[10px] py-2 text-[13px] text-(--color-muted) transition-[color,background] duration-[160ms] ease-(--ease-standard) hover:bg-[color-mix(in_oklab,var(--color-brand)_14%,transparent)] hover:text-(--color-fg)"
                   href={item.href}
                 >
                   {item.label}
@@ -23,13 +23,13 @@ export function LandingNav() {
             ))}
             <li>
               <a
-                className="inline-flex items-center gap-1.5 rounded-lg px-[10px] py-2 text-[13px] text-[var(--color-muted)] transition-[color,background] duration-[160ms] ease-[var(--ease-standard)] hover:bg-[color-mix(in_oklab,var(--color-brand)_14%,transparent)] hover:text-[var(--color-fg)]"
+                className="inline-flex items-center gap-1.5 rounded-lg px-[10px] py-2 text-[13px] text-(--color-muted) transition-[color,background] duration-[160ms] ease-(--ease-standard) hover:bg-[color-mix(in_oklab,var(--color-brand)_14%,transparent)] hover:text-(--color-fg)"
                 href="https://github.com/stephcrown/openng"
                 target="_blank"
                 rel="noreferrer noopener"
               >
                 GitHub
-                <span className="rounded-full border border-[var(--color-border)] px-2 py-[1px] text-[11px] text-[var(--color-muted)]">
+                <span className="rounded-full border border-(--color-border) px-2 py-[1px] text-[11px] text-(--color-muted)">
                   ★ 0.1k
                 </span>
               </a>
@@ -46,7 +46,7 @@ export function LandingNav() {
               href="https://github.com/stephcrown/openng"
               rel="noreferrer noopener"
               target="_blank"
-              className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] transition-[color,background] duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-surface-strong)] hover:text-[var(--color-fg)]"
+              className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-(--color-muted) transition-[color,background] duration-[160ms] ease-(--ease-standard) hover:bg-(--color-surface-strong) hover:text-(--color-fg)"
               aria-label="GitHub"
             >
               <svg

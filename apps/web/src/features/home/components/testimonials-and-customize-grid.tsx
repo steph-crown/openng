@@ -39,16 +39,16 @@ export function TestimonialsAndCustomizeGrid() {
 
   return (
     <section className="mt-[72px] grid grid-cols-2 gap-5 max-[1100px]:mt-[52px] max-[1100px]:grid-cols-1 max-[700px]:gap-[14px]">
-      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
+      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
         <h3 className="text-[clamp(24px,2.4vw,40px)] font-medium tracking-[-0.02em]">
           A tool Nigerian developers have been waiting for.
         </h3>
-        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
+        <p className="text-[15px] leading-[1.55] text-(--color-muted)">
           Public records are spread across PDFs, spreadsheets, and broken portals.
           Teams still spend hours collecting and cleaning data before they can ship
           products.
         </p>
-        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
+        <p className="text-[15px] leading-[1.55] text-(--color-muted)">
           The demand has been loud for years: one dependable way to access Nigerian
           public data without manual copy-paste workflows.
         </p>
@@ -56,7 +56,7 @@ export function TestimonialsAndCustomizeGrid() {
           <Button type="button">Start with Explorer</Button>
         </a>
       </article>
-      <article className="group min-h-[300px] min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-3">
+      <article className="group min-h-[300px] min-w-0 overflow-hidden rounded-(--radius-xl) border border-(--color-border) bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-3">
         <div className="h-full overflow-hidden">
           <div className="flex w-max gap-3 animate-[posts-marquee_75s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
             {marqueePosts.map((item, index) => (
@@ -67,10 +67,10 @@ export function TestimonialsAndCustomizeGrid() {
                 target="_blank"
                 rel="noreferrer"
               >
-                <p className="text-sm leading-[1.45] text-[var(--color-fg)]">{item.text}</p>
+                <p className="text-sm leading-[1.45] text-(--color-fg)">{item.text}</p>
                 <div className="grid gap-1">
                   <strong className="text-[13px]">{item.author}</strong>
-                  <span className="text-xs text-[var(--color-muted)]">
+                  <span className="text-xs text-(--color-muted)">
                     {item.handle} · {item.dateLabel}
                   </span>
                 </div>
@@ -79,7 +79,7 @@ export function TestimonialsAndCustomizeGrid() {
           </div>
         </div>
       </article>
-      <article className="relative grid min-h-[300px] min-w-0 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-[14px] max-[700px]:p-[10px]">
+      <article className="relative grid min-h-[300px] min-w-0 overflow-hidden rounded-(--radius-xl) border border-(--color-border) bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-brand)_84%,transparent),color-mix(in_oklab,var(--color-bg)_30%,transparent))] p-[14px] max-[700px]:p-[10px]">
         <div className="min-h-0 overflow-hidden rounded-2xl border border-[color-mix(in_oklab,var(--color-border)_70%,transparent)] bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)] px-3 pb-[70px] pt-3 max-[700px]:px-[10px] max-[700px]:pb-16 max-[700px]:pt-[10px]">
           <img
             src={activeSurface.imageSrc}
@@ -93,8 +93,8 @@ export function TestimonialsAndCustomizeGrid() {
             <button
               className={
                 surface.id === activeSurface.id
-                  ? "whitespace-nowrap rounded-full border border-[color-mix(in_oklab,var(--color-brand)_70%,transparent)] bg-[var(--color-brand)] px-3 py-[7px] text-xs text-[var(--color-brand-foreground)] max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
-                  : "whitespace-nowrap rounded-full border border-[var(--color-border)] bg-transparent px-3 py-[7px] text-xs text-[var(--color-muted)] max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
+                  ? "whitespace-nowrap rounded-full border border-[color-mix(in_oklab,var(--color-brand)_70%,transparent)] bg-(--color-brand) px-3 py-[7px] text-xs text-(--color-brand-foreground) max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
+                  : "whitespace-nowrap rounded-full border border-(--color-border) bg-transparent px-3 py-[7px] text-xs text-(--color-muted) max-[700px]:px-2.5 max-[700px]:py-1.5 max-[700px]:text-[11px]"
               }
               key={surface.id}
               onClick={() => setActiveSurfaceId(surface.id)}
@@ -105,16 +105,16 @@ export function TestimonialsAndCustomizeGrid() {
           ))}
         </div>
       </article>
-      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
+      <article className="grid min-h-[300px] min-w-0 content-start gap-[18px] rounded-(--radius-xl) border border-(--color-border) bg-(--color-surface) p-[26px] max-[700px]:min-h-0 max-[700px]:p-[18px]">
         <h3 className="text-[clamp(24px,2.4vw,40px)] font-medium tracking-[-0.02em]">
           APIs plus product surfaces your team can use immediately.
         </h3>
-        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
+        <p className="text-[15px] leading-[1.55] text-(--color-muted)">
           OpenNG is not only an API endpoint directory. Explorer lets anyone browse
           data visually, Dashboard handles keys and usage, and Docs give engineers
           integration-ready references.
         </p>
-        <p className="text-[15px] leading-[1.55] text-[var(--color-muted)]">
+        <p className="text-[15px] leading-[1.55] text-(--color-muted)">
           This means policy teams, analysts, and developers can all work from the
           same source of truth without waiting for custom data wrangling.
         </p>

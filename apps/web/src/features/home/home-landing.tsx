@@ -9,9 +9,9 @@ import { TestimonialsAndCustomizeGrid } from "./components/testimonials-and-cust
 
 export function HomeLanding() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-fg)]">
+    <div className="min-h-screen bg-(--color-bg) text-(--color-fg)">
       <LandingNav />
-      <main className="mx-auto w-full max-w-[var(--layout-width)] px-5 pb-14 pt-10 max-[1024px]:px-4 max-[640px]:px-3 max-[640px]:pb-10">
+      <main className="mx-auto w-full max-w-(--layout-width) px-5 pb-14 pt-10 max-[1024px]:px-4 max-[640px]:px-3 max-[640px]:pb-10">
         <HeroSection />
         <TestimonialsAndCustomizeGrid />
         <AnybodyCanWriteSection />
