@@ -34,14 +34,19 @@ export function DashboardNavigationGroup({
             target={item.external ? "_blank" : undefined}
             rel={item.external ? "noreferrer noopener" : undefined}
             className={cx(
-              "relative flex items-center justify-between gap-2 rounded-lg p-2 text-start text-[14px] transition-colors duration-160 ease-(--ease-standard)",
+              "relative flex items-center justify-between gap-2 rounded-[0.5rem] p-2 text-start text-[14px] transition-colors duration-160 ease-(--ease-standard)",
               active
-                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
+                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-sidebar-active-fg)"
                 : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
             )}
           >
             <span className="inline-flex items-center gap-2">
-              <span className={cx("h-4 w-4", active && "text-(--color-brand)")}>
+              <span
+                className={cx(
+                  "h-4 w-4",
+                  active && "text-(--color-sidebar-active-fg)",
+                )}
+              >
                 {item.icon}
               </span>
               {item.label}

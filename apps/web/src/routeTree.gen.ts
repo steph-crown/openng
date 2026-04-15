@@ -12,10 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as dashboardUsageRouteImport } from './routes/(dashboard)/usage'
 import { Route as dashboardSettingsRouteImport } from './routes/(dashboard)/settings'
+import { Route as dashboardOverviewRouteImport } from './routes/(dashboard)/overview'
 import { Route as dashboardKeysRouteImport } from './routes/(dashboard)/keys'
+import { Route as dashboardExploreRouteImport } from './routes/(dashboard)/explore'
 import { Route as dashboardResourceIdRouteImport } from './routes/(dashboard)/$resourceId'
-import { Route as dashboardOverviewIndexRouteImport } from './routes/(dashboard)/overview/index'
-import { Route as dashboardExploreIndexRouteImport } from './routes/(dashboard)/explore/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -32,9 +32,19 @@ const dashboardSettingsRoute = dashboardSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const dashboardOverviewRoute = dashboardOverviewRouteImport.update({
+  id: '/(dashboard)/overview',
+  path: '/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const dashboardKeysRoute = dashboardKeysRouteImport.update({
   id: '/(dashboard)/keys',
   path: '/keys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const dashboardExploreRoute = dashboardExploreRouteImport.update({
+  id: '/(dashboard)/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const dashboardResourceIdRoute = dashboardResourceIdRouteImport.update({
@@ -42,83 +52,73 @@ const dashboardResourceIdRoute = dashboardResourceIdRouteImport.update({
   path: '/$resourceId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const dashboardOverviewIndexRoute = dashboardOverviewIndexRouteImport.update({
-  id: '/(dashboard)/overview/',
-  path: '/overview/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const dashboardExploreIndexRoute = dashboardExploreIndexRouteImport.update({
-  id: '/(dashboard)/explore/',
-  path: '/explore/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$resourceId': typeof dashboardResourceIdRoute
+  '/explore': typeof dashboardExploreRoute
   '/keys': typeof dashboardKeysRoute
+  '/overview': typeof dashboardOverviewRoute
   '/settings': typeof dashboardSettingsRoute
   '/usage': typeof dashboardUsageRoute
-  '/explore/': typeof dashboardExploreIndexRoute
-  '/overview/': typeof dashboardOverviewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$resourceId': typeof dashboardResourceIdRoute
+  '/explore': typeof dashboardExploreRoute
   '/keys': typeof dashboardKeysRoute
+  '/overview': typeof dashboardOverviewRoute
   '/settings': typeof dashboardSettingsRoute
   '/usage': typeof dashboardUsageRoute
-  '/explore': typeof dashboardExploreIndexRoute
-  '/overview': typeof dashboardOverviewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(dashboard)/$resourceId': typeof dashboardResourceIdRoute
+  '/(dashboard)/explore': typeof dashboardExploreRoute
   '/(dashboard)/keys': typeof dashboardKeysRoute
+  '/(dashboard)/overview': typeof dashboardOverviewRoute
   '/(dashboard)/settings': typeof dashboardSettingsRoute
   '/(dashboard)/usage': typeof dashboardUsageRoute
-  '/(dashboard)/explore/': typeof dashboardExploreIndexRoute
-  '/(dashboard)/overview/': typeof dashboardOverviewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/$resourceId'
+    | '/explore'
     | '/keys'
+    | '/overview'
     | '/settings'
     | '/usage'
-    | '/explore/'
-    | '/overview/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$resourceId'
+    | '/explore'
     | '/keys'
+    | '/overview'
     | '/settings'
     | '/usage'
-    | '/explore'
-    | '/overview'
   id:
     | '__root__'
     | '/'
     | '/(dashboard)/$resourceId'
+    | '/(dashboard)/explore'
     | '/(dashboard)/keys'
+    | '/(dashboard)/overview'
     | '/(dashboard)/settings'
     | '/(dashboard)/usage'
-    | '/(dashboard)/explore/'
-    | '/(dashboard)/overview/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   dashboardResourceIdRoute: typeof dashboardResourceIdRoute
+  dashboardExploreRoute: typeof dashboardExploreRoute
   dashboardKeysRoute: typeof dashboardKeysRoute
+  dashboardOverviewRoute: typeof dashboardOverviewRoute
   dashboardSettingsRoute: typeof dashboardSettingsRoute
   dashboardUsageRoute: typeof dashboardUsageRoute
-  dashboardExploreIndexRoute: typeof dashboardExploreIndexRoute
-  dashboardOverviewIndexRoute: typeof dashboardOverviewIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,11 +144,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(dashboard)/overview': {
+      id: '/(dashboard)/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof dashboardOverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(dashboard)/keys': {
       id: '/(dashboard)/keys'
       path: '/keys'
       fullPath: '/keys'
       preLoaderRoute: typeof dashboardKeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/explore': {
+      id: '/(dashboard)/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof dashboardExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(dashboard)/$resourceId': {
@@ -158,31 +172,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardResourceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(dashboard)/overview/': {
-      id: '/(dashboard)/overview/'
-      path: '/overview'
-      fullPath: '/overview/'
-      preLoaderRoute: typeof dashboardOverviewIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(dashboard)/explore/': {
-      id: '/(dashboard)/explore/'
-      path: '/explore'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof dashboardExploreIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   dashboardResourceIdRoute: dashboardResourceIdRoute,
+  dashboardExploreRoute: dashboardExploreRoute,
   dashboardKeysRoute: dashboardKeysRoute,
+  dashboardOverviewRoute: dashboardOverviewRoute,
   dashboardSettingsRoute: dashboardSettingsRoute,
   dashboardUsageRoute: dashboardUsageRoute,
-  dashboardExploreIndexRoute: dashboardExploreIndexRoute,
-  dashboardOverviewIndexRoute: dashboardOverviewIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

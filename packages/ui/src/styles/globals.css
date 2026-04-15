@@ -27,13 +27,17 @@
   --color-brand: var(--openng-color-brand-light);
   --color-brand-foreground: var(--openng-color-brand-foreground-light);
   --color-sidebar-bg: #efefef;
-  --color-sidebar-hover: color-mix(in oklab, var(--openng-color-brand-light) 6%, transparent);
+  --color-sidebar-hover: color-mix(
+    in oklab,
+    var(--color-fg) 6%,
+    var(--color-sidebar-bg)
+  );
   --color-sidebar-active-bg: color-mix(
     in oklab,
-    var(--openng-color-brand-light) 10%,
-    transparent
+    var(--color-fg) 11%,
+    var(--color-sidebar-bg)
   );
-  --color-sidebar-active-fg: #2e2e2e;
+  --color-sidebar-active-fg: var(--color-fg);
   --color-sidebar-section-label: #999999;
 }
 
@@ -50,12 +54,16 @@ html.dark {
   --color-brand: var(--openng-color-brand-dark);
   --color-brand-foreground: var(--openng-color-brand-foreground-dark);
   --color-sidebar-bg: #040404;
-  --color-sidebar-hover: color-mix(in oklab, var(--openng-color-brand-dark) 7%, transparent);
+  --color-sidebar-hover: color-mix(
+    in oklab,
+    var(--color-fg) 7%,
+    var(--color-sidebar-bg)
+  );
   --color-sidebar-active-bg: color-mix(
     in oklab,
-    var(--openng-color-brand-dark) 11%,
-    transparent
+    var(--color-fg) 12%,
+    var(--color-sidebar-bg)
   );
-  --color-sidebar-active-fg: #ebebeb;
+  --color-sidebar-active-fg: var(--color-fg);
   --color-sidebar-section-label: #999999;
 }

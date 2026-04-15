@@ -27,7 +27,7 @@ export function DashboardDataExplorerNav({
     <section className="grid gap-1">
       <button
         type="button"
-        className="inline-flex items-center justify-between rounded-lg p-2 text-[14px] text-(--color-muted) transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)"
+        className="inline-flex items-center justify-between rounded-md p-2 text-[14px] text-(--color-muted) transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)"
         onClick={() => setExpanded((value) => !value)}
       >
         <span className="inline-flex items-center gap-2">
@@ -47,9 +47,9 @@ export function DashboardDataExplorerNav({
             href="/explore"
             onClick={onNavigate}
             className={cx(
-              "inline-flex items-center gap-2 rounded-lg p-2 text-[14px] transition-colors duration-[160ms] ease-(--ease-standard)",
+              "inline-flex items-center gap-2 rounded-md p-2 text-[14px] transition-colors duration-[160ms] ease-(--ease-standard)",
               isActivePath(currentPath, "/explore")
-                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
+                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-sidebar-active-fg)"
                 : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
             )}
           >
@@ -73,9 +73,9 @@ export function DashboardDataExplorerNav({
                 onClick={onNavigate}
                 key={resource.id}
                 className={cx(
-                  "inline-flex items-center justify-between rounded-lg p-2 text-[14px] transition-colors duration-160 ease-(--ease-standard)",
+                  "inline-flex items-center justify-between rounded-md p-2 text-[14px] transition-colors duration-160 ease-(--ease-standard)",
                   isActivePath(currentPath, href)
-                    ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
+                    ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-sidebar-active-fg)"
                     : resource.status === "soon"
                       ? "text-(--color-muted) opacity-70 hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)"
                       : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
@@ -86,9 +86,7 @@ export function DashboardDataExplorerNav({
                   {resource.name}
                 </span>
                 {resource.status === "live" ? (
-                  <span className="text-[11px] text-(--color-brand)">
-                    Live
-                  </span>
+                  <span className="text-[11px] text-(--color-brand)">Live</span>
                 ) : (
                   <span className="text-[11px]">Soon</span>
                 )}

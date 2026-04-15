@@ -62,7 +62,7 @@ openng/
 │   │   │   ├── routes/                     ← URL-shaped file routes; thin route modules only
 │   │   │   │   ├── __root.tsx              ← root shell + head
 │   │   │   │   ├── index.tsx               ← /
-│   │   │   │   ├── (dashboard)/            ← route group (no URL segment): overview, explore, keys, …
+│   │   │   │   ├── (dashboard)/            ← route group (no URL segment): flat `*.tsx` siblings (`explore.tsx`, `overview.tsx`, `keys.tsx`, …)
 │   │   │   │   └── contribute/…
 │   │   │   ├── features/                   ← vertical slices: `pages/`, `components/`, `hooks/`, `api/`, `data/`, optional `utils/` (see Web application)
 │   │   │   ├── components/                 ← reusable web UI (cross-route), not design tokens
