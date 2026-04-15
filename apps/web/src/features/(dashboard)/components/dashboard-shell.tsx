@@ -148,7 +148,7 @@ export function DashboardShell({
   );
 
   return (
-    <div className="h-[100svh] w-screen overflow-hidden bg-(--color-bg) text-(--color-fg)">
+    <div className="h-svh w-screen overflow-hidden bg-(--color-bg) text-(--color-fg)">
       <div
         className={cx(
           "grid h-full w-full max-w-full grid-cols-1",
