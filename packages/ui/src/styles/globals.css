@@ -3,10 +3,12 @@
   --openng-color-brand-dark: #fff16e;
   --openng-color-brand-foreground-light: #ffffff;
   --openng-color-brand-foreground-dark: #111111;
-  --font-sans: "Geist", "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+  --font-sans:
+    "Geist", "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
     "Helvetica Neue", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
   --layout-width: 1400px;
   --nav-height: 56px;
   --radius-lg: 12px;
@@ -53,7 +55,7 @@ html.dark {
   --color-button-secondary: #151515;
   --color-brand: var(--openng-color-brand-dark);
   --color-brand-foreground: var(--openng-color-brand-foreground-dark);
-  --color-sidebar-bg: #040404;
+  --color-sidebar-bg: #191919;
   --color-sidebar-hover: color-mix(
     in oklab,
     var(--color-fg) 7%,

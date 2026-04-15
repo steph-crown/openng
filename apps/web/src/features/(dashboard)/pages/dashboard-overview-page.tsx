@@ -22,7 +22,7 @@ const overviewStatValueClass =
   "mt-2 text-[32px] font-semibold tracking-[-0.09em] text-(--color-fg) tabular-nums";
 
 const overviewResourceTileBaseClass =
-  "flex min-h-[240px] flex-col justify-between gap-3 rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-8 text-left transition-colors duration-[160ms] ease-(--ease-standard)";
+  "flex min-h-[280px] flex-col justify-between gap-3 rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-8 text-left transition-[background-color,border-color,color] duration-200 ease-(--ease-standard)";
 
 const overviewQuickLinkClass =
   "text-(--color-fg) underline decoration-(--color-border) underline-offset-4 hover:decoration-(--color-fg)";
@@ -65,34 +65,43 @@ function OverviewStatCell({ label, value }: { label: string; value: string }) {
 
 function OverviewResourceTile({ resource }: { resource: ResourceCatalogItem }) {
   const isLive = resource.status === "live";
-  const meta = `${isLive ? "Live" : "Soon"} · ${resource.updateFrequency}`;
 
-  const inner = (
+  const liveInner = (
     <>
-      <div className="grid gap-1">
-        <p className="text-[15px] font-medium leading-snug text-(--color-fg)">{resource.name}</p>
-        <p className="text-xs text-(--color-muted)">{meta}</p>
-      </div>
-      <p className="text-sm leading-relaxed text-(--color-muted)">{resource.description}</p>
+      <p className="text-[20px] font-medium leading-snug text-(--color-fg) transition-colors duration-200 group-hover:text-(--color-brand-foreground) group-focus-visible:text-(--color-brand-foreground)">
+        {resource.name}
+      </p>
+      <p className="text-sm leading-[20px] text-(--color-muted) transition-colors duration-200 group-hover:text-(--color-brand-foreground) group-focus-visible:text-(--color-brand-foreground) group-hover:opacity-90 group-focus-visible:opacity-90">
+        {resource.description}
+      </p>
       <div className="mt-auto flex items-center gap-1.5 pt-1">
-        {isLive ? (
-          <>
-            <span className="text-sm font-medium text-(--color-fg)">Try in explorer</span>
-            <ArrowRightIcon className="h-4 w-4 shrink-0 text-(--color-muted)" aria-hidden />
-          </>
-        ) : (
-          <span className="text-sm font-medium text-(--color-muted)">Coming soon</span>
-        )}
+        <span className="text-sm font-medium text-(--color-brand) underline underline-offset-4 transition-colors duration-200 group-hover:text-(--color-brand-foreground) group-focus-visible:text-(--color-brand-foreground)">
+          Try in explorer
+        </span>
+        <ArrowRightIcon
+          className="h-4 w-4 shrink-0 text-(--color-brand) transition-colors duration-200 group-hover:text-(--color-brand-foreground) group-focus-visible:text-(--color-brand-foreground)"
+          aria-hidden
+        />
       </div>
     </>
   );
 
-  const tileClass = cx(
-    overviewResourceTileBaseClass,
-    isLive &&
-      "hover:border-(--color-brand) focus-visible:border-(--color-brand) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand)/25",
-    !isLive && "opacity-90",
+  const soonInner = (
+    <>
+      <p className="text-[20px] font-medium leading-snug text-(--color-fg)">{resource.name}</p>
+      <p className="text-sm leading-[20px] text-(--color-muted)">{resource.description}</p>
+      <div className="mt-auto flex items-center gap-1.5 pt-1">
+        <span className="text-sm font-medium text-(--color-muted)">Coming soon</span>
+      </div>
+    </>
   );
+
+  const liveTileClass = cx(
+    overviewResourceTileBaseClass,
+    "group hover:border-(--color-brand) hover:bg-(--color-brand) focus-visible:border-(--color-brand) focus-visible:bg-(--color-brand) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-brand)/35",
+  );
+
+  const soonTileClass = cx(overviewResourceTileBaseClass, "opacity-90");
 
   if (isLive) {
     return (
@@ -100,14 +109,14 @@ function OverviewResourceTile({ resource }: { resource: ResourceCatalogItem }) {
         to="/$resourceId"
         params={{ resourceId: resource.id }}
         search={{ page: 1, limit: 25 }}
-        className={tileClass}
+        className={liveTileClass}
       >
-        {inner}
+        {liveInner}
       </Link>
     );
   }
 
-  return <div className={cx(tileClass, "cursor-default")}>{inner}</div>;
+  return <div className={cx(soonTileClass, "cursor-default")}>{soonInner}</div>;
 }
 
 const overviewQuickLinks: { href: string; label: string; external?: boolean }[] = [

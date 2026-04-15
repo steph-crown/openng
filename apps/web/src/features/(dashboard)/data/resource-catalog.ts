@@ -56,6 +56,24 @@ export const resourceCatalog: ResourceCatalogItem[] = [
     sourceUrl: "https://openng.dev",
     status: "soon",
   },
+  {
+    id: "health-facilities",
+    name: "Health Facilities",
+    description: "Healthcare facility directory by state and LGA.",
+    updateFrequency: "Quarterly",
+    docsUrl: "https://docs.openng.dev",
+    sourceUrl: "https://openng.dev",
+    status: "soon",
+  },
+  {
+    id: "electricity-tariffs",
+    name: "Electricity Tariffs",
+    description: "DisCo tariff schedules and historical tariff changes.",
+    updateFrequency: "Monthly",
+    docsUrl: "https://docs.openng.dev",
+    sourceUrl: "https://openng.dev",
+    status: "soon",
+  },
 ];
 
 export function getResourceById(resourceId: string) {
