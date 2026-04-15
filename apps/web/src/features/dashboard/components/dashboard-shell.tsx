@@ -175,12 +175,12 @@ function DataExplorerNav({
                 onClick={onNavigate}
                 key={resource.id}
                 className={cx(
-                  "inline-flex items-center justify-between rounded-lg p-2 text-[14px] transition-colors duration-[160ms] ease-[var(--ease-standard)]",
+                  "inline-flex items-center justify-between rounded-lg p-2 text-[14px] transition-colors duration-160 ease-(--ease-standard)",
                   isActivePath(currentPath, href)
                     ? "bg-[var(--color-sidebar-active-bg)] font-medium text-[var(--color-brand)]"
                     : resource.status === "soon"
                       ? "text-[var(--color-muted)] opacity-70 hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]"
-                      : "text-[var(--color-muted)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]",
+                      : "text-(--color-muted) hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]",
                 )}
               >
                 <span className="inline-flex items-center gap-2">
