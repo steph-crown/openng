@@ -25,7 +25,7 @@ export function DashboardOverviewPage() {
   const liveResources = getLiveResources();
 
   return (
-    <DashboardShell currentPath="/dashboard">
+    <DashboardShell currentPath="/overview">
       <div className="grid gap-5">
         <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,36px)] font-medium tracking-[-0.02em]">Good day</h1>
@@ -67,7 +67,7 @@ export function DashboardOverviewPage() {
             {resourceCatalog.map((resource) => (
               <a
                 key={resource.id}
-                href={`/explore/${resource.id}`}
+                href={`/${resource.id}`}
                 className="grid gap-2 rounded-xl border border-(--color-border) bg-(--color-bg) p-4 transition-colors duration-[160ms] ease-(--ease-standard) hover:border-(--color-brand)"
               >
                 <div className="flex items-center justify-between">
@@ -94,7 +94,7 @@ export function DashboardOverviewPage() {
               <p className="font-mono text-[13px]">ong_live_xK3*********************</p>
               <p className="text-(--color-muted)">Created: April 1, 2026</p>
               <a
-                href="/dashboard/keys"
+                href="/keys"
                 className="mt-2 inline-flex items-center gap-1 text-sm text-(--color-brand)"
               >
                 Manage key
@@ -104,7 +104,7 @@ export function DashboardOverviewPage() {
           </ShellCard>
           <ShellCard title="Quick links">
             <div className="grid gap-2 text-sm">
-              <a href="/dashboard/keys" className="text-(--color-brand)">
+              <a href="/keys" className="text-(--color-brand)">
                 Go to API keys
               </a>
               <a href="/explore" className="text-(--color-brand)">

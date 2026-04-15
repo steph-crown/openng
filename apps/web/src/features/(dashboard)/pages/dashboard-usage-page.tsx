@@ -50,7 +50,7 @@ export function DashboardUsagePage() {
   }, [period]);
 
   return (
-    <DashboardShell currentPath="/dashboard/usage">
+    <DashboardShell currentPath="/usage">
       <div className="grid gap-5">
         <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,34px)] font-medium tracking-[-0.02em]">Usage</h1>

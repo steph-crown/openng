@@ -7,7 +7,7 @@ export function DashboardSettingsPage() {
   const [pageSize, setPageSize] = useState("25");
 
   return (
-    <DashboardShell currentPath="/dashboard/settings">
+    <DashboardShell currentPath="/settings">
       <div className="grid gap-5">
         <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
           <h1 className="text-[clamp(26px,3vw,34px)] font-medium tracking-[-0.02em]">Settings</h1>

@@ -62,14 +62,12 @@ openng/
 │   │   │   ├── routes/                     ← URL-shaped file routes; thin route modules only
 │   │   │   │   ├── __root.tsx              ← root shell + head
 │   │   │   │   ├── index.tsx               ← /
-│   │   │   │   ├── explore/… ← e.g. explore/index.tsx, explore/$resourceId.tsx
-│   │   │   │   ├── dashboard/…
+│   │   │   │   ├── (dashboard)/            ← route group (no URL segment): overview, explore, keys, …
 │   │   │   │   └── contribute/…
-│   │   │   ├── features/                   ← vertical slices mirroring URL areas (see Web application)
+│   │   │   ├── features/                   ← vertical slices: `pages/`, `components/`, `hooks/`, `api/`, `data/`, optional `utils/` (see Web application)
 │   │   │   ├── components/                 ← reusable web UI (cross-route), not design tokens
 │   │   │   ├── hooks/                      ← reusable hooks
-│   │   │   ├── lib/                        ← env, API client, app-wide constants
-│   │   │   ├── utils/                      ← pure helpers used across features
+│   │   │   ├── lib/                        ← env, API URL helpers, shared parsers, `cx`, and other cross-feature modules (single canonical tree — no `src/utils/`)
 │   │   │   ├── types/                      ← shared TS types for the web app
 │   │   │   └── styles/
 │   │   ├── public/
@@ -222,20 +220,29 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 
 | Layer | Responsibility |
 | ----- | -------------- |
-| **`src/routes/`** | File-based routes only: `createFileRoute`, route tree, loaders/search validation wiring, and **thin** page composition. **Mirror the public URL path** in the file tree (e.g. `/explore/fuel` → `routes/explore/fuel.tsx` or the equivalent layout TanStack Router generates for that path). No large UI implementations here—import from `features/` or `components/`. |
-| **`src/features/{area}/`** | Everything **scoped to one product URL area** (same shape as `routes/` segments): feature-specific **components**, **hooks**, **API/data helpers**, **local state**, **Zod schemas** for forms and client-side validation. One feature subtree must not depend on another feature’s internals. |
-| **`src/components/`**, **`hooks/`**, **`lib/`**, **`utils/`**, **`types/`** | **Cross-route** reuse. **`@openng/ui`** = shared design-system primitives; **`src/components/`** = composed web-specific widgets used on multiple routes. |
+| **`src/routes/`** | File-based routes only: `createFileRoute`, route tree, loaders/search validation wiring, and **thin** page composition. **Mirror the public URL path**; optional **`routes/(dashboard)/`** group holds shell/explorer/account routes (same URLs as before: `/overview/`, `/explore/`, `/keys`, `/$resourceId`, … — the `(dashboard)` folder is not a URL segment). No large UI implementations here—import from `features/` or `components/`. |
+| **`src/features/{area}/`** | Everything **scoped to one product URL area** (e.g. `features/home` for marketing, **`features/(dashboard)`** for shell + explorer + account pages). **`pages/`** for route-target screens, **`components/`** for UI used only inside that area, plus **hooks**, **api**, **data**, **schemas**, optional feature-local **`utils/`** as needed. One feature subtree must not depend on another feature’s internals. |
+| **`src/components/`**, **`hooks/`**, **`lib/`**, **`types/`** | **Cross-route** reuse. **`@openng/ui`** = shared design-system primitives; **`src/components/`** = composed web-specific widgets used on multiple routes. **`src/lib/`** is the only top-level folder for shared non-UI modules (`api-base-url`, `theme`, `cx`, URL/search parsers used by routes). |
 
 **Do not** add a directory named **`src/shared/`** in the web app. Use the explicit names above so intent is obvious in imports and reviews.
 
-**Feature isolation:** If code in `features/dashboard` needs something from `features/explore`, that code belongs in **`src/components`**, **`src/lib`**, **`@openng/ui`**, or **`@openng/shared`**—not in a cross-feature import.
+**Feature isolation:** If code in `features/(dashboard)` needs something from `features/home`, that code belongs in **`src/components`**, **`src/lib`**, **`@openng/ui`**, or **`@openng/shared`**—not in a cross-feature import.
 
 **Colocation inside a feature:** Optional subfolders such as `features/explore/fuel/components/`, `hooks/`, `api/` (or `queries/`), `schemas/`, `utils/`—add only what the feature needs. Keep files small and single-purpose.
 
+**Public URL layout (`openng.dev` web app):** `/` marketing; `/overview/` app overview (shell); `/explore/` resource catalog; `/{resourceId}` per-catalog resource (e.g. `/holidays`); `/keys`, `/usage`, `/settings` account/developer pages. Reserved first segments (`keys`, `usage`, `settings`, `overview`, `explore`, …) must not be used as `resourceCatalog` ids.
+
 ### Components, files, and naming
 
-- **One primary React component per file.** If a file exports a screen section, that export is the single main component; extract subviews to their own files when they grow or get reused.
-- **Files and folders:** `kebab-case` (e.g. `resource-card.tsx`, `use-fuel-filters.ts`, `features/explore/fuel/`).
+- **One React component per file (hard rule).** Each file under `apps/web/src` that defines UI must export **at most one** PascalCase component that returns JSX. Split any additional sidebar, card, section, or route-glue UI into new files. Pure helpers (`cx`, parsers, `formatDate`, type guards) may live in the same file as the single component **only** while they stay tiny and used exclusively there; once shared or non-trivial, move them to **`src/lib/`** (cross-feature) or **`src/features/{area}/utils/`** (one feature only). Do **not** add **`src/utils/`** at the app root.
+- **Where to create a new component file (pick exactly one):**
+  - **`src/features/{area}/pages/`** — The default export target for a file route: full-screen (or shell-wrapped) experiences tied to that URL area, e.g. `dashboard-overview-page.tsx` (served at `/overview/`), `home-landing.tsx`. Import feature `components/` from here; keep the file to one top-level page component.
+  - **`src/features/{area}/components/`** — UI blocks used only inside that feature (dashboard sidebar pieces, landing sections). Name by role: `dashboard-github-button.tsx`, `dashboard-navigation-group.tsx`. If a widget is shared across two or more features, move it to **`src/components/`** (or **`@openng/ui`** if it is a primitive).
+  - **`src/components/`** — Composed widgets reused across **multiple** route areas without importing another feature’s internals.
+  - **`@openng/ui`** — Design-system primitives (buttons, logos) consumed by web and docs.
+  - **`src/routes/**/*.tsx`** — **Never** add arbitrary presentational components under `routes/`. Route modules only register `createFileRoute` (and `Route`); set `component:` to a single component imported from `features/{area}/pages/` (including small route-bridge files such as **`features/(dashboard)/pages/explore-resource-route.tsx`** that use `getRouteApi("/(dashboard)/$resourceId")` / `routeApi.useNavigate()` for typed navigation). Do not define extra `function Foo()` wrappers in route files for a one-line return; reference the feature page (or bridge) directly. Group related routes under a pathless folder like **`routes/(dashboard)/`** when it helps consistency.
+- **Composite UI inside one feature** — Prefer a **flat** `features/{area}/components/` for a handful of files; introduce a subfolder (e.g. `components/dashboard-shell/`) only when many files clearly belong to one parent screen and names would collide otherwise.
+- **Files and folders:** `kebab-case` (e.g. `resource-card.tsx`, `use-fuel-filters.ts`, `features/(dashboard)/components/`). Parentheses name **`(dashboard)`** is a **route-group / slice label** only; it does not appear in public URLs.
 - **Component names in source:** `PascalCase` (`ResourceCard`, `DashboardLayout`).
 - **Hooks:** `use-kebab-case.ts` exporting `useFuelFilters` (camelCase function name).
 - **Consistency with repo-wide table:** variables/functions `camelCase`, types/interfaces `PascalCase` (see **Naming Conventions**).
@@ -282,6 +289,8 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 
 ### Anti-patterns (web)
 
+- A second top-level **`src/utils/`** tree in `apps/web` (use **`src/lib/`** only).
+- More than one PascalCase React component defined in the same module under `src/features/` or `src/components/` (split into separate files).
 - Fat route files mixing data, UI, and styling beyond a short composition layer.
 - Importing from **`features/foo`** inside **`features/bar`**.
 - A catch-all **`shared/`** folder name inside `apps/web`.

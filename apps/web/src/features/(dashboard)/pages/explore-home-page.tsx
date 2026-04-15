@@ -66,7 +66,7 @@ export function ExploreHomePage() {
               {recentlyVisited.map((item) => (
                 <a
                   key={item.resourceId}
-                  href={`/explore/${item.resourceId}`}
+                  href={`/${item.resourceId}`}
                   className="inline-flex shrink-0 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-sm"
                 >
                   <span>{item.name}</span>
@@ -105,7 +105,7 @@ export function ExploreHomePage() {
               </p>
               <div className="mt-auto">
                 <a
-                  href={`/explore/${resource.id}`}
+                  href={`/${resource.id}`}
                   className={`inline-flex items-center gap-1 text-sm ${
                     resource.status === "live"
                       ? "text-(--color-brand)"

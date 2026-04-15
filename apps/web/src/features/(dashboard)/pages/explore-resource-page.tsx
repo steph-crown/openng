@@ -21,30 +21,14 @@ import { DashboardShell } from "../components/dashboard-shell";
 import { ShellCard } from "../components/shell-card";
 import { fetchResourceList, fetchResourceMeta } from "../api/explorer-api";
 import { getResourceById } from "../data/resource-catalog";
-
-type ExplorerSearch = {
-  page?: number;
-  limit?: number;
-  sort?: string;
-  order?: "asc" | "desc";
-  q?: string;
-  year?: string;
-  category?: string;
-  schedule_kind?: string;
-  is_confirmed?: string;
-  date_from?: string;
-  date_to?: string;
-};
+import type { ExplorerRouteSearch } from "../../../lib/explorer-route-search";
+import { cx } from "../../../lib/cx";
 
 type ExploreResourcePageProps = {
   resourceId: string;
-  search: ExplorerSearch;
-  onApplySearch: (next: ExplorerSearch) => void;
+  search: ExplorerRouteSearch;
+  onApplySearch: (next: ExplorerRouteSearch) => void;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function formatCellValue(value: unknown, fieldType?: string) {
   if (value === null || value === undefined || value === "") {
@@ -82,7 +66,7 @@ function pageNumbers(current: number, total: number) {
 export function ExploreResourcePage({ resourceId, search, onApplySearch }: ExploreResourcePageProps) {
   const resource = getResourceById(resourceId);
   const isLive = resource?.status === "live";
-  const [draft, setDraft] = useState<ExplorerSearch>(search);
+  const [draft, setDraft] = useState<ExplorerRouteSearch>(search);
   const [desktopFiltersVisible, setDesktopFiltersVisible] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [showColumnPicker, setShowColumnPicker] = useState(false);
@@ -238,7 +222,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
   }
 
   function resetFilters() {
-    const reset: ExplorerSearch = {
+    const reset: ExplorerRouteSearch = {
       page: 1,
       limit: 25,
       sort: metaQuery.data?.default_sort,
@@ -250,7 +234,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
 
   if (!resource) {
     return (
-      <DashboardShell currentPath={`/explore/${resourceId}`}>
+      <DashboardShell currentPath={`/${resourceId}`}>
         <ShellCard title="Resource not found">
           <p className="text-sm text-(--color-muted)">
             This resource does not exist in the current catalog.
@@ -265,7 +249,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
 
   if (!isLive) {
     return (
-      <DashboardShell currentPath={`/explore/${resourceId}`}>
+      <DashboardShell currentPath={`/${resourceId}`}>
         <ShellCard title={`${resource.name} · Coming soon`}>
           <p className="text-sm text-(--color-muted)">{resource.description}</p>
           <div className="mt-3 inline-flex gap-2">
@@ -451,7 +435,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
 
   return (
     <DashboardShell
-      currentPath={`/explore/${resourceId}`}
+      currentPath={`/${resourceId}`}
       rightRail={filterPanel}
       rightRailVisible={desktopFiltersVisible}
     >

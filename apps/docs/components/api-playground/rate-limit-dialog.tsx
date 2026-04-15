@@ -58,7 +58,7 @@ export function RateLimitDialog({
             <li>
               <a
                 className="text-fd-primary no-underline hover:opacity-80"
-                href="https://openng.dev/dashboard"
+                href="https://openng.dev/overview"
                 rel="noreferrer"
                 target="_blank"
               >

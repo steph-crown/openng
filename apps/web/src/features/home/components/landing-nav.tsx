@@ -36,7 +36,7 @@ export function LandingNav() {
             </li>
           </ul>
           <div className="ml-auto flex items-center gap-2">
-            <a href="/dashboard" className="max-[640px]:hidden">
+            <a href="/keys" className="max-[640px]:hidden">
               <Button className="max-[960px]:px-3" size="sm" type="button">
                 Get API Key
               </Button>
