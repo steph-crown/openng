@@ -3,6 +3,16 @@
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 @import "@openng/ui/styles/globals.css";
 
+:root {
+  --font-sans-web-fallbacks: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", sans-serif;
+  --font-sans: "Google Sans Flex", "Geist", var(--font-sans-web-fallbacks);
+}
+
+html.font-geist {
+  --font-sans: "Geist", "Google Sans Flex", var(--font-sans-web-fallbacks);
+}
+
 html {
   max-width: 100vw;
   overflow-x: hidden;

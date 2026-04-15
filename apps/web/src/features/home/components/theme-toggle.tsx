@@ -1,29 +1,11 @@
 import { useEffect, useState } from "react";
 
-type ThemeMode = "light" | "dark";
-
-const themeStorageKey = "openng-theme";
-
-function resolveInitialTheme(): ThemeMode {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const persistedTheme = window.localStorage.getItem(themeStorageKey);
-  if (persistedTheme === "light" || persistedTheme === "dark") {
-    return persistedTheme;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-function applyTheme(nextTheme: ThemeMode) {
-  const rootElement = document.documentElement;
-  rootElement.classList.toggle("dark", nextTheme === "dark");
-  rootElement.style.colorScheme = nextTheme;
-}
+import {
+  applyTheme,
+  resolveInitialTheme,
+  themeStorageKey,
+  type ThemeMode,
+} from "../../../lib/theme";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<ThemeMode>("light");

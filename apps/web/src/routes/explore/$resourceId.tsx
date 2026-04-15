@@ -39,9 +39,17 @@ function toOptionalNumber(value: unknown, fallback: number) {
 export const Route = createFileRoute("/explore/$resourceId")({
   validateSearch: (search): ExplorerSearch => ({
     page: Math.max(1, Math.floor(toOptionalNumber(search.page, 1))),
-    limit: Math.max(1, Math.min(50, Math.floor(toOptionalNumber(search.limit, 25)))),
+    limit: Math.max(
+      1,
+      Math.min(50, Math.floor(toOptionalNumber(search.limit, 25))),
+    ),
     sort: toOptionalString(search.sort),
-    order: search.order === "desc" ? "desc" : search.order === "asc" ? "asc" : undefined,
+    order:
+      search.order === "desc"
+        ? "desc"
+        : search.order === "asc"
+          ? "asc"
+          : undefined,
     q: toOptionalString(search.q),
     year: toOptionalString(search.year),
     category: toOptionalString(search.category),

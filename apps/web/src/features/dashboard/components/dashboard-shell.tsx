@@ -94,17 +94,21 @@ function NavigationGroup({
             target={item.external ? "_blank" : undefined}
             rel={item.external ? "noreferrer noopener" : undefined}
             className={cx(
-              "relative flex items-center justify-between gap-2 rounded-lg p-2 text-start text-[14px] transition-colors duration-[160ms] ease-[var(--ease-standard)]",
+              "relative flex items-center justify-between gap-2 rounded-lg p-2 text-start text-[14px] transition-colors duration-160 ease-(--ease-standard)",
               active
-                ? "bg-[var(--color-sidebar-active-bg)] font-medium text-[var(--color-brand)]"
-                : "text-[var(--color-muted)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-fg)]",
+                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-brand)"
+                : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
             )}
           >
             <span className="inline-flex items-center gap-2">
-              <span className={cx("h-4 w-4", active && "text-[var(--color-brand)]")}>{item.icon}</span>
+              <span className={cx("h-4 w-4", active && "text-(--color-brand)")}>
+                {item.icon}
+              </span>
               {item.label}
             </span>
-            {item.external ? <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" /> : null}
+            {item.external ? (
+              <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
+            ) : null}
           </a>
         );
       })}
@@ -184,7 +188,9 @@ function DataExplorerNav({
                   {resource.name}
                 </span>
                 {resource.status === "live" ? (
-                  <span className="text-[11px] text-[var(--color-brand)]">Live</span>
+                  <span className="text-[11px] text-[var(--color-brand)]">
+                    Live
+                  </span>
                 ) : (
                   <span className="text-[11px]">Soon</span>
                 )}
@@ -302,22 +308,28 @@ export function DashboardShell({
   );
 
   const hasRightRail = Boolean(rightRail);
+  const railShows = hasRightRail && rightRailVisible;
+
+  const desktopGridTemplate = cx(
+    "lg:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_minmax(0,min(4rem,7vw))]",
+    railShows &&
+      "xl:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_320px_minmax(0,min(4rem,7vw))]",
+  );
 
   return (
     <div className="h-[100svh] w-screen overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
       <div
-        className={cx(
-          "grid h-full w-full grid-cols-1",
-          hasRightRail
-            ? "lg:grid-cols-[286px_minmax(0,1fr)] xl:grid-cols-[286px_minmax(0,1fr)_320px]"
-            : "lg:grid-cols-[286px_minmax(0,1fr)]",
-        )}
+        className={cx("grid h-full w-full grid-cols-1", desktopGridTemplate)}
       >
-        <aside className="hidden h-full min-h-0 border-r border-[var(--color-border)] bg-[var(--color-sidebar-bg)] p-4 lg:block">
+        <div
+          aria-hidden
+          className="hidden min-h-0 bg-[var(--color-sidebar-bg)] lg:block"
+        />
+        <aside className="hidden h-full min-h-0 border-r border-(--color-border) bg-(--color-sidebar-bg) p-4 lg:block">
           <div className="h-full overflow-y-auto">{navContent}</div>
         </aside>
-        <main className="h-full min-h-0 overflow-y-auto">
-          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+        <main className="h-full min-h-0 overflow-y-auto bg-[var(--color-bg)]">
+          <div className="px-3 py-3 sm:px-4 sm:py-4 lg:mx-auto lg:w-full lg:max-w-[var(--layout-width)] lg:px-6 lg:py-5">
             <header className="mb-4 flex items-center justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 lg:hidden">
               <button
                 type="button"
@@ -336,13 +348,17 @@ export function DashboardShell({
         {hasRightRail ? (
           <aside
             className={cx(
-              "hidden h-full min-h-0 border-l border-[var(--color-border)] bg-[var(--color-bg)] xl:block",
+              "hidden h-full min-h-0 border-l border-(--color-border) bg-(--color-bg) xl:block",
               !rightRailVisible && "xl:hidden",
             )}
           >
             <div className="h-full overflow-y-auto p-4">{rightRail}</div>
           </aside>
         ) : null}
+        <div
+          aria-hidden
+          className="hidden min-h-0 bg-[var(--color-bg)] lg:block"
+        />
       </div>
       {mobileNavOpen ? (
         <div className="fixed inset-0 z-40 bg-black/45 lg:hidden">

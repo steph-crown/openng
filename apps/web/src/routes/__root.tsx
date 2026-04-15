@@ -1,14 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useState, type ReactNode } from "react";
 import {
   HeadContent,
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
 
+import { applyTheme, resolveInitialTheme } from "../lib/theme";
 import appCss from "../styles/globals.css?url";
-
-const themeInitScript = `(function(){try{var key="openng-theme";var stored=window.localStorage.getItem(key);var prefersDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var theme=stored==="light"||stored==="dark"?stored:prefersDark?"dark":"light";var root=document.documentElement;root.classList.toggle("dark",theme==="dark");root.style.colorScheme=theme;}catch(e){}})();`;
 
 export const Route = createRootRoute({
   head: () => ({
@@ -30,6 +29,19 @@ export const Route = createRootRoute({
     ],
     links: [
       {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Google+Sans+Flex:wght@100..900&display=swap",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
@@ -39,6 +51,10 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  useLayoutEffect(() => {
+    applyTheme(resolveInitialTheme());
+  }, []);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -55,7 +71,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
