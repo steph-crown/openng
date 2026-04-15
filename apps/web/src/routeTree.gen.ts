@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExploreIndexRouteImport } from './routes/explore/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as ExploreResourceIdRouteImport } from './routes/explore/$resourceId'
+import { Route as DashboardUsageRouteImport } from './routes/dashboard/usage'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardKeysRouteImport } from './routes/dashboard/keys'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreResourceIdRoute = ExploreResourceIdRouteImport.update({
+  id: '/explore/$resourceId',
+  path: '/explore/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardUsageRoute = DashboardUsageRouteImport.update({
+  id: '/dashboard/usage',
+  path: '/dashboard/usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/dashboard/settings',
+  path: '/dashboard/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardKeysRoute = DashboardKeysRouteImport.update({
+  id: '/dashboard/keys',
+  path: '/dashboard/keys',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard/keys': typeof DashboardKeysRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/usage': typeof DashboardUsageRoute
+  '/explore/$resourceId': typeof ExploreResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard/keys': typeof DashboardKeysRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/usage': typeof DashboardUsageRoute
+  '/explore/$resourceId': typeof ExploreResourceIdRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard/keys': typeof DashboardKeysRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/usage': typeof DashboardUsageRoute
+  '/explore/$resourceId': typeof ExploreResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/dashboard/keys'
+    | '/dashboard/settings'
+    | '/dashboard/usage'
+    | '/explore/$resourceId'
+    | '/dashboard/'
+    | '/explore/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/dashboard/keys'
+    | '/dashboard/settings'
+    | '/dashboard/usage'
+    | '/explore/$resourceId'
+    | '/dashboard'
+    | '/explore'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard/keys'
+    | '/dashboard/settings'
+    | '/dashboard/usage'
+    | '/explore/$resourceId'
+    | '/dashboard/'
+    | '/explore/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardKeysRoute: typeof DashboardKeysRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardUsageRoute: typeof DashboardUsageRoute
+  ExploreResourceIdRoute: typeof ExploreResourceIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$resourceId': {
+      id: '/explore/$resourceId'
+      path: '/explore/$resourceId'
+      fullPath: '/explore/$resourceId'
+      preLoaderRoute: typeof ExploreResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/usage': {
+      id: '/dashboard/usage'
+      path: '/dashboard/usage'
+      fullPath: '/dashboard/usage'
+      preLoaderRoute: typeof DashboardUsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/dashboard/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/keys': {
+      id: '/dashboard/keys'
+      path: '/dashboard/keys'
+      fullPath: '/dashboard/keys'
+      preLoaderRoute: typeof DashboardKeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardKeysRoute: DashboardKeysRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardUsageRoute: DashboardUsageRoute,
+  ExploreResourceIdRoute: ExploreResourceIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

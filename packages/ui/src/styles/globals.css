@@ -26,6 +26,15 @@
   --color-button-secondary: #ededed;
   --color-brand: var(--openng-color-brand-light);
   --color-brand-foreground: var(--openng-color-brand-foreground-light);
+  --color-sidebar-bg: #efefef;
+  --color-sidebar-hover: color-mix(in oklab, var(--openng-color-brand-light) 6%, transparent);
+  --color-sidebar-active-bg: color-mix(
+    in oklab,
+    var(--openng-color-brand-light) 10%,
+    transparent
+  );
+  --color-sidebar-active-fg: #2e2e2e;
+  --color-sidebar-section-label: #999999;
 }
 
 html.dark {
@@ -40,4 +49,13 @@ html.dark {
   --color-button-secondary: #151515;
   --color-brand: var(--openng-color-brand-dark);
   --color-brand-foreground: var(--openng-color-brand-foreground-dark);
+  --color-sidebar-bg: #040404;
+  --color-sidebar-hover: color-mix(in oklab, var(--openng-color-brand-dark) 7%, transparent);
+  --color-sidebar-active-bg: color-mix(
+    in oklab,
+    var(--openng-color-brand-dark) 11%,
+    transparent
+  );
+  --color-sidebar-active-fg: #ebebeb;
+  --color-sidebar-section-label: #999999;
 }

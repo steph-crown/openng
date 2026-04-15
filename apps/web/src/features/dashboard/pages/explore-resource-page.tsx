@@ -1,0 +1,801 @@
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  type ColumnDef,
+} from "@tanstack/react-table";
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowPathIcon,
+  ArrowsUpDownIcon,
+  ClipboardDocumentCheckIcon,
+  ClipboardDocumentIcon,
+  CodeBracketIcon,
+  FunnelIcon,
+  LinkIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { DashboardShell } from "../components/dashboard-shell";
+import { ShellCard } from "../components/shell-card";
+import { fetchResourceList, fetchResourceMeta } from "../api/explorer-api";
+import { getResourceById } from "../data/resource-catalog";
+
+type ExplorerSearch = {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  order?: "asc" | "desc";
+  q?: string;
+  year?: string;
+  category?: string;
+  schedule_kind?: string;
+  is_confirmed?: string;
+  date_from?: string;
+  date_to?: string;
+};
+
+type ExploreResourcePageProps = {
+  resourceId: string;
+  search: ExplorerSearch;
+  onApplySearch: (next: ExplorerSearch) => void;
+};
+
+function cx(...parts: Array<string | false | null | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+function formatCellValue(value: unknown, fieldType?: string) {
+  if (value === null || value === undefined || value === "") {
+    return "—";
+  }
+  if (fieldType === "date" && typeof value === "string") {
+    const date = new Date(value);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleDateString(undefined, {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    }
+  }
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  return String(value);
+}
+
+function stringifyRecord(record: Record<string, unknown>) {
+  return JSON.stringify(record, null, 2);
+}
+
+function pageNumbers(current: number, total: number) {
+  if (total <= 1) {
+    return [1];
+  }
+  const pages = new Set<number>([1, total, current - 1, current, current + 1]);
+  return [...pages].filter((value) => value >= 1 && value <= total).sort((a, b) => a - b);
+}
+
+export function ExploreResourcePage({ resourceId, search, onApplySearch }: ExploreResourcePageProps) {
+  const resource = getResourceById(resourceId);
+  const isLive = resource?.status === "live";
+  const [draft, setDraft] = useState<ExplorerSearch>(search);
+  const [desktopFiltersVisible, setDesktopFiltersVisible] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [showColumnPicker, setShowColumnPicker] = useState(false);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+  const [copiedState, setCopiedState] = useState<"" | "api" | "url" | "list" | "row">("");
+
+  useEffect(() => {
+    setDraft(search);
+  }, [search]);
+
+  const metaQuery = useQuery({
+    queryKey: ["resource-meta", resourceId],
+    queryFn: () => fetchResourceMeta(resourceId),
+    enabled: isLive,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const appliedParams = useMemo(() => {
+    const params: Record<string, string | number | undefined> = {
+      page: search.page ?? 1,
+      limit: search.limit ?? 25,
+      sort: search.sort,
+      order: search.order,
+      year: search.year,
+      category: search.category,
+      schedule_kind: search.schedule_kind,
+      is_confirmed: search.is_confirmed,
+      date_from: search.date_from,
+      date_to: search.date_to,
+    };
+
+    const mappedSearch = search.q?.trim();
+    if (mappedSearch) {
+      params.name = mappedSearch;
+    }
+
+    return params;
+  }, [search]);
+
+  const listQuery = useQuery({
+    queryKey: ["resource-list", resourceId, appliedParams],
+    queryFn: () => fetchResourceList({ resourceId, params: appliedParams }),
+    enabled: isLive,
+    staleTime: 1000 * 20,
+  });
+
+  const rows = useMemo(() => {
+    if (!listQuery.data?.data) {
+      return [];
+    }
+    return listQuery.data.data;
+  }, [listQuery.data]);
+
+  const defaultColumns = useMemo(() => {
+    if (!metaQuery.data) {
+      return ["date", "name", "year", "category", "isConfirmed"];
+    }
+    return metaQuery.data.fields.slice(0, 5).map((field) => field.name);
+  }, [metaQuery.data]);
+
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(defaultColumns);
+
+  useEffect(() => {
+    if (visibleColumns.length === 0 && defaultColumns.length > 0) {
+      setVisibleColumns(defaultColumns);
+    }
+  }, [defaultColumns, visibleColumns.length]);
+
+  const fieldTypeMap = useMemo(() => {
+    const map = new Map<string, string>();
+    if (!metaQuery.data) {
+      return map;
+    }
+    for (const field of metaQuery.data.fields) {
+      map.set(field.name, field.type);
+    }
+    return map;
+  }, [metaQuery.data]);
+
+  const allColumnNames = useMemo(() => {
+    if (!metaQuery.data) {
+      return defaultColumns;
+    }
+    return metaQuery.data.fields.map((field) => field.name);
+  }, [defaultColumns, metaQuery.data]);
+
+  const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
+    return visibleColumns.map((columnName) => ({
+      id: columnName,
+      accessorFn: (row) => row[columnName],
+      header: () => (
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 text-left"
+          onClick={() => {
+            const currentSort = draft.sort ?? metaQuery.data?.default_sort ?? "date";
+            const currentOrder = draft.order ?? metaQuery.data?.default_sort_order ?? "asc";
+            const nextOrder =
+              currentSort === columnName && currentOrder === "asc" ? "desc" : "asc";
+
+            onApplySearch({
+              ...search,
+              sort: columnName,
+              order: nextOrder,
+              page: 1,
+            });
+          }}
+        >
+          <span>{columnName}</span>
+          <ArrowsUpDownIcon className="h-3.5 w-3.5" />
+        </button>
+      ),
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const fieldType = fieldTypeMap.get(columnName);
+        return (
+          <span className={cx(fieldType === "number" && "text-right")}>
+            {formatCellValue(value, fieldType)}
+          </span>
+        );
+      },
+    }));
+  }, [visibleColumns, draft.sort, draft.order, onApplySearch, search, metaQuery.data, fieldTypeMap]);
+
+  const table = useReactTable({
+    data: rows,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const selectedRow = selectedRowIndex === null ? null : rows[selectedRowIndex] ?? null;
+
+  const total = listQuery.data?.meta.total ?? 0;
+  const limit = search.limit ?? 25;
+  const page = search.page ?? 1;
+  const pages = listQuery.data?.meta.pages ?? Math.max(1, Math.ceil(total / limit));
+
+  async function copyText(value: string, type: "api" | "url" | "list" | "row") {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedState(type);
+      window.setTimeout(() => setCopiedState(""), 2000);
+    } catch {
+      setCopiedState("");
+    }
+  }
+
+  function applyDraftFilters() {
+    onApplySearch({
+      ...draft,
+      page: 1,
+    });
+  }
+
+  function resetFilters() {
+    const reset: ExplorerSearch = {
+      page: 1,
+      limit: 25,
+      sort: metaQuery.data?.default_sort,
+      order: metaQuery.data?.default_sort_order,
+    };
+    setDraft(reset);
+    onApplySearch(reset);
+  }
+
+  if (!resource) {
+    return (
+      <DashboardShell currentPath={`/explore/${resourceId}`}>
+        <ShellCard title="Resource not found">
+          <p className="text-sm text-[var(--color-muted)]">
+            This resource does not exist in the current catalog.
+          </p>
+          <a href="/explore" className="mt-2 inline-flex text-sm text-[var(--color-brand)]">
+            Back to explorer
+          </a>
+        </ShellCard>
+      </DashboardShell>
+    );
+  }
+
+  if (!isLive) {
+    return (
+      <DashboardShell currentPath={`/explore/${resourceId}`}>
+        <ShellCard title={`${resource.name} · Coming soon`}>
+          <p className="text-sm text-[var(--color-muted)]">{resource.description}</p>
+          <div className="mt-3 inline-flex gap-2">
+            <a
+              href="https://github.com/stephcrown/openng/issues"
+              className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+            >
+              Request access
+            </a>
+            <a
+              href="/contribute"
+              className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+            >
+              Contribute data
+            </a>
+          </div>
+        </ShellCard>
+      </DashboardShell>
+    );
+  }
+
+  const pageList = pageNumbers(page, pages);
+  const queryPath = `/v1/${resourceId}`;
+  const queryString = new URLSearchParams(
+    Object.entries(appliedParams)
+      .filter(([, value]) => value !== undefined && value !== "")
+      .map(([key, value]) => [key, String(value)]),
+  ).toString();
+  const curlCommand = `curl "${queryPath}${queryString ? `?${queryString}` : ""}"`;
+
+  const filterPanel = (
+    <div className="grid gap-3">
+      <div className="mb-1 flex items-center justify-between">
+        <h2 className="text-sm font-medium">Filters</h2>
+        <button
+          type="button"
+          className="hidden h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-muted)] xl:inline-flex"
+          onClick={() => setDesktopFiltersVisible(false)}
+          aria-label="Hide filters"
+        >
+          <XMarkIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Search</label>
+        <input
+          value={draft.q ?? ""}
+          onChange={(event) => setDraft((prev) => ({ ...prev, q: event.target.value }))}
+          placeholder="Search name"
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        />
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Year</label>
+        <input
+          value={draft.year ?? ""}
+          onChange={(event) =>
+            setDraft((prev) => ({ ...prev, year: event.target.value || undefined }))
+          }
+          placeholder="2026"
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        />
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Category</label>
+        <input
+          value={draft.category ?? ""}
+          onChange={(event) =>
+            setDraft((prev) => ({ ...prev, category: event.target.value || undefined }))
+          }
+          placeholder="fixed"
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        />
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Is confirmed</label>
+        <select
+          value={draft.is_confirmed ?? ""}
+          onChange={(event) =>
+            setDraft((prev) => ({
+              ...prev,
+              is_confirmed: event.target.value || undefined,
+            }))
+          }
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        >
+          <option value="">Any</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Date from</label>
+        <input
+          type="date"
+          value={draft.date_from ?? ""}
+          onChange={(event) =>
+            setDraft((prev) => ({ ...prev, date_from: event.target.value || undefined }))
+          }
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        />
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Date to</label>
+        <input
+          type="date"
+          value={draft.date_to ?? ""}
+          onChange={(event) =>
+            setDraft((prev) => ({ ...prev, date_to: event.target.value || undefined }))
+          }
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        />
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Sort by</label>
+        <select
+          value={draft.sort ?? metaQuery.data?.default_sort ?? "date"}
+          onChange={(event) =>
+            setDraft((prev) => ({ ...prev, sort: event.target.value || undefined }))
+          }
+          className="h-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-sm"
+        >
+          {(metaQuery.data?.sortable_columns ?? ["date", "name", "year"]).map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="grid gap-1">
+        <label className="text-xs text-[var(--color-muted)]">Direction</label>
+        <div className="inline-flex gap-2">
+          <button
+            type="button"
+            className={cx(
+              "rounded-full px-3 py-1.5 text-sm",
+              (draft.order ?? metaQuery.data?.default_sort_order ?? "asc") === "asc"
+                ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
+                : "border border-[var(--color-border)]",
+            )}
+            onClick={() => setDraft((prev) => ({ ...prev, order: "asc" }))}
+          >
+            Asc
+          </button>
+          <button
+            type="button"
+            className={cx(
+              "rounded-full px-3 py-1.5 text-sm",
+              (draft.order ?? metaQuery.data?.default_sort_order ?? "asc") === "desc"
+                ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
+                : "border border-[var(--color-border)]",
+            )}
+            onClick={() => setDraft((prev) => ({ ...prev, order: "desc" }))}
+          >
+            Desc
+          </button>
+        </div>
+      </div>
+      <div className="mt-2 inline-flex gap-2">
+        <button
+          type="button"
+          className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm text-[var(--color-brand-foreground)]"
+          onClick={() => {
+            applyDraftFilters();
+            setMobileFiltersOpen(false);
+          }}
+        >
+          Apply
+        </button>
+        <button
+          type="button"
+          className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+          onClick={() => {
+            resetFilters();
+            setMobileFiltersOpen(false);
+          }}
+        >
+          Reset all
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <DashboardShell
+      currentPath={`/explore/${resourceId}`}
+      rightRail={filterPanel}
+      rightRailVisible={desktopFiltersVisible}
+    >
+      <div className="grid gap-5">
+        <header className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="grid gap-2">
+              <h1 className="text-[clamp(24px,2.6vw,34px)] font-medium tracking-[-0.02em]">
+                {resource.name}
+              </h1>
+              <p className="max-w-[760px] text-sm text-[var(--color-muted)]">
+                {metaQuery.data?.description ?? resource.description}
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs text-[var(--color-muted)]">
+                <span className="rounded-full border border-[var(--color-border)] px-2 py-1">
+                  {total} records
+                </span>
+                <span className="rounded-full border border-[var(--color-border)] px-2 py-1">
+                  Updates: {metaQuery.data?.update_frequency ?? resource.updateFrequency}
+                </span>
+              </div>
+            </div>
+            <div className="inline-flex gap-2">
+              <a
+                href={resource.docsUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+              >
+                View docs
+              </a>
+              <a
+                href={resource.sourceUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 text-sm"
+              >
+                View source
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <div className="grid gap-4">
+            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="text-sm text-[var(--color-muted)]">
+                  Showing {rows.length} of {total} results
+                </div>
+                <div className="inline-flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void listQuery.refetch()}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                  >
+                    <ArrowPathIcon className="h-3.5 w-3.5" />
+                    Refresh
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowColumnPicker((value) => !value)}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                  >
+                    <AdjustmentsHorizontalIcon className="h-3.5 w-3.5" />
+                    Columns
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyText(window.location.href, "url")}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                  >
+                    {copiedState === "url" ? (
+                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
+                    ) : (
+                      <LinkIcon className="h-3.5 w-3.5" />
+                    )}
+                    Share view
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyText(curlCommand, "api")}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                  >
+                    {copiedState === "api" ? (
+                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
+                    ) : (
+                      <CodeBracketIcon className="h-3.5 w-3.5" />
+                    )}
+                    Copy API call
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyText(JSON.stringify(rows, null, 2), "list")}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs"
+                  >
+                    {copiedState === "list" ? (
+                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
+                    ) : (
+                      <ClipboardDocumentIcon className="h-3.5 w-3.5" />
+                    )}
+                    Copy list JSON
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs xl:hidden"
+                    onClick={() => setMobileFiltersOpen(true)}
+                  >
+                    <FunnelIcon className="h-3.5 w-3.5" />
+                    Filters
+                  </button>
+                  <button
+                    type="button"
+                    className="hidden items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-xs xl:inline-flex"
+                    onClick={() => setDesktopFiltersVisible((value) => !value)}
+                  >
+                    <FunnelIcon className="h-3.5 w-3.5" />
+                    {desktopFiltersVisible ? "Hide filters" : "Show filters"}
+                  </button>
+                </div>
+              </div>
+              {showColumnPicker ? (
+                <div className="mt-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+                  <div className="grid grid-cols-2 gap-2 max-[700px]:grid-cols-1">
+                    {allColumnNames.map((columnName) => {
+                      const checked = visibleColumns.includes(columnName);
+                      return (
+                        <label key={columnName} className="inline-flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(event) => {
+                              if (event.target.checked) {
+                                setVisibleColumns((prev) => [...prev, columnName]);
+                                return;
+                              }
+                              setVisibleColumns((prev) =>
+                                prev.filter((existing) => existing !== columnName),
+                              );
+                            }}
+                          />
+                          {columnName}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-3 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs"
+                    onClick={() => setVisibleColumns(defaultColumns)}
+                  >
+                    Reset to default
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[760px] border-separate border-spacing-y-1 p-3 text-sm">
+                  <thead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <th
+                            key={header.id}
+                            className="px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.03em] text-[var(--color-muted)]"
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                  <tbody>
+                    {listQuery.isLoading
+                      ? Array.from({ length: limit }, (_, index) => (
+                          <tr key={`skeleton-${index}`}>
+                            {visibleColumns.map((columnName) => (
+                              <td key={`${columnName}-${index}`} className="px-3 py-3">
+                                <div className="h-4 w-[80%] animate-pulse rounded bg-[var(--color-surface-strong)]" />
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      : table.getRowModel().rows.map((row, index) => (
+                          <tr
+                            key={row.id}
+                            className="cursor-pointer rounded-xl bg-[var(--color-bg)] transition-colors duration-[160ms] ease-[var(--ease-standard)] hover:bg-[var(--color-surface-strong)]"
+                            onClick={() => setSelectedRowIndex(index)}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <td key={cell.id} className="px-3 py-3">
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                  </tbody>
+                </table>
+              </div>
+              {!listQuery.isLoading && rows.length === 0 ? (
+                <div className="grid place-items-center gap-2 p-8 text-center">
+                  <p className="text-base font-medium">No results</p>
+                  <p className="text-sm text-[var(--color-muted)]">
+                    No records match your current filters.
+                  </p>
+                  <button
+                    type="button"
+                    className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+                    onClick={resetFilters}
+                  >
+                    Reset filters
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="inline-flex items-center gap-2 text-sm">
+                  <span>per page</span>
+                  <select
+                    value={limit}
+                    onChange={(event) => {
+                      onApplySearch({
+                        ...search,
+                        page: 1,
+                        limit: Number(event.target.value),
+                      });
+                    }}
+                    className="h-9 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-2 text-sm"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+                <div className="inline-flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onApplySearch({ ...search, page: Math.max(1, page - 1) })}
+                    disabled={page <= 1}
+                    className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  {pageList.map((pageNumber) => (
+                    <button
+                      key={pageNumber}
+                      type="button"
+                      onClick={() => onApplySearch({ ...search, page: pageNumber })}
+                      className={cx(
+                        "h-8 min-w-8 rounded-full px-2 text-sm",
+                        pageNumber === page
+                          ? "bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
+                          : "border border-[var(--color-border)]",
+                      )}
+                    >
+                      {pageNumber}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => onApplySearch({ ...search, page: Math.min(pages, page + 1) })}
+                    disabled={page >= pages}
+                    className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+                <p className="text-sm text-[var(--color-muted)]">
+                  Page {page} of {pages}
+                </p>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      {mobileFiltersOpen ? (
+        <div className="fixed inset-0 z-40 bg-black/45 xl:hidden">
+          <aside className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-[var(--color-border)] bg-[var(--color-bg)] p-4">
+            <div className="mb-3 flex justify-end">
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-fg)]"
+                onClick={() => setMobileFiltersOpen(false)}
+                aria-label="Close filters"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+            {filterPanel}
+          </aside>
+        </div>
+      ) : null}
+
+      {selectedRow ? (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-black/45 p-3">
+          <div className="max-h-[90svh] w-full max-w-[780px] overflow-y-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-medium">{resource.name} record</h2>
+                <p className="text-sm text-[var(--color-muted)]">
+                  {selectedRowIndex === null ? 0 : selectedRowIndex + 1} of {rows.length}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)]"
+                onClick={() => setSelectedRowIndex(null)}
+              >
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid gap-2">
+              {Object.entries(selectedRow).map(([key, value]) => (
+                <div key={key} className="grid grid-cols-[180px_minmax(0,1fr)] gap-3 text-sm">
+                  <p className="font-medium text-[var(--color-muted)]">{key}</p>
+                  <p className="break-words">{formatCellValue(value, fieldTypeMap.get(key))}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 inline-flex gap-2">
+              <button
+                type="button"
+                className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+                onClick={() => copyText(stringifyRecord(selectedRow), "row")}
+              >
+                {copiedState === "row" ? "Copied" : "Copy as JSON"}
+              </button>
+              <a
+                href={resource.docsUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm"
+              >
+                View docs
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </DashboardShell>
+  );
+}

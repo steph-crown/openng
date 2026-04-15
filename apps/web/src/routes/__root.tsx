@@ -8,6 +8,8 @@ import {
 
 import appCss from "../styles/globals.css?url";
 
+const themeInitScript = `(function(){try{var key="openng-theme";var stored=window.localStorage.getItem(key);var prefersDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var theme=stored==="light"||stored==="dark"?stored:prefersDark?"dark":"light";var root=document.documentElement;root.classList.toggle("dark",theme==="dark");root.style.colorScheme=theme;}catch(e){}})();`;
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -53,6 +55,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
