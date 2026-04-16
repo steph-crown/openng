@@ -10,6 +10,7 @@ import {
   AdjustmentsHorizontalIcon,
   ArrowPathIcon,
   ArrowsUpDownIcon,
+  ChevronDownIcon,
   ClipboardDocumentCheckIcon,
   ClipboardDocumentIcon,
   CodeBracketIcon,
@@ -17,8 +18,13 @@ import {
   LinkIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Badge } from "@openng/ui/components/badge";
-import { Switch } from "@openng/ui/components/switch";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
 import { DashboardShell } from "../components/dashboard-shell";
 import { ShellCard } from "../components/shell-card";
 import { fetchResourceList, fetchResourceMeta } from "../api/explorer-api";
@@ -69,7 +75,7 @@ function ExplorerTableCell({
     }
     return (
       <span className={cx(alignNumber && "flex justify-end")}>
-        <Switch checked={Boolean(value)} disabled className="opacity-100" />
+        <Switch checked={Boolean(value)} disabled className="disabled:opacity-100" />
       </span>
     );
   }
@@ -77,7 +83,9 @@ function ExplorerTableCell({
   if (meta?.display === "badge" && value !== null && value !== undefined && value !== "") {
     return (
       <span className={cx(alignNumber && "text-right")}>
-        <Badge title={String(value)}>{String(value)}</Badge>
+        <Badge variant="outline" title={String(value)} className="max-w-full truncate font-normal">
+          {String(value)}
+        </Badge>
       </span>
     );
   }
@@ -100,11 +108,15 @@ function ExplorerDetailValue({
     if (value === null || value === undefined || value === "") {
       return <span className="text-(--color-muted)">—</span>;
     }
-    return <Switch checked={Boolean(value)} disabled className="opacity-100" />;
+    return <Switch checked={Boolean(value)} disabled className="disabled:opacity-100" />;
   }
 
   if (meta?.display === "badge" && value !== null && value !== undefined && value !== "") {
-    return <Badge title={String(value)}>{String(value)}</Badge>;
+    return (
+      <Badge variant="outline" title={String(value)} className="max-w-full truncate font-normal">
+        {String(value)}
+      </Badge>
+    );
   }
 
   return <span className="break-words">{formatCellValue(value, fieldType)}</span>;
@@ -126,8 +138,8 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
   const resource = getResourceById(resourceId);
   const isLive = resource?.status === "live";
   const [draft, setDraft] = useState<ExplorerRouteSearch>(search);
-  const [desktopFiltersVisible, setDesktopFiltersVisible] = useState(true);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [actionsMenuOpen, setActionsMenuOpen] = useState(false);
   const [showColumnPicker, setShowColumnPicker] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
   const [copiedState, setCopiedState] = useState<"" | "api" | "url" | "list" | "row">("");
@@ -343,9 +355,9 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         <h2 className="text-sm font-medium">Filters</h2>
         <button
           type="button"
-          className="hidden h-8 w-8 items-center justify-center rounded-full border border-(--color-border) text-(--color-muted) xl:inline-flex"
-          onClick={() => setDesktopFiltersVisible(false)}
-          aria-label="Hide filters"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) text-(--color-muted)"
+          onClick={() => setFiltersOpen(false)}
+          aria-label="Close filters"
         >
           <XMarkIcon className="h-4 w-4" />
         </button>
@@ -471,7 +483,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
           className="rounded-full bg-(--color-brand) px-4 py-2 text-sm text-(--color-brand-foreground)"
           onClick={() => {
             applyDraftFilters();
-            setMobileFiltersOpen(false);
+            setFiltersOpen(false);
           }}
         >
           Apply
@@ -481,7 +493,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
           className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
           onClick={() => {
             resetFilters();
-            setMobileFiltersOpen(false);
+            setFiltersOpen(false);
           }}
         >
           Reset all
@@ -491,47 +503,28 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
   );
 
   return (
-    <DashboardShell
-      currentPath={`/${resourceId}`}
-      rightRail={filterPanel}
-      rightRailVisible={desktopFiltersVisible}
-    >
+    <DashboardShell currentPath={`/${resourceId}`}>
       <div className="grid gap-5">
         <header className="grid gap-3 pb-2">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="grid gap-2">
-              <h1 className="text-[clamp(24px,2.6vw,34px)] font-medium tracking-[-0.02em]">
-                {resource.name}
-              </h1>
-              <p className="max-w-[760px] text-sm text-(--color-muted)">
-                {metaQuery.data?.description ?? resource.description}
-              </p>
-              <div className="flex flex-wrap gap-2 text-xs text-(--color-muted)">
-                <span className="rounded-full border border-(--color-border) px-2 py-1">
-                  {total} records
-                </span>
-                <span className="rounded-full border border-(--color-border) px-2 py-1">
-                  Updates: {metaQuery.data?.update_frequency ?? resource.updateFrequency}
-                </span>
-              </div>
-            </div>
-            <div className="inline-flex gap-2">
+          <div className="grid gap-2">
+            <h1 className="text-[clamp(24px,2.6vw,34px)] font-medium tracking-[-0.02em]">
+              {resource.name}
+            </h1>
+            <p className="max-w-[760px] text-sm text-(--color-muted)">
+              {metaQuery.data?.description ?? resource.description}
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs text-(--color-muted)">
               <a
                 href={resource.docsUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
+                className="rounded-full border border-(--color-border) px-2 py-1 transition-colors hover:bg-(--color-surface-strong)"
               >
                 View docs
               </a>
-              <a
-                href={resource.sourceUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="rounded-full border border-(--color-border) bg-(--color-bg) px-4 py-2 text-sm"
-              >
-                View source
-              </a>
+              <span className="rounded-full border border-(--color-border) px-2 py-1">
+                Updates: {metaQuery.data?.update_frequency ?? resource.updateFrequency}
+              </span>
             </div>
           </div>
         </header>
@@ -542,7 +535,15 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 <div className="text-sm text-(--color-muted)">
                   Showing {rows.length} of {total} results
                 </div>
-                <div className="inline-flex flex-wrap gap-2">
+                <div className="inline-flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFiltersOpen(true)}
+                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
+                  >
+                    <FunnelIcon className="h-3.5 w-3.5" />
+                    Filters
+                  </button>
                   <button
                     type="button"
                     onClick={() => void listQuery.refetch()}
@@ -551,66 +552,77 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                     <ArrowPathIcon className="h-3.5 w-3.5" />
                     Refresh
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowColumnPicker((value) => !value)}
-                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
-                  >
-                    <AdjustmentsHorizontalIcon className="h-3.5 w-3.5" />
-                    Columns
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => copyText(window.location.href, "url")}
-                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
-                  >
-                    {copiedState === "url" ? (
-                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
-                    ) : (
-                      <LinkIcon className="h-3.5 w-3.5" />
-                    )}
-                    Share view
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => copyText(curlCommand, "api")}
-                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
-                  >
-                    {copiedState === "api" ? (
-                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
-                    ) : (
-                      <CodeBracketIcon className="h-3.5 w-3.5" />
-                    )}
-                    Copy API call
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => copyText(JSON.stringify(rows, null, 2), "list")}
-                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
-                  >
-                    {copiedState === "list" ? (
-                      <ClipboardDocumentCheckIcon className="h-3.5 w-3.5" />
-                    ) : (
-                      <ClipboardDocumentIcon className="h-3.5 w-3.5" />
-                    )}
-                    Copy list JSON
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs xl:hidden"
-                    onClick={() => setMobileFiltersOpen(true)}
-                  >
-                    <FunnelIcon className="h-3.5 w-3.5" />
-                    Filters
-                  </button>
-                  <button
-                    type="button"
-                    className="hidden items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs xl:inline-flex"
-                    onClick={() => setDesktopFiltersVisible((value) => !value)}
-                  >
-                    <FunnelIcon className="h-3.5 w-3.5" />
-                    {desktopFiltersVisible ? "Hide filters" : "Show filters"}
-                  </button>
+                  <Popover open={actionsMenuOpen} onOpenChange={setActionsMenuOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-2 text-xs"
+                      >
+                        Actions
+                        <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-56 p-1">
+                      <div className="grid gap-0.5">
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-(--color-surface-strong)"
+                          onClick={() => {
+                            setShowColumnPicker((value) => !value);
+                            setActionsMenuOpen(false);
+                          }}
+                        >
+                          <AdjustmentsHorizontalIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          Columns
+                        </button>
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-(--color-surface-strong)"
+                          onClick={() => {
+                            void copyText(window.location.href, "url");
+                            setActionsMenuOpen(false);
+                          }}
+                        >
+                          {copiedState === "url" ? (
+                            <ClipboardDocumentCheckIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          ) : (
+                            <LinkIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          )}
+                          Share view
+                        </button>
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-(--color-surface-strong)"
+                          onClick={() => {
+                            void copyText(curlCommand, "api");
+                            setActionsMenuOpen(false);
+                          }}
+                        >
+                          {copiedState === "api" ? (
+                            <ClipboardDocumentCheckIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          ) : (
+                            <CodeBracketIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          )}
+                          Copy API call
+                        </button>
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-(--color-surface-strong)"
+                          onClick={() => {
+                            void copyText(JSON.stringify(rows, null, 2), "list");
+                            setActionsMenuOpen(false);
+                          }}
+                        >
+                          {copiedState === "list" ? (
+                            <ClipboardDocumentCheckIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          ) : (
+                            <ClipboardDocumentIcon className="h-4 w-4 shrink-0 text-(--color-muted)" />
+                          )}
+                          Copy list JSON
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
               {showColumnPicker ? (
@@ -775,19 +787,16 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </div>
       </div>
 
-      {mobileFiltersOpen ? (
-        <div className="fixed inset-0 z-40 bg-black/45 xl:hidden">
-          <aside className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-(--color-border) bg-(--color-bg) p-4">
-            <div className="mb-3 flex justify-end">
-              <button
-                type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-(--color-fg)"
-                onClick={() => setMobileFiltersOpen(false)}
-                aria-label="Close filters"
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </button>
-            </div>
+      {filtersOpen ? (
+        <div
+          className="fixed inset-0 z-40 bg-black/45"
+          onClick={() => setFiltersOpen(false)}
+          role="presentation"
+        >
+          <aside
+            className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-(--color-border) bg-(--color-bg) p-4"
+            onClick={(event) => event.stopPropagation()}
+          >
             {filterPanel}
           </aside>
         </div>

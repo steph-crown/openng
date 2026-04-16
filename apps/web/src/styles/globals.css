@@ -1,7 +1,28 @@
 @import "tailwindcss";
+@import "shadcn/tailwind.css";
 @source "../**/*.{ts,tsx}";
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 @import "@openng/ui/styles/globals.css";
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-fg);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-fg);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-fg);
+  --color-primary: var(--color-brand);
+  --color-primary-foreground: var(--color-brand-foreground);
+  --color-secondary: var(--color-button-secondary);
+  --color-secondary-foreground: var(--color-fg);
+  --color-muted: var(--color-surface-strong);
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: var(--color-surface-strong);
+  --color-accent-foreground: var(--color-fg);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-input: var(--color-surface-strong);
+  --color-ring: var(--color-brand);
+}
 
 :root {
   --font-sans-web-fallbacks: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,

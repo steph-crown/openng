@@ -3,12 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./components/badge": "./src/components/badge.tsx",
     "./components/button": "./src/components/button.tsx",
     "./components/open-nav-logo": "./src/components/open-nav-logo.tsx",
     "./components/card": "./src/components/card.tsx",
     "./components/code": "./src/components/code.tsx",
-    "./components/switch": "./src/components/switch.tsx",
     "./styles/globals.css": "./src/styles/globals.css"
   },
   "typesVersions": {
@@ -36,7 +34,6 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@radix-ui/react-switch": "^1.2.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "react": "^19.2.0",

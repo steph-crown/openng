@@ -21,16 +21,9 @@ import type { DashboardShellLinkItem } from "./dashboard-shell-nav";
 type DashboardShellProps = {
   currentPath: string;
   children: ReactNode;
-  rightRail?: ReactNode;
-  rightRailVisible?: boolean;
 };
 
-export function DashboardShell({
-  children,
-  currentPath,
-  rightRail,
-  rightRailVisible = true,
-}: DashboardShellProps) {
+export function DashboardShell({ children, currentPath }: DashboardShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const developerItems = useMemo<DashboardShellLinkItem[]>(
@@ -132,20 +125,11 @@ export function DashboardShell({
     </div>
   );
 
-  const hasRightRail = Boolean(rightRail);
-  const railShows = hasRightRail && rightRailVisible;
+  const desktopGridTemplate =
+    "lg:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_minmax(0,min(4rem,7vw))]";
 
-  const desktopGridTemplate = cx(
-    "lg:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_minmax(0,min(4rem,7vw))]",
-    railShows &&
-      "xl:[grid-template-columns:minmax(0,min(4rem,7vw))_286px_minmax(0,1fr)_320px_minmax(0,min(4rem,7vw))]",
-  );
-
-  const desktopShellMaxWidth = cx(
-    "lg:mx-auto lg:max-w-[min(100vw,calc(var(--layout-width)+286px+min(8rem,14vw)))]",
-    railShows &&
-      "xl:max-w-[min(100vw,calc(var(--layout-width)+286px+320px+min(8rem,14vw)))]",
-  );
+  const desktopShellMaxWidth =
+    "lg:mx-auto lg:max-w-[min(100vw,calc(var(--layout-width)+286px+min(8rem,14vw)))]";
 
   return (
     <div className="h-svh w-screen overflow-hidden bg-(--color-bg) text-(--color-fg)">
@@ -180,16 +164,6 @@ export function DashboardShell({
             {children}
           </div>
         </main>
-        {hasRightRail ? (
-          <aside
-            className={cx(
-              "hidden h-full min-h-0 border-l border-(--color-border) bg-(--color-bg) xl:block",
-              !rightRailVisible && "xl:hidden",
-            )}
-          >
-            <div className="h-full overflow-y-auto p-4">{rightRail}</div>
-          </aside>
-        ) : null}
         <div aria-hidden className="hidden min-h-0 bg-(--color-bg) lg:block" />
       </div>
       {mobileNavOpen ? (
