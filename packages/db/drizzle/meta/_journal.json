@@ -22,6 +22,20 @@
       "when": 1775601850778,
       "tag": "0002_holidays_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776369295689,
+      "tag": "0003_postal_codes_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776369303358,
+      "tag": "0004_postal_codes_functions",
+      "breakpoints": true
     }
   ]
 }

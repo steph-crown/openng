@@ -91,9 +91,8 @@ openng/
 │   │
 │   ├── scrapers/               ← one scraper module per resource
 │   │   ├── src/
-│   │   │   ├── fuel/
-│   │   │   ├── food-prices/
-│   │   │   └── shared/         ← PDF parser, HTTP client, R2 uploader
+│   │   │   ├── postal-codes/
+│   │   │   └── ...
 │   │   └── package.json
 │   │
 │   ├── ui/                     ← shared component and token package
@@ -430,6 +429,8 @@ Research → seed file (JSON and/or Excel) → staging DB → validate → migra
 ```
 
 **JSON vs Excel:** Use **`scripts/import-json/`** (one module per resource, e.g. `holidays.ts`) when the canonical seed is a machine-generated or version-controlled **JSON** array (one object per row, keys aligned with staging columns). Use **`scripts/import-excel.ts`** when the workflow is curator-driven **`.xlsx`** (wide tables, non-technical editors). Holidays use JSON (`data/seeds/holidays/seed-rows.json`); a future `import-excel.ts` covers spreadsheet-first resources.
+
+**Scraper docs rule:** Every resource scraper directory under `packages/scrapers/src/{resource}/` must include a `README.md` that lists each scraper/module, its pipeline step (`acquisition`, `transformation`, `verification`), run order, exact run commands, inputs, and outputs. Update this README in the same commit whenever scraper workflow changes.
 
 **Step by step:**
 

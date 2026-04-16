@@ -1,0 +1,32 @@
+---
+title: Postal Codes
+description: Nigerian postal code assignments by state, LGA, and area
+---
+
+## Overview
+
+`GET /v1/postal-codes` provides postal code records with state-first lookup support, then LGA, postal code, and area filtering.
+
+## Data source policy
+
+- Primary source: NIPOST postcode finder
+- Cross-check sources: community postal code directories
+- Fallback rows are preserved with confidence metadata when primary source coverage is incomplete
+
+## Filters
+
+See `GET /v1/postal-codes/meta` for the full set. Typical filters are `state`, `lga`, `postal_code`, `area`, `is_verified`, and `confidence`.
+
+## Examples
+
+```bash
+curl -sS "https://api.openng.dev/v1/postal-codes?state=lagos&limit=20"
+```
+
+```bash
+curl -sS "https://api.openng.dev/v1/postal-codes?state=lagos&lga=ikeja&limit=20"
+```
+
+```bash
+curl -sS "https://api.openng.dev/v1/postal-codes?postal_code=100271"
+```

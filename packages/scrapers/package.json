@@ -1,0 +1,26 @@
+{
+  "name": "@openng/scrapers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "postal-codes:build-seed": "tsx src/postal-codes/cli.ts",
+    "postal-codes:acquire": "tsx src/postal-codes/acquire-cli.ts",
+    "postal-codes:corroborate-nipost": "tsx src/postal-codes/corroborate-cli.ts"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "xlsx": "^0.18.5",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@openng/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "tsx": "^4.7.1",
+    "typescript": "5.9.2"
+  }
+}

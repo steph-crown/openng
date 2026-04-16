@@ -2,16 +2,18 @@ import "dotenv/config";
 import { resolve } from "path";
 import { parseResourceAndFile } from "../lib/cli-args";
 import { importHolidaysFromJson } from "./holidays";
+import { importPostalCodesFromJson } from "./postal-codes";
 
 const importers: Record<string, (filePath: string) => Promise<void>> = {
   holidays: importHolidaysFromJson,
+  "postal-codes": importPostalCodesFromJson,
 };
 
 async function main() {
   const { resource, file } = parseResourceAndFile(process.argv.slice(2));
   if (!resource || !file) {
     console.error(
-      "Usage: pnpm import-json -- --resource holidays --file <path.json>",
+      "Usage: pnpm import-json -- --resource <resource> --file <path.json>",
     );
     process.exit(1);
   }

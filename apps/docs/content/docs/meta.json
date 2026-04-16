@@ -12,6 +12,7 @@
     "changelog",
     "---Data---",
     "data-api/holidays",
+    "data-api/postal-codes",
     "data-api/fuel-prices",
     "data-api/food-prices",
     "---Reference---",

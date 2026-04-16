@@ -2,16 +2,18 @@ import "dotenv/config";
 import { z } from "zod";
 import { parseResourceAndBatch } from "../lib/cli-args";
 import { migrateHolidaysBatch } from "./holidays";
+import { migratePostalCodesBatch } from "./postal-codes";
 
 const migrators: Record<string, (batch: string) => Promise<void>> = {
   holidays: migrateHolidaysBatch,
+  "postal-codes": migratePostalCodesBatch,
 };
 
 async function main() {
   const { resource, batch } = parseResourceAndBatch(process.argv.slice(2));
   if (!resource || !batch) {
     console.error(
-      "Usage: pnpm migrate-to-prod -- --resource holidays --batch <uuid>",
+      "Usage: pnpm migrate-to-prod -- --resource <resource> --batch <uuid>",
     );
     process.exit(1);
   }

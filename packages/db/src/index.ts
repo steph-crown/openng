@@ -12,3 +12,5 @@ export { analyticsSchema, usageEvents } from "./analytics/usage-events";
 
 export { holidays } from "./public/holidays";
 export { stagingHolidays } from "./staging/holidays";
+export { postalCodes } from "./public/postal-codes";
+export { stagingPostalCodes } from "./staging/postal-codes";

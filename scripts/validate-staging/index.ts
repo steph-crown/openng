@@ -2,16 +2,18 @@ import "dotenv/config";
 import { z } from "zod";
 import { parseResourceAndBatch } from "../lib/cli-args";
 import { validateHolidaysBatch } from "./holidays";
+import { validatePostalCodesBatch } from "./postal-codes";
 
 const validators: Record<string, (batch: string) => Promise<void>> = {
   holidays: validateHolidaysBatch,
+  "postal-codes": validatePostalCodesBatch,
 };
 
 async function main() {
   const { resource, batch } = parseResourceAndBatch(process.argv.slice(2));
   if (!resource || !batch) {
     console.error(
-      "Usage: pnpm validate-staging -- --resource holidays --batch <uuid>",
+      "Usage: pnpm validate-staging -- --resource <resource> --batch <uuid>",
     );
     process.exit(1);
   }

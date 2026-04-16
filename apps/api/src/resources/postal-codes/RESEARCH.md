@@ -1,22 +1,131 @@
-Option 1 — Scrape NIPOST's own postcode finder
-nipost.gov.ng/postcode-finder/ has a search UI. You can write a scraper that iterates through all states and LGAs systematically, queries the finder, and collects the results. This gives you data directly from the authoritative source. The downside: it's tedious, NIPOST's website is unreliable, and the scraper may need babysitting.
+# Postal Codes Resource Research
 
-Option 2 — Community-compiled datasets (fastest)
-Several websites have already done this work:
+## Goal
 
-nigeriapostcodes.com — lists all 36 states and FCT with their LGAs and postal codes, arranged by NIPOST's regional system Humanitarian Data Exchange
-postcode.com.ng — comprehensive database of Nigerian postal codes by state, LGA, and street level Knoema
-showpostcodes.com.ng — covers every state, LGA, and area with a navigation structure of region → state → LGA data.world
+Deliver a factually complete and query-friendly `postal-codes` resource for Nigeria in OpenNG.
 
-None of these offer a CSV download but all are scrapeable. Cross-referencing two or three of them gives you higher confidence data.
-There are also GitHub repositories with partial datasets — the arilwan/Nigeria repo has LGA data, and temikeezy/nigeria-geojson-data has states, LGAs, and wards with geographic coordinates GitHub though it notes postal codes are not yet included and invites contributions.
+For v1, "complete" means:
 
-Option 3 — GeoNames (international dataset)
-GeoNames maintains a global postal code dataset. It covers postal codes with geocoordinates parsed from GeoNames data GitHub but Nigeria's coverage is patchy at the street level — it has the major city codes but not comprehensive LGA-level coverage.
+- All 36 states plus FCT are represented.
+- Every `ref.lgas` state/LGA pair is checked against primary source data.
+- Postal entries are captured at LGA and area/locality level where available.
+- Missing primary-source entries are explicitly marked and reviewed.
+- Community fallback rows are tracked with lower confidence metadata.
 
-## The Recommended Approach for OpenNG
-Primary source: Scrape nipost.gov.ng/postcode-finder/ for the authoritative codes. Write a script that queries by state → LGA systematically and captures everything it returns.
-Cross-check: Run the same state/LGA combinations against postcode.com.ng and compare. Where they agree, mark is_verified = true. Where they differ, flag for manual review.
-Gap fill: For any LGA that the NIPOST finder returns nothing for (common in rural areas), use community data from the GitHub repos as a fallback, marked with a lower confidence source.
-This is more work than holidays or fuel prices — it's the first resource where you genuinely need a scraper strategy rather than a PDF download. But once seeded, it never needs updating unless NIPOST restructures their system, which happens rarely.
-Worth noting: NIPOST itself says customers are advised to familiarise themselves with the postcodes of their areas GlobalPetrolPrices — which is a roundabout admission that their own postcode directory is not easily accessible. OpenNG fixing this is exactly the problem it was built to solve.
+v1 does not target universal street-level coverage. Street-level enrichment is reserved for a potential v2.
+
+## Target Granularity
+
+Primary granularity for v1:
+
+- `state`
+- `lga`
+- `area_name`
+- `postal_code`
+- `post_office_name` (when present)
+
+Lookup optimization priority:
+
+1. State-first browsing/filtering
+2. State + LGA narrowing
+3. Postal code exact lookup
+4. Area name search within a state
+
+## Source Strategy
+
+### Primary Authoritative Source
+
+- NIPOST postcode finder: `https://nipost.gov.ng/postcode-finder/`
+
+Reason:
+
+- Official source controlled by Nigerian Postal Service.
+- Closest available source of truth for operational postal assignments.
+
+### Secondary Cross-Check Sources
+
+- `https://postcode.com.ng/`
+- `https://showpostcodes.com.ng/`
+
+Reason:
+
+- Broad state/LGA/area coverage.
+- Useful for reconciliation when NIPOST responses are sparse or intermittent.
+
+### Excluded as Primary
+
+- Global/aggregator datasets (for example GeoNames or paid international compilations) are not primary due to inconsistent Nigeria coverage and opaque refresh cycles.
+
+## Confidence and Verification Model
+
+Each consolidated row carries lineage and confidence:
+
+- `source_kind`: `nipost` or `community`
+- `confidence`: `authoritative`, `high`, or `fallback`
+- `is_verified`: true when NIPOST and at least one community source agree on the state/LGA/area/postal code tuple
+
+Interpretation:
+
+- `authoritative`: NIPOST-sourced row, optionally corroborated
+- `high`: community row corroborated by another source when NIPOST is unavailable
+- `fallback`: community-only row pending manual confirmation
+
+## Data Acquisition Approach
+
+1. Enumerate all states/LGAs from `ref.states` and `ref.lgas`.
+2. Query NIPOST finder systematically by state and LGA.
+3. Parse and normalize area, post office, and postal code rows.
+4. Scrape secondary sources for the same state/LGA combinations.
+5. Reconcile rows by normalized `(state_slug, lga_slug, area_name, postal_code)`.
+6. Mark confidence and verification fields.
+7. Generate canonical seed outputs for import pipeline.
+
+## Canonical Seed Contract
+
+Seed output columns:
+
+- `state`
+- `state_slug`
+- `lga`
+- `lga_slug`
+- `area_name`
+- `post_office_name`
+- `postal_code`
+- `region_digit`
+- `source_url`
+- `source_date`
+- `source_kind`
+- `confidence`
+- `is_verified`
+- `notes`
+
+The same logical contract is used for `data.xlsx` and optional `seed-rows.json`.
+
+## Validation Requirements
+
+At validation time:
+
+- `postal_code` must be exactly 6 digits.
+- `region_digit` must match first digit of `postal_code`.
+- `state_slug` must map to `ref.states`.
+- `lga_slug` must map to `ref.lgas` under the same state when present.
+- Duplicates for `(state, lga, area_name, postal_code)` in the same batch are rejected.
+- Missing state coverage is surfaced before migration.
+- Conflicting source assignments for the same `(state, lga, area_name)` are flagged.
+
+## Update Cadence
+
+Postal code data is mostly static but not immutable.
+
+Operational cadence:
+
+- Scheduled refresh: quarterly.
+- Forced refresh: when NIPOST changes UI/data behavior or community reports indicate drift.
+- Community correction flow: accepted corrections are merged into seed and re-imported through staging validation/migration.
+
+## Decision Summary
+
+- Use NIPOST as authoritative primary.
+- Use community sources for corroboration and controlled fallback.
+- Ship v1 at state/LGA/area granularity with explicit confidence metadata.
+- Optimize list query patterns for state-first access.

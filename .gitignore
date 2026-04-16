@@ -39,10 +39,12 @@ yarn-error.log*
 *.pem
 prd.md
 ROADMAP.md
+.tmp-*.html
 
 # Local runbooks (not committed)
 private/
 .history
 .pnpm-store
+packages/scrapers/data/
 
 fumadocs/*

@@ -9,11 +9,18 @@ import {
 
 describe("/v1/holidays", () => {
   const app = createApp();
+  let requestCounter = 1;
+
+  async function request(url: string): Promise<Response> {
+    const ip = `10.0.0.${requestCounter++}`;
+    return await app.request(url, {
+      method: "GET",
+      headers: { "x-forwarded-for": ip },
+    });
+  }
 
   it("lists holidays with standard success envelope", async () => {
-    const res = await app.request("http://test/v1/holidays?limit=10", {
-      method: "GET",
-    });
+    const res = await request("http://test/v1/holidays?limit=10");
     expect(res.status).toBe(200);
     const json: unknown = await res.json();
     const parsed = apiListSuccessSchema.safeParse(json);
@@ -25,9 +32,7 @@ describe("/v1/holidays", () => {
   });
 
   it("filters by year", async () => {
-    const res = await app.request("http://test/v1/holidays?year=2030&limit=20", {
-      method: "GET",
-    });
+    const res = await request("http://test/v1/holidays?year=2030&limit=20");
     expect(res.status).toBe(200);
     const json: unknown = await res.json();
     const parsed = apiListSuccessSchema.safeParse(json);
@@ -41,7 +46,7 @@ describe("/v1/holidays", () => {
   });
 
   it("returns meta for resource", async () => {
-    const res = await app.request("http://test/v1/holidays/meta", { method: "GET" });
+    const res = await request("http://test/v1/holidays/meta");
     expect(res.status).toBe(200);
     const json: unknown = await res.json();
     const parsed = apiMetaSuccessSchema.safeParse(json);
@@ -53,9 +58,7 @@ describe("/v1/holidays", () => {
   });
 
   it("returns 400 for invalid id", async () => {
-    const res = await app.request("http://test/v1/holidays/not-an-id", {
-      method: "GET",
-    });
+    const res = await request("http://test/v1/holidays/not-an-id");
     expect(res.status).toBe(400);
     const json: unknown = await res.json();
     const parsed = apiErrorSchema.safeParse(json);
@@ -66,9 +69,7 @@ describe("/v1/holidays", () => {
   });
 
   it("returns 404 for unknown id", async () => {
-    const res = await app.request("http://test/v1/holidays/999999999999999999", {
-      method: "GET",
-    });
+    const res = await request("http://test/v1/holidays/999999999999999999");
     expect(res.status).toBe(404);
     const json: unknown = await res.json();
     const parsed = apiErrorSchema.safeParse(json);
@@ -76,9 +77,7 @@ describe("/v1/holidays", () => {
   });
 
   it("returns a single row by id with detail envelope", async () => {
-    const listRes = await app.request("http://test/v1/holidays?limit=1&year=2030", {
-      method: "GET",
-    });
+    const listRes = await request("http://test/v1/holidays?limit=1&year=2030");
     const listJson: unknown = await listRes.json();
     const listParsed = apiListSuccessSchema.safeParse(listJson);
     expect(listParsed.success).toBe(true);
@@ -87,9 +86,7 @@ describe("/v1/holidays", () => {
     }
     const first = listParsed.data.data[0] as { id?: string };
     expect(first.id).toBeDefined();
-    const res = await app.request(`http://test/v1/holidays/${first.id}`, {
-      method: "GET",
-    });
+    const res = await request(`http://test/v1/holidays/${first.id}`);
     expect(res.status).toBe(200);
     const json: unknown = await res.json();
     const parsed = apiDetailSuccessSchema.safeParse(json);
