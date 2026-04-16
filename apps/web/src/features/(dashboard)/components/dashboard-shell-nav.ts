@@ -4,6 +4,7 @@ export type DashboardShellLinkItem = {
   href: string;
   label: string;
   icon: ReactNode;
+  iconActive?: ReactNode;
   external?: boolean;
 };
 

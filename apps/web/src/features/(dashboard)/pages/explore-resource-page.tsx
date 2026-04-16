@@ -21,6 +21,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { Badge } from "@/components/ui/badge";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -666,79 +674,87 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[820px] border-collapse text-sm">
-                  <thead>
+              <div className="rounded-xl border border-grey-50 bg-white sm:p-6 dark:border-grey-800 dark:bg-grey-950">
+                <Table className="min-w-[820px]">
+                  <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
-                      <tr key={headerGroup.id}>
+                      <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                          <th
+                          <TableHead
                             key={header.id}
                             className={cx(
-                              "border-b border-(--color-border) px-3 py-3 text-left text-sm font-medium text-(--color-fg)",
+                              "text-xs",
                               header.column.id === "actions" && "w-[1%] whitespace-nowrap text-right",
                             )}
                           >
                             {header.isPlaceholder
                               ? null
                               : flexRender(header.column.columnDef.header, header.getContext())}
-                          </th>
+                          </TableHead>
                         ))}
-                      </tr>
+                      </TableRow>
                     ))}
-                  </thead>
-                  <tbody>
+                  </TableHeader>
+                  <TableBody>
                     {listQuery.isLoading
                       ? Array.from({ length: limit }, (_, index) => (
-                          <tr key={`skeleton-${index}`}>
+                          <TableRow key={`skeleton-${index}`}>
                             {visibleColumns.map((columnName) => (
-                              <td
-                                key={`${columnName}-${index}`}
-                                className="border-b border-(--color-border) px-3 py-3 align-middle"
-                              >
-                                <div className="h-4 w-[80%] animate-pulse rounded bg-(--color-surface-strong)" />
-                              </td>
+                              <TableCell key={`${columnName}-${index}`}>
+                                <div className="h-4 w-[80%] animate-pulse rounded bg-grey-100 dark:bg-grey-850" />
+                              </TableCell>
                             ))}
-                            <td className="border-b border-(--color-border) px-3 py-3 align-middle text-right">
-                              <div className="ml-auto h-8 w-16 animate-pulse rounded-full bg-(--color-surface-strong)" />
-                            </td>
-                          </tr>
+                            <TableCell className="text-right">
+                              <div className="ml-auto h-8 w-16 animate-pulse rounded-full bg-grey-100 dark:bg-grey-850" />
+                            </TableCell>
+                          </TableRow>
                         ))
-                      : table.getRowModel().rows.map((row, index) => (
-                          <tr
+                      : rows.length === 0
+                        ? (
+                            <TableRow>
+                              <TableCell
+                                colSpan={visibleColumns.length + 1}
+                                className="h-24 text-center"
+                              >
+                                <div className="grid place-items-center gap-2 py-4">
+                                  <p className="text-base font-medium text-grey-800 dark:text-grey-200">
+                                    No results
+                                  </p>
+                                  <p className="text-sm text-grey-600 dark:text-grey-400">
+                                    No records match your current filters.
+                                  </p>
+                                  <button
+                                    type="button"
+                                    className="rounded-full border border-grey-200 bg-white px-4 py-2 text-sm text-grey-800 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-200"
+                                    onClick={resetFilters}
+                                  >
+                                    Reset filters
+                                  </button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        : table.getRowModel().rows.map((row, index) => (
+                          <TableRow
                             key={row.id}
-                            className="cursor-pointer transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-surface-strong)/80"
+                            className="cursor-pointer hover:bg-grey-25 dark:hover:bg-grey-900"
                             onClick={() => setSelectedRowIndex(index)}
                           >
                             {row.getVisibleCells().map((cell) => (
-                              <td
+                              <TableCell
                                 key={cell.id}
                                 className={cx(
-                                  "border-b border-(--color-border) px-3 py-3 align-middle",
                                   cell.column.id === "actions" && "w-[1%] whitespace-nowrap text-right",
                                 )}
                               >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                              </td>
+                              </TableCell>
                             ))}
-                          </tr>
+                          </TableRow>
                         ))}
-                  </tbody>
-                </table>
-              {!listQuery.isLoading && rows.length === 0 ? (
-                <div className="grid place-items-center gap-2 border-b border-(--color-border) p-8 text-center">
-                  <p className="text-base font-medium">No results</p>
-                  <p className="text-sm text-(--color-muted)">
-                    No records match your current filters.
-                  </p>
-                  <button
-                    type="button"
-                    className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
-                    onClick={resetFilters}
-                  >
-                    Reset filters
-                  </button>
-                </div>
-              ) : null}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">

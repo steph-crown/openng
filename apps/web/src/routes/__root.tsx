@@ -9,6 +9,27 @@ import {
 import { applyTheme, resolveInitialTheme } from "../lib/theme";
 import appCss from "../styles/globals.css?url";
 
+const webFontLinksEmpty: Array<{
+  rel: string;
+  href: string;
+  crossOrigin?: "anonymous" | "use-credentials";
+}> = [];
+
+const webFontLinksGeistGoogle = [
+  { rel: "preconnect" as const, href: "https://fonts.googleapis.com" },
+  {
+    rel: "preconnect" as const,
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous" as const,
+  },
+  {
+    rel: "stylesheet" as const,
+    href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Google+Sans+Flex:wght@100..900&display=swap",
+  },
+];
+
+const activeWebFontLinks = [webFontLinksEmpty, webFontLinksGeistGoogle][0];
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -28,19 +49,7 @@ export const Route = createRootRoute({
       },
     ],
     links: [
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Google+Sans+Flex:wght@100..900&display=swap",
-      },
+      ...activeWebFontLinks,
       {
         rel: "stylesheet",
         href: appCss,

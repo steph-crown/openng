@@ -36,23 +36,25 @@ export function DashboardNavigationGroup({
             className={cx(
               "relative flex items-center justify-between gap-2 rounded-[0.5rem] p-2 text-start text-[14px] transition-colors duration-160 ease-(--ease-standard)",
               active
-                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-sidebar-active-fg)"
+                ? "bg-(--color-sidebar-active-bg) font-medium text-(--color-fg)"
                 : "text-(--color-muted) hover:bg-(--color-sidebar-hover) hover:text-(--color-fg)",
             )}
           >
             <span className="inline-flex items-center gap-2">
               <span
                 className={cx(
-                  "h-4 w-4",
-                  active && "text-(--color-sidebar-active-fg)",
+                  "inline-flex h-4 w-4 shrink-0 items-center justify-center",
+                  active && "text-(--color-brand)",
                 )}
               >
-                {item.icon}
+                {active && item.iconActive ? item.iconActive : item.icon}
               </span>
               {item.label}
             </span>
             {item.external ? (
-              <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5" />
+              <ArrowTopRightOnSquareIcon
+                className={cx("h-3.5 w-3.5 shrink-0", active ? "text-(--color-muted)" : "")}
+              />
             ) : null}
           </a>
         );
