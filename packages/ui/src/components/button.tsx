@@ -43,7 +43,7 @@ export function Button({
   return (
     <button
       className={cx(
-        "inline-flex items-center justify-center rounded-full font-[500]",
+        "inline-flex items-center justify-center rounded-[10px] font-[500]",
         resolveVariantClass(variant),
         resolveSizeClass(size),
         className,
