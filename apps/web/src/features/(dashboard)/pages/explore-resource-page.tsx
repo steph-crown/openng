@@ -4,6 +4,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type CellContext,
   type ColumnDef,
 } from "@tanstack/react-table";
 import {
@@ -24,6 +25,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { DashboardShell } from "../components/dashboard-shell";
 import { ShellCard } from "../components/shell-card";
@@ -228,9 +236,10 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
   }, [defaultColumns, metaQuery.data]);
 
   const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
-    return visibleColumns.map((columnName) => ({
+    const dataColumns = visibleColumns.map(
+      (columnName): ColumnDef<Record<string, unknown>> => ({
       id: columnName,
-      accessorFn: (row) => row[columnName],
+      accessorFn: (row: Record<string, unknown>) => row[columnName],
       header: () => (
         <button
           type="button"
@@ -253,12 +262,40 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
           <ArrowsUpDownIcon className="h-3.5 w-3.5" />
         </button>
       ),
-      cell: ({ getValue }) => {
-        const value = getValue();
+      cell: (ctx: CellContext<Record<string, unknown>, unknown>) => {
+        const value = ctx.getValue();
         return <ExplorerTableCell value={value} meta={fieldMetaMap.get(columnName)} />;
       },
-    }));
-  }, [visibleColumns, draft.sort, draft.order, onApplySearch, search, metaQuery.data, fieldMetaMap]);
+    }),
+    );
+
+    const actionsColumn: ColumnDef<Record<string, unknown>> = {
+      id: "actions",
+      header: () => <span className="text-(--color-muted)">Actions</span>,
+      cell: ({ row }) => (
+        <button
+          type="button"
+          className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs font-medium transition-colors hover:bg-(--color-surface-strong)"
+          onClick={(event) => {
+            event.stopPropagation();
+            setSelectedRowIndex(row.index);
+          }}
+        >
+          View
+        </button>
+      ),
+    };
+
+    return [...dataColumns, actionsColumn];
+  }, [
+    visibleColumns,
+    draft.sort,
+    draft.order,
+    onApplySearch,
+    search,
+    metaQuery.data,
+    fieldMetaMap,
+  ]);
 
   const table = useReactTable({
     data: rows,
@@ -349,19 +386,8 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
   ).toString();
   const curlCommand = `curl "${queryPath}${queryString ? `?${queryString}` : ""}"`;
 
-  const filterPanel = (
+  const filterFields = (
     <div className="grid gap-3">
-      <div className="mb-1 flex items-center justify-between">
-        <h2 className="text-sm font-medium">Filters</h2>
-        <button
-          type="button"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) text-(--color-muted)"
-          onClick={() => setFiltersOpen(false)}
-          aria-label="Close filters"
-        >
-          <XMarkIcon className="h-4 w-4" />
-        </button>
-      </div>
       <div className="grid gap-1">
         <label className="text-xs text-(--color-muted)">Search</label>
         <input
@@ -476,28 +502,6 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             Desc
           </button>
         </div>
-      </div>
-      <div className="mt-2 inline-flex gap-2">
-        <button
-          type="button"
-          className="rounded-full bg-(--color-brand) px-4 py-2 text-sm text-(--color-brand-foreground)"
-          onClick={() => {
-            applyDraftFilters();
-            setFiltersOpen(false);
-          }}
-        >
-          Apply
-        </button>
-        <button
-          type="button"
-          className="rounded-full border border-(--color-border) px-4 py-2 text-sm"
-          onClick={() => {
-            resetFilters();
-            setFiltersOpen(false);
-          }}
-        >
-          Reset all
-        </button>
       </div>
     </div>
   );
@@ -662,14 +666,17 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] border-collapse text-sm">
+              <table className="w-full min-w-[820px] border-collapse text-sm">
                   <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <tr key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
                           <th
                             key={header.id}
-                            className="border-b border-(--color-border) px-3 py-3 text-left text-sm font-medium text-(--color-fg)"
+                            className={cx(
+                              "border-b border-(--color-border) px-3 py-3 text-left text-sm font-medium text-(--color-fg)",
+                              header.column.id === "actions" && "w-[1%] whitespace-nowrap text-right",
+                            )}
                           >
                             {header.isPlaceholder
                               ? null
@@ -691,6 +698,9 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                                 <div className="h-4 w-[80%] animate-pulse rounded bg-(--color-surface-strong)" />
                               </td>
                             ))}
+                            <td className="border-b border-(--color-border) px-3 py-3 align-middle text-right">
+                              <div className="ml-auto h-8 w-16 animate-pulse rounded-full bg-(--color-surface-strong)" />
+                            </td>
                           </tr>
                         ))
                       : table.getRowModel().rows.map((row, index) => (
@@ -702,7 +712,10 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                             {row.getVisibleCells().map((cell) => (
                               <td
                                 key={cell.id}
-                                className="border-b border-(--color-border) px-3 py-3 align-middle"
+                                className={cx(
+                                  "border-b border-(--color-border) px-3 py-3 align-middle",
+                                  cell.column.id === "actions" && "w-[1%] whitespace-nowrap text-right",
+                                )}
                               >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </td>
@@ -787,20 +800,39 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </div>
       </div>
 
-      {filtersOpen ? (
-        <div
-          className="fixed inset-0 z-40 bg-black/45"
-          onClick={() => setFiltersOpen(false)}
-          role="presentation"
+      <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <SheetContent
+          side="right"
+          className="flex h-full max-h-[100dvh] w-full flex-col gap-0 border-(--color-border) bg-(--color-bg) p-0 sm:max-w-md"
         >
-          <aside
-            className="absolute right-0 top-0 h-full w-[86%] max-w-[360px] overflow-y-auto border-l border-(--color-border) bg-(--color-bg) p-4"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {filterPanel}
-          </aside>
-        </div>
-      ) : null}
+          <SheetHeader className="border-b border-(--color-border) px-4 py-4 text-left">
+            <SheetTitle className="text-base font-medium">Filters</SheetTitle>
+          </SheetHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{filterFields}</div>
+          <SheetFooter className="border-t border-(--color-border) sm:flex-col">
+            <button
+              type="button"
+              className="w-full rounded-full bg-(--color-brand) py-3 text-sm font-medium text-(--color-brand-foreground)"
+              onClick={() => {
+                applyDraftFilters();
+                setFiltersOpen(false);
+              }}
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              className="w-full rounded-full border border-(--color-border) bg-(--color-bg) py-3 text-sm font-medium"
+              onClick={() => {
+                resetFilters();
+                setFiltersOpen(false);
+              }}
+            >
+              Clear
+            </button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
       {selectedRow ? (
         <div className="fixed inset-0 z-40 grid place-items-center bg-black/45 p-3">
