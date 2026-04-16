@@ -18,6 +18,7 @@ export type ResourceMeta = {
     name: string;
     type: string;
     format?: string;
+    display?: "badge";
   }>;
 };
 

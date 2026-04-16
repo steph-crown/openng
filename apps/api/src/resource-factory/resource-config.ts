@@ -13,6 +13,7 @@ export interface FieldConfig {
   type: string;
   unit?: string;
   format?: string;
+  display?: "badge";
 }
 
 export interface FilterConfig {

@@ -17,11 +17,14 @@ import {
   LinkIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Badge } from "@openng/ui/components/badge";
+import { Switch } from "@openng/ui/components/switch";
 import { DashboardShell } from "../components/dashboard-shell";
 import { ShellCard } from "../components/shell-card";
 import { fetchResourceList, fetchResourceMeta } from "../api/explorer-api";
 import { getResourceById } from "../data/resource-catalog";
 import type { ExplorerRouteSearch } from "../../../lib/explorer-route-search";
+import { humanizeColumnLabel } from "../../../utils/humanize-column-label";
 import { cx } from "../../../lib/cx";
 
 type ExploreResourcePageProps = {
@@ -45,10 +48,66 @@ function formatCellValue(value: unknown, fieldType?: string) {
       });
     }
   }
-  if (typeof value === "boolean") {
-    return value ? "Yes" : "No";
-  }
   return String(value);
+}
+
+type ExplorerFieldMeta = { type: string; display?: "badge" };
+
+function ExplorerTableCell({
+  value,
+  meta,
+}: {
+  value: unknown;
+  meta: ExplorerFieldMeta | undefined;
+}) {
+  const fieldType = meta?.type;
+  const alignNumber = fieldType === "number";
+
+  if (fieldType === "boolean") {
+    if (value === null || value === undefined || value === "") {
+      return <span className="text-(--color-muted)">—</span>;
+    }
+    return (
+      <span className={cx(alignNumber && "flex justify-end")}>
+        <Switch checked={Boolean(value)} disabled className="opacity-100" />
+      </span>
+    );
+  }
+
+  if (meta?.display === "badge" && value !== null && value !== undefined && value !== "") {
+    return (
+      <span className={cx(alignNumber && "text-right")}>
+        <Badge title={String(value)}>{String(value)}</Badge>
+      </span>
+    );
+  }
+
+  return (
+    <span className={cx(alignNumber && "text-right")}>{formatCellValue(value, fieldType)}</span>
+  );
+}
+
+function ExplorerDetailValue({
+  value,
+  meta,
+}: {
+  value: unknown;
+  meta: ExplorerFieldMeta | undefined;
+}) {
+  const fieldType = meta?.type;
+
+  if (fieldType === "boolean") {
+    if (value === null || value === undefined || value === "") {
+      return <span className="text-(--color-muted)">—</span>;
+    }
+    return <Switch checked={Boolean(value)} disabled className="opacity-100" />;
+  }
+
+  if (meta?.display === "badge" && value !== null && value !== undefined && value !== "") {
+    return <Badge title={String(value)}>{String(value)}</Badge>;
+  }
+
+  return <span className="break-words">{formatCellValue(value, fieldType)}</span>;
 }
 
 function stringifyRecord(record: Record<string, unknown>) {
@@ -135,13 +194,16 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
     }
   }, [defaultColumns, visibleColumns.length]);
 
-  const fieldTypeMap = useMemo(() => {
-    const map = new Map<string, string>();
+  const fieldMetaMap = useMemo(() => {
+    const map = new Map<string, ExplorerFieldMeta>();
     if (!metaQuery.data) {
       return map;
     }
     for (const field of metaQuery.data.fields) {
-      map.set(field.name, field.type);
+      map.set(field.name, {
+        type: field.type,
+        display: field.display,
+      });
     }
     return map;
   }, [metaQuery.data]);
@@ -175,21 +237,16 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             });
           }}
         >
-          <span>{columnName}</span>
+          <span>{humanizeColumnLabel(columnName)}</span>
           <ArrowsUpDownIcon className="h-3.5 w-3.5" />
         </button>
       ),
       cell: ({ getValue }) => {
         const value = getValue();
-        const fieldType = fieldTypeMap.get(columnName);
-        return (
-          <span className={cx(fieldType === "number" && "text-right")}>
-            {formatCellValue(value, fieldType)}
-          </span>
-        );
+        return <ExplorerTableCell value={value} meta={fieldMetaMap.get(columnName)} />;
       },
     }));
-  }, [visibleColumns, draft.sort, draft.order, onApplySearch, search, metaQuery.data, fieldTypeMap]);
+  }, [visibleColumns, draft.sort, draft.order, onApplySearch, search, metaQuery.data, fieldMetaMap]);
 
   const table = useReactTable({
     data: rows,
@@ -374,7 +431,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         >
           {(metaQuery.data?.sortable_columns ?? ["date", "name", "year"]).map((value) => (
             <option key={value} value={value}>
-              {value}
+              {humanizeColumnLabel(value)}
             </option>
           ))}
         </select>
@@ -440,7 +497,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
       rightRailVisible={desktopFiltersVisible}
     >
       <div className="grid gap-5">
-        <header className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
+        <header className="grid gap-3 pb-2">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="grid gap-2">
               <h1 className="text-[clamp(24px,2.6vw,34px)] font-medium tracking-[-0.02em]">
@@ -480,7 +537,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
         </header>
 
         <div className="grid gap-4">
-            <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
+            <div className="grid gap-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="text-sm text-(--color-muted)">
                   Showing {rows.length} of {total} results
@@ -557,7 +614,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 </div>
               </div>
               {showColumnPicker ? (
-                <div className="mt-3 rounded-xl border border-(--color-border) bg-(--color-bg) p-3">
+                <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-3">
                   <div className="grid grid-cols-2 gap-2 max-[700px]:grid-cols-1">
                     {allColumnNames.map((columnName) => {
                       const checked = visibleColumns.includes(columnName);
@@ -576,7 +633,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                               );
                             }}
                           />
-                          {columnName}
+                          {humanizeColumnLabel(columnName)}
                         </label>
                       );
                     })}
@@ -592,16 +649,15 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               ) : null}
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface)">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[760px] border-separate border-spacing-y-1 p-3 text-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] border-collapse text-sm">
                   <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <tr key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
                           <th
                             key={header.id}
-                            className="px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.03em] text-(--color-muted)"
+                            className="border-b border-(--color-border) px-3 py-3 text-left text-sm font-medium text-(--color-fg)"
                           >
                             {header.isPlaceholder
                               ? null
@@ -616,7 +672,10 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                       ? Array.from({ length: limit }, (_, index) => (
                           <tr key={`skeleton-${index}`}>
                             {visibleColumns.map((columnName) => (
-                              <td key={`${columnName}-${index}`} className="px-3 py-3">
+                              <td
+                                key={`${columnName}-${index}`}
+                                className="border-b border-(--color-border) px-3 py-3 align-middle"
+                              >
                                 <div className="h-4 w-[80%] animate-pulse rounded bg-(--color-surface-strong)" />
                               </td>
                             ))}
@@ -625,11 +684,14 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                       : table.getRowModel().rows.map((row, index) => (
                           <tr
                             key={row.id}
-                            className="cursor-pointer rounded-xl bg-(--color-bg) transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-surface-strong)"
+                            className="cursor-pointer transition-colors duration-[160ms] ease-(--ease-standard) hover:bg-(--color-surface-strong)/80"
                             onClick={() => setSelectedRowIndex(index)}
                           >
                             {row.getVisibleCells().map((cell) => (
-                              <td key={cell.id} className="px-3 py-3">
+                              <td
+                                key={cell.id}
+                                className="border-b border-(--color-border) px-3 py-3 align-middle"
+                              >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </td>
                             ))}
@@ -637,9 +699,8 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                         ))}
                   </tbody>
                 </table>
-              </div>
               {!listQuery.isLoading && rows.length === 0 ? (
-                <div className="grid place-items-center gap-2 p-8 text-center">
+                <div className="grid place-items-center gap-2 border-b border-(--color-border) p-8 text-center">
                   <p className="text-base font-medium">No results</p>
                   <p className="text-sm text-(--color-muted)">
                     No records match your current filters.
@@ -655,8 +716,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
               ) : null}
             </div>
 
-            <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <div className="inline-flex items-center gap-2 text-sm">
                   <span>per page</span>
                   <select
@@ -711,7 +771,6 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                 <p className="text-sm text-(--color-muted)">
                   Page {page} of {pages}
                 </p>
-              </div>
             </div>
         </div>
       </div>
@@ -755,8 +814,10 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             <div className="grid gap-2">
               {Object.entries(selectedRow).map(([key, value]) => (
                 <div key={key} className="grid grid-cols-[180px_minmax(0,1fr)] gap-3 text-sm">
-                  <p className="font-medium text-(--color-muted)">{key}</p>
-                  <p className="break-words">{formatCellValue(value, fieldTypeMap.get(key))}</p>
+                  <p className="font-medium text-(--color-muted)">{humanizeColumnLabel(key)}</p>
+                  <div>
+                    <ExplorerDetailValue value={value} meta={fieldMetaMap.get(key)} />
+                  </div>
                 </div>
               ))}
             </div>
