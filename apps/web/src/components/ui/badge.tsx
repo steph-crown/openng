@@ -16,7 +16,7 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border-purple-150 border-solid bg-purple-50 text-purple-600 [a&]:hover:bg-purple-100 [a&]:hover:text-purple-700",
+          "border-solid [border-color:var(--openng-badge-outline-border)] bg-[color:var(--openng-badge-outline-bg)] text-[color:var(--openng-badge-outline-fg)] [a&]:hover:bg-[color:var(--openng-badge-outline-hover-bg)] [a&]:hover:text-[color:var(--openng-badge-outline-hover-fg)]",
       },
     },
     defaultVariants: {

@@ -28,7 +28,9 @@ const webFontLinksGeistGoogle = [
   },
 ];
 
-const activeWebFontLinks = [webFontLinksEmpty, webFontLinksGeistGoogle][0];
+const fontLinkMode = 0 as 0 | 1;
+const activeWebFontLinks =
+  fontLinkMode === 0 ? webFontLinksEmpty : webFontLinksGeistGoogle;
 
 export const Route = createRootRoute({
   head: () => ({

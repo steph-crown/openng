@@ -251,7 +251,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
       header: () => (
         <button
           type="button"
-          className="inline-flex items-center gap-1 text-left"
+          className="inline-flex items-center gap-1 text-left text-(--color-fg) hover:text-(--color-brand)"
           onClick={() => {
             const currentSort = draft.sort ?? metaQuery.data?.default_sort ?? "date";
             const currentOrder = draft.order ?? metaQuery.data?.default_sort_order ?? "asc";
@@ -267,7 +267,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
           }}
         >
           <span>{humanizeColumnLabel(columnName)}</span>
-          <ArrowsUpDownIcon className="h-3.5 w-3.5" />
+          <ArrowsUpDownIcon className="h-3.5 w-3.5 shrink-0 text-(--color-muted)" />
         </button>
       ),
       cell: (ctx: CellContext<Record<string, unknown>, unknown>) => {
@@ -283,7 +283,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
       cell: ({ row }) => (
         <button
           type="button"
-          className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs font-medium transition-colors hover:bg-(--color-surface-strong)"
+          className="rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1.5 text-xs font-medium text-(--color-fg) transition-colors hover:bg-(--color-surface-strong)"
           onClick={(event) => {
             event.stopPropagation();
             setSelectedRowIndex(row.index);
@@ -674,8 +674,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
             </div>
 
             <div className="overflow-x-auto">
-              <div className="rounded-xl border border-grey-50 bg-white sm:p-6 dark:border-grey-800 dark:bg-grey-950">
-                <Table className="min-w-[820px]">
+              <Table className="min-w-[820px]">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
@@ -701,11 +700,11 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                           <TableRow key={`skeleton-${index}`}>
                             {visibleColumns.map((columnName) => (
                               <TableCell key={`${columnName}-${index}`}>
-                                <div className="h-4 w-[80%] animate-pulse rounded bg-grey-100 dark:bg-grey-850" />
+                                <div className="h-4 w-[80%] animate-pulse rounded bg-(--color-surface-strong)" />
                               </TableCell>
                             ))}
                             <TableCell className="text-right">
-                              <div className="ml-auto h-8 w-16 animate-pulse rounded-full bg-grey-100 dark:bg-grey-850" />
+                              <div className="ml-auto h-8 w-16 animate-pulse rounded-full bg-(--color-surface-strong)" />
                             </TableCell>
                           </TableRow>
                         ))
@@ -717,15 +716,15 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                                 className="h-24 text-center"
                               >
                                 <div className="grid place-items-center gap-2 py-4">
-                                  <p className="text-base font-medium text-grey-800 dark:text-grey-200">
+                                  <p className="text-base font-medium text-(--color-fg)">
                                     No results
                                   </p>
-                                  <p className="text-sm text-grey-600 dark:text-grey-400">
+                                  <p className="text-sm text-(--color-muted)">
                                     No records match your current filters.
                                   </p>
                                   <button
                                     type="button"
-                                    className="rounded-full border border-grey-200 bg-white px-4 py-2 text-sm text-grey-800 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-200"
+                                    className="rounded-full border border-(--color-border) bg-(--color-surface) px-4 py-2 text-sm text-(--color-fg) transition-colors hover:bg-(--color-surface-strong)"
                                     onClick={resetFilters}
                                   >
                                     Reset filters
@@ -737,7 +736,7 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                         : table.getRowModel().rows.map((row, index) => (
                           <TableRow
                             key={row.id}
-                            className="cursor-pointer hover:bg-grey-25 dark:hover:bg-grey-900"
+                            className="cursor-pointer hover:bg-(--color-surface-strong)"
                             onClick={() => setSelectedRowIndex(index)}
                           >
                             {row.getVisibleCells().map((cell) => (
@@ -754,7 +753,6 @@ export function ExploreResourcePage({ resourceId, search, onApplySearch }: Explo
                         ))}
                   </TableBody>
                 </Table>
-              </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">

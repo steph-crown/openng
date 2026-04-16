@@ -251,7 +251,7 @@ Normative rules for **TanStack Start** (`openng.dev`). Aligns with common produc
 
 - `apps/web` uses **Tailwind CSS v4** utilities directly in JSX (`className`) as the primary styling approach.
 - Tailwind is wired via `@tailwindcss/vite` in `apps/web/vite.config.ts` and `@import "tailwindcss";` in `apps/web/src/styles/globals.css`.
-- Shared OpenNG design tokens live in `@openng/ui/styles/globals.css` and are imported by both `apps/web/src/styles/globals.css` and `apps/docs/app/globals.css`.
+- Shared OpenNG design tokens live in `@openng/ui/styles/globals.css` and are imported by both `apps/web/src/styles/globals.css` and `apps/docs/app/globals.css`. Semantic colors (`--color-fg`, `--color-border`, `--color-surface*`, sidebar active background) and the `--openng-purple-*` scale plus `--openng-badge-outline-*` outline-badge variables are defined there for light and `html.dark`.
 - **Do not introduce CSS Modules** (`*.module.css`) in `apps/web`. Existing and new UI styling should be Tailwind utility classes (including arbitrary values/variants when needed).
 - Reusable primitives (for example buttons and nav logo) belong in `@openng/ui` and should be reused in both web and docs rather than duplicating inline class strings.
 - Keep shared design tokens in CSS variables and consume them through Tailwind arbitrary values.

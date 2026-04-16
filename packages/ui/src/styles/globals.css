@@ -36,14 +36,40 @@
   );
   --color-sidebar-active-bg: color-mix(
     in oklab,
-    var(--color-fg) 11%,
+    var(--color-brand) 16%,
     var(--color-sidebar-bg)
   );
   --color-sidebar-active-fg: var(--color-fg);
   --color-sidebar-section-label: #999999;
+
+  --openng-purple-25: #f5f3ff;
+  --openng-purple-50: #f2eeff;
+  --openng-purple-100: #e5dcff;
+  --openng-purple-150: #d8cbff;
+  --openng-purple-200: #cbbaff;
+  --openng-purple-300: #b297ff;
+  --openng-purple-400: #9875ff;
+  --openng-purple-500: #7e52ff;
+  --openng-purple-600: #6742d4;
+  --openng-purple-700: #5031a9;
+  --openng-purple-800: #38217f;
+  --openng-purple-850: #2d1969;
+  --openng-purple-900: #211054;
+  --openng-purple-950: #16083e;
+
+  --openng-badge-outline-bg: #f2eeff;
+  --openng-badge-outline-fg: #5031a9;
+  --openng-badge-outline-border: #cbb8f0;
+  --openng-badge-outline-hover-bg: #e5dcff;
+  --openng-badge-outline-hover-fg: #38217f;
+}
+
+html {
+  color-scheme: light;
 }
 
 html.dark {
+  color-scheme: dark;
   --color-bg: #0a0a0a;
   --color-fg: #f3f3f3;
   --color-muted: #b4b4b4;
@@ -63,9 +89,15 @@ html.dark {
   );
   --color-sidebar-active-bg: color-mix(
     in oklab,
-    var(--color-fg) 12%,
+    var(--color-brand) 12%,
     var(--color-sidebar-bg)
   );
   --color-sidebar-active-fg: var(--color-fg);
   --color-sidebar-section-label: #999999;
+
+  --openng-badge-outline-bg: color-mix(in oklab, var(--openng-purple-500) 14%, var(--color-surface));
+  --openng-badge-outline-fg: #ece8ff;
+  --openng-badge-outline-border: color-mix(in oklab, var(--openng-purple-400) 32%, var(--color-border));
+  --openng-badge-outline-hover-bg: color-mix(in oklab, var(--openng-purple-500) 22%, var(--color-surface));
+  --openng-badge-outline-hover-fg: #f7f5ff;
 }
