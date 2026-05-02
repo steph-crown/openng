@@ -37,9 +37,11 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
-prd.md
-ROADMAP.md
 .tmp-*.html
+
+**/*.md
+!**/README.md
+**/*.mdc
 
 # Local runbooks (not committed)
 private/

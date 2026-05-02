@@ -1,157 +1,200 @@
-# openng
+# OpenNG
 
-## Using this example
+OpenNG is an open-source REST API platform that makes Nigerian public data accessible to developers. Data that exists in government PDFs, broken portals, and Excel files is collected, cleaned, validated, and served through a **versioned REST API**, alongside a **web app** for exploration and a **documentation site**.
 
-Run the following command:
+Planned production surfaces:
 
-```sh
-npx create-turbo@latest
+| Surface | Role |
+| ------- | ---- |
+| **API** | Versioned JSON REST API (`api.openng.dev`) |
+| **Web** | Landing page, data explorer, dashboard, contribution flows (`openng.dev`) |
+| **Docs** | Product and API documentation (`docs.openng.dev`) |
+
+Repository: [github.com/stephcrown/openng](https://github.com/stephcrown/openng)
+
+## Tech stack
+
+| Layer | Technology |
+| ----- | ---------- |
+| Language | TypeScript (strict) |
+| Runtime | Node.js 22+ |
+| Monorepo | pnpm workspaces, Turborepo |
+| API | Hono on Node.js |
+| Web | TanStack Start (Vite, TanStack Router, React) |
+| Documentation | Next.js App Router, Fumadocs |
+| ORM | Drizzle |
+| Database | PostgreSQL 16 (multiple schemas: `public`, `staging`, `ref`, `analytics`) |
+| Validation | Zod |
+| Cache / rate limiting | Redis |
+| CI | GitHub Actions |
+
+Shared packages use the `@openng/` scope (`@openng/db`, `@openng/shared`, `@openng/ui`, `@openng/scrapers`, plus internal ESLint and TypeScript config packages).
+
+## Architecture
+
+High-level monorepo and runtime relationships:
+
+```mermaid
+flowchart TB
+  subgraph Users
+    Browser[Browser]
+    Integrators[API consumers]
+  end
+
+  subgraph Apps["apps/"]
+    Web["web — TanStack Start"]
+    Docs["docs — Next.js / Fumadocs"]
+    API["api — Hono"]
+  end
+
+  subgraph Packages["packages/"]
+    DBpkg["@openng/db — Drizzle schemas & migrations"]
+    Shared["@openng/shared"]
+    Scrapers["@openng/scrapers"]
+    UI["@openng/ui"]
+  end
+
+  subgraph DataLayer["Data & infra"]
+    PG[("PostgreSQL")]
+    Redis[("Redis")]
+  end
+
+  Browser --> Web
+  Browser --> Docs
+  Integrators --> API
+  Web --> API
+  API --> PG
+  API --> Redis
+  DBpkg --> PG
+  Scrapers --> PG
+  API --> Shared
+  Web --> UI
+  Docs --> UI
 ```
 
-## What's inside?
+How data moves from sources to the API (staging pipeline and production reads):
 
-This Turborepo includes the following packages/apps:
+```mermaid
+flowchart LR
+  subgraph Ingestion["Ingestion"]
+    Seeds[Seeds & imports]
+    Jobs[Scraper jobs]
+  end
 
-### Apps and Packages
+  subgraph Postgres["PostgreSQL"]
+    Staging[staging schema]
+    Public[public schema]
+    Ref[ref schema]
+  end
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router) for `openng.dev`
-- `@openng/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@openng/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@openng/typescript-config`: `tsconfig.json`s used throughout the monorepo
+  subgraph API["Hono API"]
+    V1["/v1/* resources"]
+    RefAPI["/v1/ref/*"]
+  end
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+  Seeds --> Staging
+  Jobs --> Staging
+  Staging -->|"validate & migrate (stored procedures)"| Public
+  Ref --> RefAPI
+  Public --> V1
 ```
 
-Without global `turbo`, use your package manager:
+## Getting started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 22 or newer (see root `engines` and `.nvmrc` if present)
+- [pnpm](https://pnpm.io/) (workspace pins `packageManager` in root `package.json`)
+- [Docker](https://docs.docker.com/get-docker/) for local PostgreSQL, Redis, and observability stack (`docker compose`)
+
+### 1. Install dependencies
+
+From the repository root:
 
 ```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+pnpm install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### 2. Environment variables
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Copy the example env files and fill in secrets where needed:
 
 ```sh
-turbo build --filter=docs
+cp .env.example .env
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Without global `turbo`:
+Generate secrets as described in `.env.example` (for example `openssl rand -hex 32` for `SESSION_SECRET` and `MAGIC_LINK_SECRET`). Root `.env.example` documents database URLs aligned with Docker Compose ports.
+
+### 3. Start infrastructure
+
+Postgres and Redis (and related services) run in Docker; apps run on the host in development:
 
 ```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+docker compose up -d
 ```
 
-### Develop
+### 4. Database migrations
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+With `DATABASE_URL` set (see root `.env`), apply schema migrations from `@openng/db`:
 
 ```sh
-cd my-turborepo
-turbo dev
+pnpm --filter @openng/db db:migrate
 ```
 
-Without global `turbo`, use your package manager:
+### 5. Run the apps
+
+Start all packages in watch mode:
 
 ```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+pnpm dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Or target one app:
 
 ```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
+pnpm exec turbo dev --filter=api
 pnpm exec turbo dev --filter=web
+pnpm exec turbo dev --filter=docs
 ```
 
-### Remote Caching
+Default local ports:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+| App | Port |
+| --- | ---- |
+| API (`apps/api`) | [http://localhost:3000](http://localhost:3000) |
+| Web (`apps/web`) | [http://localhost:3001](http://localhost:3001) |
+| Docs (`apps/docs`) | [http://localhost:3002](http://localhost:3002) |
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Tests and quality
 
 ```sh
-cd my-turborepo
-turbo login
+pnpm test
+pnpm lint
+pnpm check-types
 ```
 
-Without global `turbo`, use your package manager:
+API tests use a separate database when configured; see `apps/api/.env.test.example`.
 
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+## Project layout (overview)
+
+```
+openng/
+├── apps/
+│   ├── api/          # Hono REST API
+│   ├── web/          # TanStack Start frontend
+│   └── docs/         # Fumadocs documentation site
+├── packages/
+│   ├── db/           # Drizzle schema and migrations
+│   ├── shared/       # Shared types and helpers
+│   ├── scrapers/     # Data acquisition jobs
+│   └── ui/           # Shared UI primitives and tokens
+├── scripts/          # Import, validate, migrate CLIs
+├── data/seeds/       # Versioned seed data (where applicable)
+└── docker-compose.yml
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Contributions welcome via issues and pull requests on GitHub.
